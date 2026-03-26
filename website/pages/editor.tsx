@@ -341,9 +341,23 @@ function EditorInner() {
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
   const [hoveredDocId, setHoveredDocId] = useState<string | null>(null)
+  const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor')
+  const [isMobile, setIsMobile] = useState(false)
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // ---- Responsive detection ----
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)')
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => {
+      setIsMobile(e.matches)
+      if (e.matches) setSidebarOpen(false)
+    }
+    handler(mq)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   // ---- Load from localStorage on mount ----
   useEffect(() => {
@@ -522,97 +536,158 @@ function EditorInner() {
 
   if (!isLoaded) return null
 
+  // ---- Shared sub-renders ----
+
+  const sidebarContent = (
+    <aside style={{
+      ...styles.sidebar,
+      ...(isMobile ? styles.sidebarMobile : {}),
+    }}>
+      <div style={styles.sidebarHeader}>
+        <span style={styles.sidebarTitle}>bentomd</span>
+        <button
+          style={styles.iconBtn}
+          onClick={() => setSidebarOpen(false)}
+          title="Close sidebar"
+        >
+          &#x2715;
+        </button>
+      </div>
+
+      <button style={styles.newDocBtn} onClick={handleNewDoc}>
+        + New Presentation
+      </button>
+
+      <div style={styles.docList}>
+        {docs.map((doc) => (
+          <div
+            key={doc.id}
+            style={{
+              ...styles.docItem,
+              ...(doc.id === activeId ? styles.docItemActive : {}),
+              ...(hoveredDocId === doc.id && doc.id !== activeId ? { background: '#1a2535' } : {}),
+            }}
+            onClick={() => { handleSelectDoc(doc.id); if (isMobile) setSidebarOpen(false) }}
+            onMouseEnter={() => setHoveredDocId(doc.id)}
+            onMouseLeave={() => setHoveredDocId(null)}
+          >
+            {renamingId === doc.id ? (
+              <input
+                autoFocus
+                style={styles.renameInput}
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                onBlur={commitRename}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commitRename()
+                  if (e.key === 'Escape') setRenamingId(null)
+                  e.stopPropagation()
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <span style={styles.docName}>{doc.name}</span>
+            )}
+            <div
+              style={{
+                ...styles.docActions,
+                opacity: isMobile || hoveredDocId === doc.id || renamingId === doc.id ? 1 : 0,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                style={styles.docActionBtn}
+                title="Rename"
+                onClick={() => startRename(doc)}
+              >
+                ✎
+              </button>
+              {docs.length > 1 && (
+                <button
+                  style={styles.docActionBtn}
+                  title="Delete"
+                  onClick={() => handleDeleteDoc(doc.id)}
+                >
+                  &#x1F5D1;
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </aside>
+  )
+
+  const editorPane = (
+    <div style={{
+      ...styles.editorPane,
+      ...(isMobile && mobileTab !== 'editor' ? { display: 'none' } : {}),
+    }}>
+      {!isMobile && <div style={styles.paneLabel}>Markdown</div>}
+      <textarea
+        ref={textareaRef}
+        style={styles.textarea}
+        value={editorContent}
+        onChange={(e) => handleContentChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+        spellCheck={false}
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+      />
+    </div>
+  )
+
+  const previewPane = (
+    <div style={{
+      ...styles.previewPane,
+      ...(isMobile && mobileTab !== 'preview' ? { display: 'none' } : {}),
+    }}>
+      {!isMobile && <div style={styles.paneLabel}>Preview</div>}
+      <div style={styles.previewArea}>
+        {previewError ? (
+          <div style={styles.errorBox}>{previewError}</div>
+        ) : previewHtml ? (
+          <iframe
+            key={previewHtml.length}
+            srcDoc={previewHtml}
+            style={styles.previewIframe}
+            title="Slide Preview"
+            sandbox="allow-scripts allow-same-origin"
+          />
+        ) : (
+          <div style={styles.emptyPreview}>Rendering...</div>
+        )}
+      </div>
+    </div>
+  )
+
   // ---- Render ----
   return (
     <>
       <Head>
         <title>Editor — bentomd</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="robots" content="noindex" />
       </Head>
 
       <div style={styles.root}>
-        {/* Sidebar */}
-        {sidebarOpen && (
-          <aside style={styles.sidebar}>
-            <div style={styles.sidebarHeader}>
-              <span style={styles.sidebarTitle}>bentomd</span>
-              <button
-                style={styles.iconBtn}
-                onClick={() => setSidebarOpen(false)}
-                title="Close sidebar"
-              >
-                &#x2715;
-              </button>
-            </div>
-
-            <button style={styles.newDocBtn} onClick={handleNewDoc}>
-              + New Presentation
-            </button>
-
-            <div style={styles.docList}>
-              {docs.map((doc) => (
-                <div
-                  key={doc.id}
-                  style={{
-                    ...styles.docItem,
-                    ...(doc.id === activeId ? styles.docItemActive : {}),
-                    ...(hoveredDocId === doc.id && doc.id !== activeId ? { background: '#1a2535' } : {}),
-                  }}
-                  onClick={() => handleSelectDoc(doc.id)}
-                  onMouseEnter={() => setHoveredDocId(doc.id)}
-                  onMouseLeave={() => setHoveredDocId(null)}
-                >
-                  {renamingId === doc.id ? (
-                    <input
-                      autoFocus
-                      style={styles.renameInput}
-                      value={renameValue}
-                      onChange={(e) => setRenameValue(e.target.value)}
-                      onBlur={commitRename}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') commitRename()
-                        if (e.key === 'Escape') setRenamingId(null)
-                        e.stopPropagation()
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
-                    <span style={styles.docName}>{doc.name}</span>
-                  )}
-                  <div
-                    style={{
-                      ...styles.docActions,
-                      opacity: hoveredDocId === doc.id || renamingId === doc.id ? 1 : 0,
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      style={styles.docActionBtn}
-                      title="Rename"
-                      onClick={() => startRename(doc)}
-                    >
-                      ✎
-                    </button>
-                    {docs.length > 1 && (
-                      <button
-                        style={styles.docActionBtn}
-                        title="Delete"
-                        onClick={() => handleDeleteDoc(doc.id)}
-                      >
-                        &#x1F5D1;
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </aside>
+        {/* Sidebar — overlay on mobile */}
+        {sidebarOpen && isMobile && (
+          <div
+            style={styles.sidebarOverlay}
+            onClick={() => setSidebarOpen(false)}
+          />
         )}
+        {sidebarOpen && sidebarContent}
 
         {/* Main area */}
         <div style={styles.main}>
           {/* Toolbar */}
-          <header style={styles.toolbar}>
+          <header style={{
+            ...styles.toolbar,
+            ...(isMobile ? styles.toolbarMobile : {}),
+          }}>
             {!sidebarOpen && (
               <button
                 style={styles.toolbarBtn}
@@ -622,57 +697,48 @@ function EditorInner() {
                 &#9776;
               </button>
             )}
-            <span style={styles.toolbarDocName}>{activeDoc?.name ?? ''}</span>
+            {!isMobile && (
+              <span style={styles.toolbarDocName}>{activeDoc?.name ?? ''}</span>
+            )}
             <div style={styles.toolbarActions}>
-              <button style={styles.toolbarBtn} onClick={handlePresentationMode} title="Present (opens in new window)">
-                &#9654; Present
+              <button style={styles.toolbarBtn} onClick={handlePresentationMode} title="Present">
+                &#9654;{!isMobile && ' Present'}
               </button>
-              <button style={styles.toolbarBtnPrimary} onClick={handlePrint} title="Export to PDF via print dialog">
-                &#128438; Export PDF
+              <button style={styles.toolbarBtnPrimary} onClick={handlePrint} title="Export PDF">
+                &#128438;{!isMobile && ' Export PDF'}
               </button>
             </div>
           </header>
 
-          {/* Split pane */}
+          {/* Mobile tab switcher */}
+          {isMobile && (
+            <div style={styles.mobileTabBar}>
+              <button
+                style={{
+                  ...styles.mobileTab,
+                  ...(mobileTab === 'editor' ? styles.mobileTabActive : {}),
+                }}
+                onClick={() => setMobileTab('editor')}
+              >
+                Markdown
+              </button>
+              <button
+                style={{
+                  ...styles.mobileTab,
+                  ...(mobileTab === 'preview' ? styles.mobileTabActive : {}),
+                }}
+                onClick={() => setMobileTab('preview')}
+              >
+                Preview
+              </button>
+            </div>
+          )}
+
+          {/* Split pane (desktop) / tab content (mobile) */}
           <div style={styles.splitPane}>
-            {/* Editor pane */}
-            <div style={styles.editorPane}>
-              <div style={styles.paneLabel}>Markdown</div>
-              <textarea
-                ref={textareaRef}
-                style={styles.textarea}
-                value={editorContent}
-                onChange={(e) => handleContentChange(e.target.value)}
-                onKeyDown={handleKeyDown}
-                spellCheck={false}
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="off"
-              />
-            </div>
-
-            {/* Divider */}
-            <div style={styles.divider} />
-
-            {/* Preview pane */}
-            <div style={styles.previewPane}>
-              <div style={styles.paneLabel}>Preview</div>
-              <div style={styles.previewArea}>
-                {previewError ? (
-                  <div style={styles.errorBox}>{previewError}</div>
-                ) : previewHtml ? (
-                  <iframe
-                    key={previewHtml.length}
-                    srcDoc={previewHtml}
-                    style={styles.previewIframe}
-                    title="Slide Preview"
-                    sandbox="allow-scripts allow-same-origin"
-                  />
-                ) : (
-                  <div style={styles.emptyPreview}>Rendering...</div>
-                )}
-              </div>
-            </div>
+            {editorPane}
+            {!isMobile && <div style={styles.divider} />}
+            {previewPane}
           </div>
         </div>
       </div>
@@ -687,12 +753,13 @@ function EditorInner() {
 const styles: Record<string, React.CSSProperties> = {
   root: {
     display: 'flex',
-    height: '100vh',
+    height: '100dvh',
     width: '100vw',
     overflow: 'hidden',
     fontFamily: 'system-ui, -apple-system, sans-serif',
     background: '#0f172a',
     color: '#f1f5f9',
+    position: 'relative',
   },
   sidebar: {
     width: 220,
@@ -702,6 +769,22 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
+  },
+  sidebarMobile: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: '75vw',
+    maxWidth: 300,
+    zIndex: 100,
+    boxShadow: '4px 0 24px rgba(0,0,0,0.5)',
+  },
+  sidebarOverlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0,0,0,0.5)',
+    zIndex: 99,
   },
   sidebarHeader: {
     display: 'flex',
@@ -832,6 +915,11 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     whiteSpace: 'nowrap',
   },
+  toolbarMobile: {
+    height: 44,
+    padding: '0 10px',
+    gap: 6,
+  },
   toolbarBtnPrimary: {
     background: '#2563eb',
     border: '1px solid #3b82f6',
@@ -841,6 +929,28 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '6px 12px',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
+  },
+  mobileTabBar: {
+    display: 'flex',
+    borderBottom: '1px solid #1e293b',
+    background: '#0f172a',
+    flexShrink: 0,
+  },
+  mobileTab: {
+    flex: 1,
+    padding: '10px 0',
+    background: 'none',
+    border: 'none',
+    borderBottom: '2px solid transparent',
+    color: '#64748b',
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
+    textAlign: 'center',
+  } as React.CSSProperties,
+  mobileTabActive: {
+    color: '#f1f5f9',
+    borderBottomColor: '#3b82f6',
   },
   splitPane: {
     flex: 1,
@@ -868,14 +978,14 @@ const styles: Record<string, React.CSSProperties> = {
   textarea: {
     flex: 1,
     width: '100%',
-    padding: '20px 24px',
+    padding: '16px 16px',
     background: '#0d1117',
     color: '#e2e8f0',
     border: 'none',
     outline: 'none',
     resize: 'none',
     fontFamily: '"JetBrains Mono", "Fira Code", "Cascadia Code", "Menlo", "Monaco", monospace',
-    fontSize: 14,
+    fontSize: 16, // >=16px prevents iOS auto-zoom on focus
     lineHeight: 1.7,
     boxSizing: 'border-box',
     tabSize: 2,
