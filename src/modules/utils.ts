@@ -3,7 +3,7 @@ import * as lucideIcons from 'lucide-static';
 import { renderBarChart, renderPieChart, renderLineChart } from './chart.js';
 import type { ChartDataItem } from '../types/index.js';
 
-const DEFAULT_CHART_COLORS = ['#334155', '#64748b', '#94a3b8', '#475569', '#1e293b', '#cbd5e1'];
+const DEFAULT_CHART_COLORS = ['#2980b9', '#8e44ad', '#27ae60', '#e74c3c', '#f39c12', '#1abc9c'];
 
 /**
  * Parse inline chart code block.

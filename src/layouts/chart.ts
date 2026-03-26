@@ -1,7 +1,7 @@
 import type { LayoutRenderer, ChartDataItem } from '../types/index.js';
 import { wrapSlide } from './base.js';
 
-const DEFAULT_COLORS = ['#334155', '#64748b', '#94a3b8', '#475569', '#1e293b', '#cbd5e1'];
+const DEFAULT_COLORS = ['#2980b9', '#8e44ad', '#27ae60', '#e74c3c', '#f39c12', '#1abc9c'];
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

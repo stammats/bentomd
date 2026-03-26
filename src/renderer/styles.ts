@@ -3,12 +3,12 @@ import { generateGridCSS } from '../engine/grid.js';
 
 export function generateCSS(config: GlobalConfig): string {
   const p = config.palette ?? {};
-  const primary = p.primary ?? '#334155';
-  const secondary = p.secondary ?? '#475569';
+  const primary = p.primary ?? '#2980b9';
+  const secondary = p.secondary ?? '#8e44ad';
   const background = p.background ?? '#ffffff';
-  const surface = p.surface ?? '#f1f5f9';
-  const text = p.text ?? '#0f172a';
-  const muted = p.muted ?? '#64748b';
+  const surface = p.surface ?? '#ecf0f1';
+  const text = p.text ?? '#2c3e50';
+  const muted = p.muted ?? '#7f8c8d';
 
   const fontHeading = config.fonts?.heading ?? config.fonts?.sans ?? 'Inter, system-ui, sans-serif';
   const fontBody = config.fonts?.body ?? config.fonts?.sans ?? 'Inter, system-ui, sans-serif';

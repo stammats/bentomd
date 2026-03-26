@@ -51,8 +51,8 @@ const COLOR_SCHEMES: Record<string, string[]> = {
     '#e2e8f0', '#cbd5e1', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1',
   ],
   slate: [
-    '#f1f5f9', '#e2e8f0', '#f8fafc', '#e2e8f0', '#f1f5f9', '#f8fafc',
-    '#e2e8f0', '#f1f5f9', '#f8fafc', '#e2e8f0', '#f1f5f9', '#f8fafc',
+    '#d5e8f0', '#dce4ef', '#e8dce8', '#d5e8dc', '#e8e4d5', '#d5e0e8',
+    '#e0d5e8', '#d5e8e4', '#e8dcd5', '#dce8d5', '#d5dce8', '#e8e0d5',
   ],
 };
 
