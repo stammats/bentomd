@@ -446,8 +446,15 @@ function EditorInner() {
           return
         }
 
-        // Allow spaces in search query (for tag search like "arrow down")
-        // but the colon must follow a space or start of line (not mid-word like http:)
+        // Only trigger in ### heading lines (where icons actually render)
+        const lineStart = textBefore.lastIndexOf('\n') + 1
+        const currentLine = textBefore.substring(lineStart)
+        if (!currentLine.trimStart().startsWith('###')) {
+          setIconPicker((p) => ({ ...p, open: false }))
+          return
+        }
+
+        // Colon must follow a space or start-of-icon context (not mid-word like http:)
         const charBeforeColon = lastColon > 0 ? textBefore[lastColon - 1] : '\n'
         if (charBeforeColon !== ' ' && charBeforeColon !== '\n' && charBeforeColon !== '\t' && lastColon !== 0) {
           setIconPicker((p) => ({ ...p, open: false }))
@@ -698,7 +705,14 @@ function EditorInner() {
       ...styles.editorPane,
       ...(isMobile && mobileTab !== 'editor' ? { display: 'none' } : {}),
     }}>
-      {!isMobile && <div style={styles.paneLabel}>Markdown</div>}
+      {!isMobile && (
+        <div style={styles.paneLabel}>
+          Markdown
+          <span style={{ fontWeight: 400, marginLeft: 12, opacity: 0.6, textTransform: 'none', letterSpacing: 'normal' }}>
+            Type : in ### lines for icon picker
+          </span>
+        </div>
+      )}
       <textarea
         ref={textareaRef}
         style={styles.textarea}
@@ -790,6 +804,26 @@ function EditorInner() {
               <span style={styles.toolbarDocName}>{activeDoc?.name ?? ''}</span>
             )}
             <div style={styles.toolbarActions}>
+              <button
+                style={styles.toolbarBtn}
+                onClick={() => {
+                  const ta = textareaRef.current
+                  if (!ta) return
+                  const cursor = ta.selectionStart
+                  const val = editorContent
+                  // Insert ":" at cursor to trigger icon picker
+                  const newVal = val.substring(0, cursor) + ':' + val.substring(cursor)
+                  handleContentChange(newVal)
+                  requestAnimationFrame(() => {
+                    ta.focus()
+                    ta.selectionStart = cursor + 1
+                    ta.selectionEnd = cursor + 1
+                  })
+                }}
+                title="Insert icon (or type : in a ### line)"
+              >
+                &#9671;{!isMobile && ' Icon'}
+              </button>
               <button style={styles.toolbarBtn} onClick={handlePresentationMode} title="Present">
                 &#9654;{!isMobile && ' Present'}
               </button>
