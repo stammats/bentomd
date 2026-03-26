@@ -425,7 +425,7 @@ function EditorInner() {
         return next
       })
 
-      // Icon picker trigger: detect `:query` pattern at cursor
+      // Icon picker trigger: detect `:query` pattern at cursor (works anywhere, like Slack)
       requestAnimationFrame(() => {
         const ta = textareaRef.current
         if (!ta) return
@@ -440,28 +440,25 @@ function EditorInner() {
         }
 
         const afterColon = textBefore.substring(lastColon + 1)
-        // Must be a valid icon search: no spaces at start, no closing ":"
+        // Close if: already closed with ":", has newline, too long, or has spaces (icon names use dashes)
         if (afterColon.includes(':') || afterColon.includes('\n') || afterColon.length > 30) {
           setIconPicker((p) => ({ ...p, open: false }))
           return
         }
 
-        // Only trigger after "### :" or start-of-line ":"
-        const beforeColon = textBefore.substring(0, lastColon)
-        const lineStart = beforeColon.lastIndexOf('\n') + 1
-        const linePrefix = beforeColon.substring(lineStart).trimStart()
-        const isIconContext = linePrefix === '' || linePrefix.startsWith('###')
-        if (!isIconContext) {
+        // Allow spaces in search query (for tag search like "arrow down")
+        // but the colon must follow a space or start of line (not mid-word like http:)
+        const charBeforeColon = lastColon > 0 ? textBefore[lastColon - 1] : '\n'
+        if (charBeforeColon !== ' ' && charBeforeColon !== '\n' && charBeforeColon !== '\t' && lastColon !== 0) {
           setIconPicker((p) => ({ ...p, open: false }))
           return
         }
 
         // Calculate popup position from textarea
         const rect = ta.getBoundingClientRect()
-        // Approximate line/col position
         const lines = textBefore.split('\n')
         const lineIndex = lines.length - 1
-        const lineHeight = 16 * 1.7 // fontSize * lineHeight
+        const lineHeight = 16 * 1.7
         const top = Math.min(rect.top + 16 + lineIndex * lineHeight - ta.scrollTop, window.innerHeight - 300)
         const left = Math.min(rect.left + 20, window.innerWidth - 340)
 

@@ -52,14 +52,20 @@ export function IconPicker({ query, position, onSelect, onClose }: IconPickerPro
     const q = query.toLowerCase().trim()
     if (!q) return ICON_CATALOG.slice(0, 50)
 
-    const terms = q.split(/\s+/)
+    // Split on spaces or dashes for flexible search
+    // e.g. "arrow down", "arrow-down", "heart" all work
+    const terms = q.split(/[\s-]+/).filter(Boolean)
     const scored = ICON_CATALOG.map((icon) => {
       let score = 0
+
+      // Name match (against both the name and dash-split parts)
       const nameMatch = terms.every((t) => icon.name.includes(t))
       if (nameMatch) score += 10
       // Exact name start bonus
-      if (icon.name.startsWith(terms[0])) score += 5
+      if (icon.name.startsWith(q.replace(/\s+/g, '-'))) score += 8
+      else if (icon.name.startsWith(terms[0])) score += 5
 
+      // Tag match
       const tagStr = icon.tags.join(' ').toLowerCase()
       const tagMatch = terms.every((t) => tagStr.includes(t))
       if (tagMatch) score += 3
