@@ -1,7 +1,7 @@
 import type { Slide, GlobalConfig, ChartDataItem } from '../types/index.js';
 import { escapeHtml } from './utils.js';
 
-const DEFAULT_COLORS = ['#2980b9', '#8e44ad', '#27ae60', '#e74c3c', '#f39c12', '#1abc9c'];
+const DEFAULT_COLORS = ['#0984e3', '#6c5ce7', '#00b894', '#d63031', '#fdcb6e', '#e17055'];
 
 export function renderChart(slide: Slide, _config: GlobalConfig): string {
   const items = (slide.items ?? slide.rawItems ?? []) as ChartDataItem[];

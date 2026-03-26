@@ -28,7 +28,7 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   ];
 
   // Background
-  const bg = cell.background ?? config.palette?.surface ?? '#ecf0f1';
+  const bg = cell.background ?? config.palette?.surface ?? '#dfe6e9';
   styles.push(`background:${bg}`);
 
   // Full-bleed image cell (image only, no icon/value — title overlays)

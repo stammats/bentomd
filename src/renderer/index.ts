@@ -83,12 +83,12 @@ ${slidesMarkup}
 
 function generateMermaidScript(config: GlobalConfig): string {
   const p = config.palette ?? {};
-  const primary = p.primary ?? '#2980b9';
-  const secondary = p.secondary ?? '#8e44ad';
+  const primary = p.primary ?? '#0984e3';
+  const secondary = p.secondary ?? '#6c5ce7';
   const background = p.background ?? '#ffffff';
-  const text = p.text ?? '#2c3e50';
-  const muted = p.muted ?? '#7f8c8d';
-  const surface = p.surface ?? '#ecf0f1';
+  const text = p.text ?? '#2d3436';
+  const muted = p.muted ?? '#636e72';
+  const surface = p.surface ?? '#dfe6e9';
 
   return `
   <script type="module">
