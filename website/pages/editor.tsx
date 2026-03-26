@@ -10,6 +10,7 @@ import Head from 'next/head'
 import { parse } from '../../src/parser/index.js'
 import { renderSlide } from '../../src/layouts/index.js'
 import { renderDeck } from '../../src/renderer/index.js'
+import { IconPicker } from '../components/IconPicker'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -344,6 +345,14 @@ function EditorInner() {
   const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor')
   const [isMobile, setIsMobile] = useState(false)
 
+  // ---- Icon picker state ----
+  const [iconPicker, setIconPicker] = useState<{
+    open: boolean
+    query: string
+    colonPos: number  // position of the opening ":"
+    position: { top: number; left: number }
+  }>({ open: false, query: '', colonPos: 0, position: { top: 0, left: 0 } })
+
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -415,8 +424,77 @@ function EditorInner() {
         scheduleAutoSave(activeId, val, next)
         return next
       })
+
+      // Icon picker trigger: detect `:query` pattern at cursor
+      requestAnimationFrame(() => {
+        const ta = textareaRef.current
+        if (!ta) return
+        const cursor = ta.selectionStart
+        const textBefore = val.substring(0, cursor)
+
+        // Find the last unmatched ":" before cursor
+        const lastColon = textBefore.lastIndexOf(':')
+        if (lastColon === -1) {
+          setIconPicker((p) => ({ ...p, open: false }))
+          return
+        }
+
+        const afterColon = textBefore.substring(lastColon + 1)
+        // Must be a valid icon search: no spaces at start, no closing ":"
+        if (afterColon.includes(':') || afterColon.includes('\n') || afterColon.length > 30) {
+          setIconPicker((p) => ({ ...p, open: false }))
+          return
+        }
+
+        // Only trigger after "### :" or start-of-line ":"
+        const beforeColon = textBefore.substring(0, lastColon)
+        const lineStart = beforeColon.lastIndexOf('\n') + 1
+        const linePrefix = beforeColon.substring(lineStart).trimStart()
+        const isIconContext = linePrefix === '' || linePrefix.startsWith('###')
+        if (!isIconContext) {
+          setIconPicker((p) => ({ ...p, open: false }))
+          return
+        }
+
+        // Calculate popup position from textarea
+        const rect = ta.getBoundingClientRect()
+        // Approximate line/col position
+        const lines = textBefore.split('\n')
+        const lineIndex = lines.length - 1
+        const lineHeight = 16 * 1.7 // fontSize * lineHeight
+        const top = Math.min(rect.top + 16 + lineIndex * lineHeight - ta.scrollTop, window.innerHeight - 300)
+        const left = Math.min(rect.left + 20, window.innerWidth - 340)
+
+        setIconPicker({
+          open: true,
+          query: afterColon,
+          colonPos: lastColon,
+          position: { top: Math.max(top, 8), left: Math.max(left, 8) },
+        })
+      })
     },
     [activeId, scheduleAutoSave]
+  )
+
+  const handleIconSelect = useCallback(
+    (iconName: string) => {
+      const ta = textareaRef.current
+      if (!ta) return
+      const val = editorContent
+      const { colonPos } = iconPicker
+      const cursor = ta.selectionStart
+      // Replace `:query` with `:icon-name:`
+      const newVal = val.substring(0, colonPos) + ':' + iconName + ':' + val.substring(cursor)
+      const newCursor = colonPos + iconName.length + 2
+      handleContentChange(newVal)
+      setIconPicker((p) => ({ ...p, open: false }))
+      requestAnimationFrame(() => {
+        ta.focus()
+        ta.selectionStart = newCursor
+        ta.selectionEnd = newCursor
+      })
+    },
+    [editorContent, iconPicker, handleContentChange]
   )
 
   const handleSelectDoc = useCallback(
@@ -629,12 +707,26 @@ function EditorInner() {
         style={styles.textarea}
         value={editorContent}
         onChange={(e) => handleContentChange(e.target.value)}
-        onKeyDown={handleKeyDown}
+        onKeyDown={(e) => {
+          // Let icon picker handle navigation keys when open
+          if (iconPicker.open && ['ArrowDown', 'ArrowUp', 'Enter', 'Tab', 'Escape'].includes(e.key)) {
+            return // handled by IconPicker's window listener
+          }
+          handleKeyDown(e)
+        }}
         spellCheck={false}
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"
       />
+      {iconPicker.open && (
+        <IconPicker
+          query={iconPicker.query}
+          position={iconPicker.position}
+          onSelect={handleIconSelect}
+          onClose={() => setIconPicker((p) => ({ ...p, open: false }))}
+        />
+      )}
     </div>
   )
 
