@@ -1,0 +1,60 @@
+{
+  "name": "bentomd",
+  "version": "1.0.0",
+  "description": "Modular slide decks from Markdown. Built for the AI era.",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stammats/bentomd.git"
+  },
+  "homepage": "https://github.com/stammats/bentomd",
+  "bugs": {
+    "url": "https://github.com/stammats/bentomd/issues"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "bentomd": "./dist/cli/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli/index.ts dev",
+    "test": "vitest run --exclude test/visual/**",
+    "test:visual": "npx tsx test/visual/generate-pages.ts && npx playwright test",
+    "test:watch": "vitest",
+    "docs:dev": "cd website && npm run dev",
+    "docs:build": "cd website && npm run build"
+  },
+  "keywords": [
+    "slides",
+    "presentation",
+    "markdown",
+    "yaml",
+    "bento"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "chokidar": "^4.0.0",
+    "commander": "^13.1.0",
+    "js-yaml": "^4.1.0",
+    "lucide-static": "^1.7.0",
+    "marked": "^15.0.0",
+    "mermaid": "^11.13.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.13.0",
+    "@types/ws": "^8.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitepress": "^1.6.4",
+    "vitest": "^3.0.0"
+  }
+}

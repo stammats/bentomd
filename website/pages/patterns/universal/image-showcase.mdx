@@ -1,0 +1,63 @@
+import { SlidePreview } from '../../../components/SlidePreview'
+
+# Image Showcase
+
+*Universal*
+
+A full image slide with heading, summary, and caption. Use for product screenshots, architecture diagrams, and visual demonstrations.
+
+
+## Preview
+
+<SlidePreview code={`---
+title: "Image Showcase"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: image
+heading: "Product Dashboard"
+summary: "Unified view of all key metrics and alerts"
+src: "https://placehold.co/1600x900/f1f5f9/64748b?text=Product+Dashboard"
+fit: contain
+caption: "The dashboard consolidates data from 12 sources into a single real-time view"
+footer: true
+pageNumber: true
+---`} />
+
+## Source
+
+```yaml
+---
+title: "Image Showcase"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: image
+heading: "Product Dashboard"
+summary: "Unified view of all key metrics and alerts"
+src: "https://placehold.co/1600x900/f1f5f9/64748b?text=Product+Dashboard"
+fit: contain
+caption: "The dashboard consolidates data from 12 sources into a single real-time view"
+footer: true
+pageNumber: true
+---
+```
+
+## Why This Works
+
+- The heading and summary provide context before the viewer sees the image
+- `fit: contain` ensures the full image is visible without cropping
+- The caption adds a specific detail that the image alone might not convey
+- This pattern works for any visual: screenshots, diagrams, photos, mockups

@@ -1,0 +1,131 @@
+# Slide Structure
+
+Every bentomd slide follows a consistent 5-layer page anatomy. Understanding this structure is key to creating effective slides.
+
+## File Format
+
+A `.bmd` file starts with a global config block, followed by slides separated by `---`:
+
+```yaml
+---
+# Global config (first block)
+theme: default
+title: "Deck Title"
+palette:
+  primary: "#2563eb"
+---
+
+---
+# Slide 1
+layout: cover
+background: "#1e293b"
+---
+
+# Title Here
+
+---
+# Slide 2
+layout: default
+heading: "Slide Title"
+---
+
+Body content in Markdown.
+```
+
+## Slide Separators
+
+Slides are separated by a line containing only `---`. The first `---` block is always the global configuration. Each subsequent `---` block starts a new slide.
+
+## The 5-Layer Page Anatomy
+
+Every slide is composed of five vertical zones:
+
+### 1. Header (Pillar Bar)
+
+A thin strip at the top of the slide for section context. Common in consulting decks.
+
+```yaml
+header: "Strategic Analysis"
+```
+
+- Font: 14px, uppercase, muted color
+- Height: 48px (16:9) / 40px (4:3)
+
+### 2. Heading
+
+The slide title. Present on almost every slide except cover/section layouts.
+
+```yaml
+heading: "Market Entry Strategy"
+```
+
+- Font: 56px bold (auto-scales down to 40px if needed)
+- Max: 2 lines, ~50 characters per line
+
+### 3. Summary
+
+An optional subtitle that frames the content below.
+
+```yaml
+summary: "Three factors support a phased approach"
+```
+
+- Font: 24px, muted color
+- Max: 2 lines
+
+### 4. Body (Content Area)
+
+The main content area. This is where layout-specific content lives -- bullet points, cards, charts, tables, images, code blocks.
+
+Content is standard Markdown below the frontmatter. For structured layouts (stats, features, bento, etc.), use `###` headings to define each item:
+
+```yaml
+---
+layout: stats
+heading: "Key Metrics"
+---
+
+### :trending-up: $4.2M
+Revenue
++38% YoY
+```
+
+### 5. Footer
+
+Page numbers, dates, and other metadata at the bottom.
+
+```yaml
+footer: true
+pageNumber: true
+```
+
+- Font: 13px, muted, 70% opacity
+- Supports template strings: `{title}`, `{author}`, `{date}`, `{slideNumber}`, `{totalSlides}`
+
+## Content Modules
+
+The body area supports different content types depending on the layout:
+
+| Module | Used In | Format |
+|---|---|---|
+| Text / Markdown | `default`, `two-column` | Standard Markdown below frontmatter |
+| Stat items | `stats` | YAML list with `value`, `label`, `icon`, `trend` |
+| Feature cards | `features` | YAML list with `icon`, `title`, `description` |
+| Chart data | `chart` | YAML list with `label`, `value` |
+| Table | `table` | Markdown table in body |
+| Quote | `quote` | Markdown blockquote in body |
+| Image | `image` | `src` option in frontmatter |
+| Code | `default` | Fenced code block in Markdown body |
+
+## Overflow Prevention
+
+bentomd uses a content budget system to prevent overflow. Each layout has a maximum vertical budget. When content exceeds it, the renderer automatically:
+
+1. Reduces footer padding
+2. Steps down body font size (20px -> 18px -> 16px -> 14px)
+3. Steps down subtitle size (may hide it entirely)
+4. Steps down heading size (56px -> 48px -> 40px)
+5. Compresses line height
+6. Truncates as a last resort
+
+You never need to worry about content overflowing the slide.

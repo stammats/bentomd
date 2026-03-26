@@ -1,0 +1,61 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# section
+
+Section break / interstitial with large centered text. Use to separate major sections of a presentation.
+
+
+## Preview
+
+<SlidePreview code={`---
+theme: default
+title: Section Break
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: section
+background: "#1e293b"
+---
+
+# Technical Deep Dive
+## Architecture, scalability, and security`} />
+
+## Example
+
+```yaml
+---
+theme: default
+title: Section Break
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: section
+background: "#1e293b"
+---
+
+# Technical Deep Dive
+## Architecture, scalability, and security
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `background` | `string` | palette background | Background color |
+| `color` | `string` | auto | Text color |
+| `align` | `string` | `"center"` | Text alignment |
+
+## Tips
+
+- Use `#` for the section title and `##` for a tagline
+- Dark backgrounds create strong visual breaks between sections
+- No header, footer, or page number -- keep it minimal
+- Keep the title short: 3-5 words is ideal
+- Great for creating rhythm in long presentations (20+ slides)
+- Use between major topic changes to help the audience reset

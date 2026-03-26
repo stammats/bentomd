@@ -1,0 +1,96 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# features
+
+Grid of icon + title + description cards. Use for feature showcases, team pages, and key findings.
+
+
+## Preview
+
+<SlidePreview code={`---
+theme: default
+title: Features Demo
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: features
+heading: "Why Choose Our Platform"
+summary: "Three pillars of enterprise-grade infrastructure"
+columns: 3
+style: card
+footer: true
+pageNumber: true
+---
+
+### :zap: Lightning Fast
+Sub-millisecond response times with our globally distributed edge network spanning 42 regions.
+
+### :shield: Enterprise Security
+SOC 2 Type II certified with end-to-end encryption, SSO support, and role-based access control.
+
+### :bar-chart: Deep Analytics
+Real-time dashboards with custom metrics, anomaly detection, and automated reporting.`} />
+
+## Example
+
+```yaml
+---
+theme: default
+title: Features Demo
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: features
+heading: "Why Choose Our Platform"
+summary: "Three pillars of enterprise-grade infrastructure"
+columns: 3
+style: card
+footer: true
+pageNumber: true
+---
+
+### :zap: Lightning Fast
+Sub-millisecond response times with our globally distributed edge network spanning 42 regions.
+
+### :shield: Enterprise Security
+SOC 2 Type II certified with end-to-end encryption, SSO support, and role-based access control.
+
+### :bar-chart: Deep Analytics
+Real-time dashboards with custom metrics, anomaly detection, and automated reporting.
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `heading` | `string` | — | Slide title |
+| `summary` | `string` | — | Subtitle below the heading |
+| `header` | `string` | — | Pillar/section header at top |
+| `columns` | `number` | `3` | Number of columns (2, 3, or 4) |
+| `style` | `string` | `"card"` | Card style |
+| `footer` | `boolean` | `false` | Show footer bar |
+| `pageNumber` | `boolean` | `false` | Show page number |
+
+## Item Fields
+
+Each item in the list accepts:
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `icon` | `string` | no | Lucide icon name (e.g., `zap`, `shield`, `bar-chart`) |
+| `title` | `string` | yes | Card title |
+| `description` | `string` | no | Card description text |
+
+## Tips
+
+- Icons use [Lucide](https://lucide.dev) names (lowercase, hyphenated)
+- 3 columns with 3 items is the most balanced layout
+- 2 columns with 4 items (2x2 grid) works well for executive summaries
+- 4 columns with 4 items is compact -- keep descriptions to 2 lines
+- Keep descriptions concise: 1-3 sentences per card

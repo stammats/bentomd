@@ -1,0 +1,89 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# comparison
+
+Side-by-side comparison cards for pricing tiers, plan options, or vendor evaluation.
+
+
+## Preview
+
+<SlidePreview code={`---
+title: "Pricing"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: comparison
+heading: "Choose Your Plan"
+summary: "All plans include core features. Upgrade for advanced capabilities."
+footer: true
+pageNumber: true
+---
+
+### Starter — $29/mo
+- 5 team members
+- 10 projects
+- Community support
+- Basic analytics
+
+### Pro — $99/mo {highlight}
+- 25 team members
+- Unlimited projects
+- Priority support
+- Advanced analytics
+- Custom integrations
+
+### Enterprise — Custom
+- Unlimited members
+- Unlimited projects
+- Dedicated support
+- Full analytics suite
+- SSO & audit logs
+- SLA guarantee`} />
+
+## Example
+
+```yaml
+---
+layout: comparison
+heading: "Choose Your Plan"
+summary: "All plans include core features."
+---
+
+### Starter — $29/mo
+- 5 team members
+- 10 projects
+
+### Pro — $99/mo {highlight}
+- 25 team members
+- Unlimited projects
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `heading` | `string` | -- | Slide title |
+| `summary` | `string` | -- | Subtitle below the heading |
+| `header` | `string` | -- | Pillar/section header at top |
+| `footer` | `boolean` | `false` | Show footer bar |
+| `pageNumber` | `boolean` | `false` | Show page number |
+
+## Item Fields
+
+Each item in the list accepts:
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `label` | `string` | yes | Plan/option name |
+| `price` | `string` | no | Price display (e.g., `"$99/mo"`) |
+| `highlight` | `boolean` | no | Add emphasis border and shadow |
+| `features` | `string[]` | no | List of included features |
+
+## Tips
+
+- 2-3 options is ideal; use `{highlight}` on the recommended plan
+- Keep feature lists parallel -- same number of items when possible
+- Use `price: "Custom"` or `price: "Contact us"` for enterprise tiers

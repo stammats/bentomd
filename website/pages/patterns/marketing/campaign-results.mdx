@@ -1,0 +1,99 @@
+import { SlidePreview } from '../../../components/SlidePreview'
+
+# Campaign Results
+
+*Marketing*
+
+A stats layout showing multi-channel campaign performance. Four KPIs covering reach, engagement, conversion, and ROI.
+
+
+## Preview
+
+<SlidePreview code={`---
+title: "Campaign Results"
+aspectRatio: "16:9"
+palette:
+  primary: "#dc2626"
+  secondary: "#f97316"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: stats
+heading: "Spring Campaign Performance"
+summary: "6-week multi-channel campaign exceeded all targets"
+footer: true
+pageNumber: true
+---
+
+- value: "2.4M"
+  label: Total Impressions
+  icon: eye
+  trend: "+180% vs. goal"
+
+- value: "86,400"
+  label: Click-throughs
+  icon: mouse-pointer
+  trend: "3.6% CTR"
+
+- value: "4,120"
+  label: Conversions
+  icon: shopping-cart
+  trend: "4.8% conv. rate"
+
+- value: "340%"
+  label: Return on Ad Spend
+  icon: dollar-sign
+  trend: "+90% vs. benchmark"`} />
+
+## Source
+
+```yaml
+---
+title: "Campaign Results"
+aspectRatio: "16:9"
+palette:
+  primary: "#dc2626"
+  secondary: "#f97316"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: stats
+heading: "Spring Campaign Performance"
+summary: "6-week multi-channel campaign exceeded all targets"
+footer: true
+pageNumber: true
+---
+
+- value: "2.4M"
+  label: Total Impressions
+  icon: eye
+  trend: "+180% vs. goal"
+
+- value: "86,400"
+  label: Click-throughs
+  icon: mouse-pointer
+  trend: "3.6% CTR"
+
+- value: "4,120"
+  label: Conversions
+  icon: shopping-cart
+  trend: "4.8% conv. rate"
+
+- value: "340%"
+  label: Return on Ad Spend
+  icon: dollar-sign
+  trend: "+90% vs. benchmark"
+```
+
+## Why This Works
+
+- Metrics follow the marketing funnel: impressions -> clicks -> conversions -> ROI
+- Trend values compare against goals/benchmarks rather than just showing change
+- The summary frames the campaign scope (6 weeks, multi-channel) and verdict (exceeded targets)
+- Red/orange palette matches the energy of a performance review

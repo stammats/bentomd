@@ -1,0 +1,333 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# bento
+
+Flexible grid layout with cells of varying sizes. Each cell supports icon, title, description, image, value, and label. Cells are auto-placed using bin-packing, and row gaps are automatically filled.
+
+
+## Preview
+
+<SlidePreview code={`---
+title: "Bento Grid"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+  background: "#f5f5f5"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### :layers: Modular Architecture {hero}
+Compose your system from independent, tested modules. Each module owns its data, API, and lifecycle.
+
+### 50K+ {sm center}
+Active Developers
+
+### 4.9 {sm center}
+npm Rating
+
+### :git-branch: Version Control {sm}
+Built-in schema versioning and migration support
+
+### :terminal: CLI First {sm}
+Powerful command-line tools for every workflow
+
+### :lock: Enterprise Security {sm}
+SOC 2, GDPR, and HIPAA compliant out of the box`} />
+
+## Example
+
+```markdown
+---
+layout: bento
+scheme: pastel
+---
+
+### :layers: Modular Architecture {hero}
+Compose your system from independent modules.
+
+### 50K+ {sm center}
+Active Developers
+
+### :terminal: CLI First {sm}
+Powerful command-line tools
+```
+
+## Size Keywords
+
+| Keyword | Columns | Rows | Description |
+|---|---|---|---|
+| `sm` | 4 (1/3) | 1 | Small card |
+| `md` | 6 (1/2) | 1 | Medium card |
+| `lg` | 8 (2/3) | 1 | Large card |
+| `wide` | 12 (full) | 1 | Full-width banner |
+| `tall` | 4 (1/3) | 2 | Tall sidebar card |
+| `hero` | 8 (2/3) | 2 | Hero feature block |
+| `full` | 12 (full) | 2 | Full-width hero |
+
+You can also use explicit notation: `size: "6x2"` means 6 columns wide, 2 rows tall.
+
+## Item Syntax
+
+Each `###` heading defines one cell:
+
+```markdown
+### :icon-name: Title text {size modifier}
+Description text below the heading.
+![](image-url)
+```
+
+- `:icon-name:` -- Lucide icon (optional, at start of heading)
+- `{size}` -- Size keyword (optional, at end of heading)
+- `{center}` -- Center-align content
+- Value cells: start the title with a number or currency symbol (e.g. `### $4.2M`)
+- Image cells: add `![](url)` in the body
+
+## Color Schemes
+
+Use `scheme` in the slide frontmatter for automatic cell coloring:
+
+| Scheme | Style |
+|---|---|
+| `pastel` | Soft pastels (purple, pink, yellow, green, blue, orange) |
+| `ocean` | Cool blues and teals |
+| `warm` | Warm yellows, oranges, and pinks |
+| `mono` | Neutral grays |
+
+---
+
+## Mixed Layout
+
+Use different sizes to create card-style feature grids. Row gaps are automatically filled.
+
+<SlidePreview code={`---
+title: "Product Features"
+aspectRatio: "16:9"
+palette:
+  primary: "#059669"
+  background: "#fafaf9"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### :credit-card: Maximize Card Rewards {md}
+Maximize rewards on every purchase. Identify top cards for each spend category.
+
+### :wallet: Manage Cards {sm}
+Manage multiple cards, track benefits, and set payment reminders.
+
+### :target: Set Goals {sm}
+Set trip goals or target annual fee waivers.
+
+### :map-pin: Lounges {sm}
+Track and find eligible airport and railway lounge access.
+
+### :bar-chart: Credit Card Strategy {lg}
+Personalized credit card plan that fits your lifestyle and spending habits.
+
+### :search: Find, Compare & Apply {sm}
+Discover ideal cards. Compare features and apply in minutes.`} />
+
+---
+
+## Tall (Vertical Span)
+
+Use `{tall}` to span a cell across 2 rows. Great for sidebar-style content.
+
+<SlidePreview code={`---
+title: "Platform Overview"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  background: "#f5f5f5"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: ocean
+---
+
+### :shield: Security & Compliance {tall}
+SOC 2 Type II, GDPR, HIPAA. End-to-end encryption with zero-trust architecture. Regular third-party audits.
+
+### :zap: Lightning Fast
+Sub-10ms P99 latency across all API endpoints.
+
+### :globe: Global Edge Network
+42 regions worldwide with automatic failover.
+
+### 99.99%
+Uptime SLA
+
+### 150ms
+Global P95 Latency
+
+### :code: Developer First {lg}
+Beautiful APIs, comprehensive SDKs, and interactive documentation. Ship in hours, not weeks.`} />
+
+---
+
+## Dashboard (KPI Cards)
+
+Use value cells with `{center}` and `{wide}` for data-driven layouts.
+
+<SlidePreview code={`---
+title: "Q4 Dashboard"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+  background: "#f5f5f5"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### $12.4M {md center}
+Annual Recurring Revenue
+
+### 340% {sm center}
+YoY Growth
+
+### 98.7 {sm center}
+NPS Score
+
+### :users: 2,400+ Enterprise Customers {wide}
+Trusted by Fortune 500 companies across 45 countries. Average contract value of $52K with 142% net dollar retention.`} />
+
+---
+
+## Photo Grid
+
+Use `![](url)` in the body to add background images. Title and description overlay at the bottom.
+
+<SlidePreview code={`---
+title: "Travel Guide"
+aspectRatio: "16:9"
+palette:
+  primary: "#0f766e"
+  background: "#f5f5f4"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### Kyoto, Japan {hero}
+Ancient temples, serene gardens, and the magic of cherry blossom season. A city where tradition meets modernity.
+![](https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1200&h=800&fit=crop)
+
+### Tokyo {tall}
+Neon-lit streets and endless energy.
+![](https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=800&fit=crop)
+
+### :utensils: Food & Culture
+Michelin-starred ramen to street-side yakitori. Japan has more Michelin stars than any other country.
+
+### :map: Getting Around
+JR Pass covers bullet trains, local rails, and buses nationwide. Efficient, punctual, spotless.
+
+### Osaka {md}
+Street food capital of Japan. Don't miss Dotonbori at night.
+![](https://images.unsplash.com/photo-1590559899731-a382839e5549?w=800&h=400&fit=crop)`} />
+
+---
+
+## Portfolio
+
+Mix photos and text cards for creative showcases.
+
+<SlidePreview code={`---
+title: "Design Portfolio"
+aspectRatio: "16:9"
+palette:
+  primary: "#1e1b4b"
+  background: "#fafaf9"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: mono
+---
+
+### Brand Identity {hero}
+Complete visual identity system for a sustainable fashion brand. Logo, typography, color palette, and packaging.
+![](https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=800&fit=crop)
+
+### Mobile App {tall}
+![](https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=800&fit=crop)
+
+### :award: 12 Awards
+Red Dot, iF Design, Webby, and more.
+
+### :briefcase: 8 Years
+Professional design experience across startups and Fortune 500.
+
+### Web Design {lg}
+Responsive e-commerce platform with 40% conversion rate improvement.
+![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=400&fit=crop)`} />
+
+---
+
+## Inline Images (Product Showcase)
+
+When a cell has both an icon/title AND an image, the image appears as inline content (not background).
+
+<SlidePreview code={`---
+title: "Product Showcase"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+  background: "#f5f5f5"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### :camera: Smart Camera {hero}
+AI-powered 4K camera with real-time object tracking, night vision, and cloud storage.
+![](https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&h=400&fit=crop)
+
+### 4K Resolution
+Ultra HD
+
+### 180 Days
+Battery Life
+
+### :wifi: Always Connected {md}
+Dual-band WiFi 6 with automatic failover to LTE backup.
+![](https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=300&fit=crop)
+
+### :shield: Privacy First {sm}
+End-to-end encryption. All processing happens on-device.`} />
+
+Image behavior:
+- **Background image**: `![](url)` without icon/value -- image fills the entire cell
+- **Inline image**: `![](url)` with `:icon:` or title -- image appears below the text content
+
+## Tips
+
+- Cells are auto-placed using a greedy bin-packing algorithm -- no positions needed
+- Row gaps are automatically filled by expanding the last cell in each row
+- Use `scheme: pastel` in the slide frontmatter for automatic pastel cell colors
+- Mix `hero`/`tall`/`lg` with `sm` cells for visual hierarchy
+- Image cells: add `![](url)` in the body -- title/description overlay at bottom
+- Value cells: start the heading with a number or `$` (e.g. `### $4.2M {sm center}`)
+- `{tall}` creates a 2-row vertical span -- great for sidebars and featured content

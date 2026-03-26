@@ -1,0 +1,16 @@
+{
+  "name": "bentomd-docs",
+  "private": true,
+  "scripts": {
+    "dev": "rm -rf .next && next dev -p 3081 -H 0.0.0.0",
+    "build": "next build",
+    "start": "next start -p 3081 -H 0.0.0.0"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "nextra": "^2.13.0",
+    "nextra-theme-docs": "^2.13.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  }
+}

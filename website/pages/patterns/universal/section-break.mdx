@@ -1,0 +1,51 @@
+import { SlidePreview } from '../../../components/SlidePreview'
+
+# Section Break
+
+*Universal*
+
+A dark interstitial slide that separates major sections of a presentation. Minimal content -- just a title and tagline.
+
+
+## Preview
+
+<SlidePreview code={`---
+title: "Section Break"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: section
+background: "#1e293b"
+---
+
+# Part 2: Deep Dive
+## Architecture, performance benchmarks, and security model`} />
+
+## Source
+
+```yaml
+---
+title: "Section Break"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: section
+background: "#1e293b"
+---
+
+# Part 2: Deep Dive
+## Architecture, performance benchmarks, and security model
+```
+
+## Why This Works
+
+- The dark background creates a strong visual break that signals a topic change
+- Minimal content lets the audience mentally reset before the next section
+- The subtitle previews what's coming, building anticipation
+- No footer, header, or page number -- this slide is a pause, not content

@@ -1,0 +1,33 @@
+node_modules/
+node_modules_bak/
+dist/
+.next/
+docs-dist*/
+docs/.vitepress/cache/
+*.log
+.DS_Store
+package-lock.json
+
+# Test artifacts
+test-results/
+test/visual/pages/
+test/visual/screenshots/
+website/test-results/
+
+# Dev logs (private)
+devlogs/
+
+# IDE / tool settings
+.claude/
+CLAUDE.md
+
+# Screenshots and images in root (dev artifacts)
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.WEBP
+*.JPG
+
+# Build cache
+website/tsconfig.tsbuildinfo

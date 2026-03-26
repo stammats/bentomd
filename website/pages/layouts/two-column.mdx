@@ -1,0 +1,97 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# two-column
+
+Two content areas side by side. Use `##` headings to separate left and right columns.
+
+
+## Preview
+
+<SlidePreview code={`---
+theme: default
+title: Migration Plan
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: two-column
+heading: "Before & After"
+summary: "Migrating from monolith to microservices"
+footer: true
+pageNumber: true
+---
+
+## Current State
+
+- Single Rails monolith (280k LOC)
+- Vertical scaling only
+- 45-minute deploy cycles
+- Shared PostgreSQL database
+- Tightly coupled modules
+
+## Target Architecture
+
+- 12 domain-bounded services
+- Horizontal auto-scaling per service
+- Independent 3-minute deploys
+- Service-owned data stores
+- Event-driven communication via Kafka`} />
+
+## Example
+
+```yaml
+---
+theme: default
+title: Migration Plan
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: two-column
+heading: "Before & After"
+summary: "Migrating from monolith to microservices"
+footer: true
+pageNumber: true
+---
+
+## Current State
+
+- Single Rails monolith (280k LOC)
+- Vertical scaling only
+- 45-minute deploy cycles
+- Shared PostgreSQL database
+- Tightly coupled modules
+
+## Target Architecture
+
+- 12 domain-bounded services
+- Horizontal auto-scaling per service
+- Independent 3-minute deploys
+- Service-owned data stores
+- Event-driven communication via Kafka
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `heading` | `string` | — | Slide title |
+| `summary` | `string` | — | Subtitle below the heading |
+| `header` | `string` | — | Pillar/section header at top |
+| `ratio` | `string` | `"1:1"` | Column width ratio (e.g., `"2:1"`, `"1:2"`) |
+| `footer` | `boolean` | `false` | Show footer bar |
+| `pageNumber` | `boolean` | `false` | Show page number |
+| `gap` | `"sm" \| "md" \| "lg"` | `"md"` | Gap between columns |
+
+## Tips
+
+- Use `##` headings to split content into left and right columns
+- The first `##` becomes the left column, the second becomes the right
+- Each column supports full Markdown: bullets, tables, code blocks, images
+- Use `ratio: "2:1"` for a main content + sidebar layout
+- Keep to 5 bullet points per column max
+- Works well for before/after, pros/cons, and comparison slides

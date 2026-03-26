@@ -1,0 +1,218 @@
+---
+theme: default
+title: bentomd Full Demo
+author: bentomd team
+date: "2026-03-26"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  secondary: "#7c3aed"
+  background: "#ffffff"
+  surface: "#f8fafc"
+  text: "#0f172a"
+  muted: "#64748b"
+defaults:
+  pageNumber: true
+---
+
+---
+layout: cover
+background: "#0f172a"
+color: "#ffffff"
+---
+
+# bentomd v0.2
+## Grid Engine Architecture Demo
+
+All layouts powered by a single CSS Grid engine
+
+---
+layout: default
+heading: "Grid Engine Architecture"
+summary: "Every layout is now driven by one unified system"
+---
+
+The new Grid Engine replaces per-layout CSS with a **Slot × Module** architecture:
+
+- **Slots** define _where_ content goes (grid coordinates)
+- **Modules** define _what_ content renders (heading, richtext, cards, etc.)
+- **Zero layout-specific CSS** — all placement via inline grid properties
+
+```
+Slide → SlotResolver → LayoutDefinition + Modules → GridEngine → HTML
+```
+
+---
+layout: two-column
+heading: "Two Column (1:1)"
+ratio: "1:1"
+---
+
+::left::
+
+### Left Column
+
+This is a standard two-column layout with equal width columns.
+
+The Grid Engine handles this with:
+- `grid-column: 1 / span 6` (left)
+- `grid-column: 7 / span 6` (right)
+
+::right::
+
+### Right Column
+
+Each column is a **richtext module** placed in its own grid slot.
+
+No special CSS needed — just grid placement coordinates defined in the layout definition.
+
+---
+layout: two-column
+heading: "Two Column (2:1 ratio)"
+ratio: "2:1"
+---
+
+::left::
+
+### Main Content Area
+
+With a 2:1 ratio, the left column gets **8 of 12 grid columns** while the right gets 4.
+
+This is configured by the `adjustTwoColumnRatio` function in the slot resolver.
+
+::right::
+
+### Sidebar
+
+Narrower column for supplementary content.
+
+---
+layout: features
+heading: "Features Layout"
+summary: "Card grid module with icon support"
+columns: 3
+---
+
+### :layout-grid: Grid Engine
+All 19 layouts driven by one CSS Grid system
+
+### :box: Slot × Module
+Clean separation of placement and content
+
+### :layers: 12-Column Grid
+Consistent column system across all layouts
+
+### :zap: Zero Layout CSS
+No layout-specific CSS rules needed
+
+### :printer: PDF Ready
+Print stylesheet built into the engine
+
+### :code: Type Safe
+Full TypeScript definitions for all modules
+
+---
+layout: stats
+heading: "Key Metrics"
+summary: "Stat grid module with trend indicators"
+---
+
+### :layout-grid: 19
+Layout Definitions
+
+### :box: 13
+Module Renderers
+
+### :trending-down: -55%
+CSS Reduction
+↓ from 730 to 320 lines
+
+### :check-circle: 79
+Tests Passing
++15 new engine tests
+
+---
+layout: chart
+type: bar
+title: "CSS Lines of Code Comparison"
+---
+
+### Old: Layout CSS: 385
+### Old: Base CSS: 345
+### New: Grid Engine: 40
+### New: Module CSS: 180
+### New: Base CSS: 100
+
+---
+layout: chart
+type: pie
+title: "Template Coverage by Tier"
+---
+
+### Tier 1 (Universal): 9
+### Tier 2 (Common): 9
+### Tier 3 (Diff): 12
+### Tier 4 (Unique): 4
+
+---
+layout: table
+heading: "Layout Registry"
+---
+
+| Layout | Chrome | Slots | Primary Module |
+|--------|--------|-------|----------------|
+| cover | none | 1 | hero |
+| default | full | 2 | heading + richtext |
+| two-column | full | 3 | heading + richtext×2 |
+| features | full | 2 | heading + card-grid |
+| stats | full | 2 | heading + stat-grid |
+| chart | full | 2 | heading + chart |
+| quote | minimal | 1 | quote |
+| bento | minimal | n | dynamic cells |
+
+---
+layout: quote
+---
+
+> The best architectures are those where adding a new feature means adding a new file, not editing an existing one.
+
+— Software Design Principle
+
+---
+layout: section
+background: "#1e293b"
+color: "#ffffff"
+---
+
+# What's Next?
+
+---
+layout: default
+heading: "Roadmap"
+summary: "Document-driven development continues"
+---
+
+### Phase 2: PDF Export + Additional Templates
+- `@media print` stylesheet (already included)
+- Playwright-based `bentomd export` command
+- Templates: code, comparison, timeline, team, bento
+
+### Phase 3: Extended Modules
+- Tier 2 modules: process, pros-cons, gallery, logo-grid
+- Syntax highlighting via Shiki
+- Templates #21-30
+
+### Phase 4: Advanced Features
+- Mermaid diagram integration
+- Animation/transitions
+- Speaker notes
+
+---
+layout: end
+background: "#0f172a"
+color: "#ffffff"
+---
+
+# Grid Engine ✓
+
+19 layouts · 13 modules · 1 engine

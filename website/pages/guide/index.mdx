@@ -1,0 +1,34 @@
+# Introduction
+
+**bentomd** is a slide deck authoring tool that turns Markdown + YAML into pixel-perfect presentations. It uses a fixed canvas renderer (1920x1080 for 16:9) with CSS transform scaling, so your content always fits the slide -- no overflow, no scrollbars, no surprises.
+
+## Design Principles
+
+- **Fixed canvas, not responsive.** Slides render at exact pixel dimensions and scale to fit the viewport. No media queries, no viewport units.
+- **Layout-first.** Every slide declares a named layout (`cover`, `stats`, `two-column`, etc.). The layout engine owns spacing, font sizing, and overflow prevention.
+- **Content budgets.** Each layout has a finite vertical content budget. When content exceeds it, the renderer auto-scales fonts and spacing in a deterministic step-down algorithm.
+- **YAML + Markdown.** Structured data (stats, chart data, feature cards) lives in YAML frontmatter. Prose content uses standard Markdown. No custom syntax to learn.
+
+## How It Differs
+
+| | bentomd | Marp | Slidev | reveal.js |
+|---|---|---|---|---|
+| Canvas model | Fixed pixel canvas with transform scaling | CSS-based with viewport units | Vue SPA with CSS | CSS-based responsive |
+| Overflow handling | Auto-scaling with content budgets | Manual | Manual | Manual (overflow hidden) |
+| Structured data | YAML items (stats, charts, features) | Markdown only | Vue components | HTML/plugin |
+| Layout system | 10 named layouts with typed options | Themes with directives | Vue layouts | Sections with CSS |
+| AI generation | Designed for LLM output | Possible but fragile | Possible but complex | Not practical |
+
+## When to Use bentomd
+
+- You want an LLM to generate slide decks and need reliable, consistent output
+- You need pixel-perfect slides that work on any screen size
+- You want structured layouts (stats, charts, feature grids) without writing HTML
+- You care about consistent anatomy (headers, footers, page numbers) across every slide
+
+## Next Steps
+
+- [Quick Start](/guide/quickstart) -- install and create your first deck
+- [Slide Structure](/guide/structure) -- understand the page anatomy
+- [Layouts](/layouts/cover) -- browse all 10 built-in layouts
+- [Patterns](/patterns/) -- copy-paste real-world examples

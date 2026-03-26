@@ -1,0 +1,97 @@
+# Theming
+
+bentomd uses a semantic color system and design token architecture. You can customize the visual appearance through the `palette` and `fonts` config fields.
+
+## Built-in Theme
+
+The `default` theme provides a clean, professional look:
+
+- White background with slate-gray text
+- Blue primary accent (`#2563EB`)
+- Inter-style system font stack
+- 8px base spacing unit
+
+## Custom Palette
+
+Override any of the six color tokens in your global config:
+
+```yaml
+palette:
+  primary: "#dc2626"     # Red accent
+  secondary: "#f97316"   # Orange secondary
+  background: "#ffffff"
+  surface: "#fef2f2"     # Light red surface
+  text: "#1e293b"
+  muted: "#64748b"
+```
+
+### Dark Theme
+
+Set a dark background and light text colors:
+
+```yaml
+palette:
+  primary: "#6366f1"
+  secondary: "#818cf8"
+  background: "#0f172a"
+  surface: "#1e293b"
+  text: "#f8fafc"
+  muted: "#94a3b8"
+```
+
+### Contrast Requirements
+
+All text must meet WCAG 2.1 AA minimums:
+
+| Text Type | Min Contrast |
+|---|---|
+| Body text on background | 4.5:1 |
+| Large text (>= 24px) on background | 3:1 |
+| Muted text on background | 4.5:1 |
+
+## Custom Fonts
+
+```yaml
+fonts:
+  heading: "Playfair Display"
+  body: "Source Sans Pro"
+  mono: "JetBrains Mono"
+```
+
+Fonts are loaded from Google Fonts automatically. Use any font available on Google Fonts.
+
+## Design Tokens
+
+bentomd uses an 8px base unit for all spacing. Key tokens:
+
+| Token | Value | Use |
+|---|---|---|
+| `--space-sm` | 8px | Small gaps |
+| `--space-md` | 16px | Default element spacing |
+| `--space-lg` | 24px | Grid gutters |
+| `--space-xl` | 32px | Heading-to-body gaps |
+| `--space-2xl` | 48px | Major section breaks |
+
+### Border Radius
+
+| Token | Value | Use |
+|---|---|---|
+| `--radius-sm` | 4px | Inline code, badges |
+| `--radius-md` | 8px | Buttons |
+| `--radius-lg` | 12px | Code blocks |
+| `--radius-xl` | 16px | Feature cards |
+
+### Typography Scale
+
+Based on a 1.25 (Major Third) scale ratio:
+
+| Name | Size | Use |
+|---|---|---|
+| display | 64px | Cover title (max) |
+| h1 | 56px | Slide headings |
+| h2 | 40px | Section headings |
+| h3 | 28px | Card titles |
+| body-lg | 20px | Body text |
+| body | 16px | Secondary text |
+| small | 14px | Header bar, captions |
+| caption | 13px | Footer text |

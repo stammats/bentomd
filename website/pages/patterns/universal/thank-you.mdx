@@ -1,0 +1,65 @@
+import { SlidePreview } from '../../../components/SlidePreview'
+
+# Thank You
+
+*Universal*
+
+A closing slide with contact information. Uses the `end` layout (a variant of cover) with a dark background.
+
+
+## Preview
+
+<SlidePreview code={`---
+title: "Thank You"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  background: "#0f172a"
+  text: "#f8fafc"
+---
+
+---
+layout: end
+background: "#0f172a"
+---
+
+# Thank You
+
+## Questions? Let's talk.
+
+Sarah Chen | sarah@company.com | @sarahchen
+
+Company, Inc. | company.com`} />
+
+## Source
+
+```yaml
+---
+title: "Thank You"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  background: "#0f172a"
+  text: "#f8fafc"
+---
+
+---
+layout: end
+background: "#0f172a"
+---
+
+# Thank You
+
+## Questions? Let's talk.
+
+Sarah Chen | sarah@company.com | @sarahchen
+
+Company, Inc. | company.com
+```
+
+## Why This Works
+
+- Dark background matches the cover slide, creating a visual bookend for the deck
+- "Questions? Let's talk." is more inviting than just "Q&A"
+- Contact info is on two lines: personal details, then company details
+- The `end` layout is similar to `cover` but semantically marks the deck's conclusion

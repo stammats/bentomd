@@ -1,0 +1,68 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# quote
+
+Prominent quote with attribution. Use for testimonials, key insights, and callout statements.
+
+
+## Preview
+
+<SlidePreview code={`---
+theme: default
+title: Customer Testimonial
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: quote
+heading: "What Our Customers Say"
+footer: true
+pageNumber: true
+---
+
+> Switching to this platform cut our infrastructure costs by 40% while improving reliability. The migration took two weeks instead of the six months we had budgeted. It completely changed how our engineering team thinks about deployment.
+
+— **Maria Rodriguez**, CTO at Streamline Health`} />
+
+## Example
+
+```yaml
+---
+theme: default
+title: Customer Testimonial
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: quote
+heading: "What Our Customers Say"
+footer: true
+pageNumber: true
+---
+
+> Switching to this platform cut our infrastructure costs by 40% while improving reliability. The migration took two weeks instead of the six months we had budgeted. It completely changed how our engineering team thinks about deployment.
+
+— **Maria Rodriguez**, CTO at Streamline Health
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `heading` | `string` | — | Slide title |
+| `header` | `string` | — | Pillar/section header at top |
+| `footer` | `boolean` | `false` | Show footer bar |
+| `pageNumber` | `boolean` | `false` | Show page number |
+
+## Tips
+
+- Use Markdown blockquote syntax (`>`) for the quote text
+- Place the attribution on a new line after the quote with `—` (em dash)
+- Use `**bold**` for the person's name in the attribution
+- Keep quotes to 2-4 sentences for maximum impact
+- One quote per slide -- let it breathe
+- Works well for customer testimonials, expert opinions, and key takeaways

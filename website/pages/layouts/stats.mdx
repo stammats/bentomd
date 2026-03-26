@@ -1,0 +1,105 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# stats
+
+Big numbers with labels, icons, and trend indicators. Use for KPIs, metrics dashboards, and performance highlights.
+
+
+## Preview
+
+<SlidePreview code={`---
+theme: default
+title: Q4 Results
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: stats
+heading: "Q4 2025 Performance"
+summary: "Record-breaking quarter across all key metrics"
+footer: true
+pageNumber: true
+---
+
+### :trending-up: $4.2M
+Annual Recurring Revenue
++38% YoY
+
+### :users: 12,400
+Active Customers
++22% QoQ
+
+### :activity: 99.98%
+Platform Uptime
+Top 1% SLA
+
+### :heart: 47
+Net Promoter Score
++12 pts`} />
+
+## Example
+
+```yaml
+---
+theme: default
+title: Q4 Results
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: stats
+heading: "Q4 2025 Performance"
+summary: "Record-breaking quarter across all key metrics"
+footer: true
+pageNumber: true
+---
+
+### :trending-up: $4.2M
+Annual Recurring Revenue
++38% YoY
+
+### :users: 12,400
+Active Customers
++22% QoQ
+
+### :activity: 99.98%
+Platform Uptime
+Top 1% SLA
+
+### :heart: 47
+Net Promoter Score
++12 pts
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `heading` | `string` | — | Slide title |
+| `summary` | `string` | — | Subtitle below the heading |
+| `header` | `string` | — | Pillar/section header at top |
+| `footer` | `boolean` | `false` | Show footer bar |
+| `pageNumber` | `boolean` | `false` | Show page number |
+
+## Item Fields
+
+Each item in the list accepts:
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `value` | `string` | yes | The big number (e.g., `"$4.2M"`, `"99.98%"`) |
+| `label` | `string` | yes | Description below the number |
+| `icon` | `string` | no | Lucide icon name |
+| `trend` | `string` | no | Trend text (e.g., `"+38% YoY"`) |
+
+## Tips
+
+- 3-4 items is the sweet spot; 2 looks sparse, 5+ gets crowded
+- Format values for impact: `"$4.2M"` not `"$4,200,000"`
+- Use `trend` to add context -- growth rates, comparisons, benchmarks
+- Icons are optional but add visual weight
+- Works great for investor decks, quarterly reviews, and campaign results

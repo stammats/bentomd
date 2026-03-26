@@ -1,0 +1,77 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# default
+
+Single-column body with a title and Markdown content. The workhorse layout for narrative slides.
+
+
+## Preview
+
+<SlidePreview code={`---
+theme: default
+title: Platform Overview
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: default
+heading: "Platform Architecture"
+summary: "How our system handles 50M requests per day"
+footer: true
+pageNumber: true
+---
+
+Our platform is built on three core principles that enable reliable, high-throughput data processing at scale.
+
+- **Event-driven ingestion** — Messages are consumed from Kafka topics, validated against schemas, and routed to appropriate processing pipelines
+- **Stateless compute layer** — Workers scale horizontally with no shared state; all coordination happens through the message bus
+- **Multi-region storage** — Data is replicated across three regions with eventual consistency and conflict-free merge semantics
+- **Observability first** — Every request is traced end-to-end with structured logs, metrics, and distributed tracing via OpenTelemetry`} />
+
+## Example
+
+```yaml
+---
+theme: default
+title: Platform Overview
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: default
+heading: "Platform Architecture"
+summary: "How our system handles 50M requests per day"
+footer: true
+pageNumber: true
+---
+
+Our platform is built on three core principles that enable reliable, high-throughput data processing at scale.
+
+- **Event-driven ingestion** — Messages are consumed from Kafka topics, validated against schemas, and routed to appropriate processing pipelines
+- **Stateless compute layer** — Workers scale horizontally with no shared state; all coordination happens through the message bus
+- **Multi-region storage** — Data is replicated across three regions with eventual consistency and conflict-free merge semantics
+- **Observability first** — Every request is traced end-to-end with structured logs, metrics, and distributed tracing via OpenTelemetry
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `heading` | `string` | — | Slide title (H1) |
+| `summary` | `string` | — | Subtitle below the heading |
+| `header` | `string` | — | Pillar/section header at top |
+| `footer` | `boolean` | `false` | Show footer bar |
+| `pageNumber` | `boolean` | `false` | Show page number |
+| `valign` | `"top" \| "center" \| "bottom"` | `"top"` | Vertical alignment of body content |
+
+## Tips
+
+- Body content is standard Markdown: paragraphs, bullet lists, code blocks, bold/italic
+- Keep to 7 bullet points max at default font size (10 at minimum size)
+- Code blocks are syntax highlighted automatically
+- The heading auto-scales from 56px down to 40px if it's long
+- Great for agendas, narrative slides, and code showcases

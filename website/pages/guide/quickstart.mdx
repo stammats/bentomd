@@ -1,0 +1,84 @@
+# Quick Start
+
+## Install
+
+```bash
+npm install bentomd
+```
+
+## Create a `.bmd` File
+
+Create a file called `deck.bmd`:
+
+```yaml
+---
+theme: default
+title: My First Deck
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: cover
+background: "#1e293b"
+---
+
+# Hello, bentomd
+
+## Your first slide deck
+
+---
+layout: default
+heading: "What is bentomd?"
+summary: "A quick overview"
+footer: true
+pageNumber: true
+---
+
+- Modular slide decks from Markdown + YAML
+- Fixed canvas rendering -- content always fits
+- 10 built-in layouts for common slide types
+- Designed for AI generation
+
+---
+layout: stats
+heading: "By the Numbers"
+footer: true
+pageNumber: true
+---
+
+### :layout: 10
+Built-in Layouts
+
+### :monitor: 1920px
+Canvas Width
+
+### :check-circle: 0
+Overflow Bugs
+```
+
+## Run the Dev Server
+
+```bash
+npx bentomd dev deck.bmd
+```
+
+This opens your deck in the browser with live reload. Edit the `.bmd` file and see changes instantly.
+
+## Build for Production
+
+```bash
+npx bentomd build deck.bmd -o output/
+```
+
+Generates a standalone HTML file you can open anywhere.
+
+## File Format
+
+A `.bmd` file has two parts:
+
+1. **Global frontmatter** (first YAML block) -- theme, palette, fonts, footer settings
+2. **Slides** (separated by `---`) -- each slide has its own YAML frontmatter plus optional Markdown content
+
+See [Slide Structure](/guide/structure) for the full anatomy.

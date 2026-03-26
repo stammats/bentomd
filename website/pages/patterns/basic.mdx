@@ -1,0 +1,1466 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# Basic Patterns
+
+All built-in layout patterns with live previews. Copy the source code and adapt to your needs.
+
+---
+
+## Cover
+
+The opening slide of a deck. Dark background with title, subtitle, and attribution.
+
+<SlidePreview code={`---
+title: "Pitch Cover"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+  secondary: "#818cf8"
+  background: "#0f172a"
+  text: "#f8fafc"
+  muted: "#94a3b8"
+---
+
+---
+layout: cover
+background: "#0f172a"
+---
+
+# Lumina AI
+
+## Intelligent Document Processing for the Enterprise
+
+Series A | $12M Raise | Q2 2026
+
+Jane Park, CEO & Co-founder`} />
+
+```yaml
+---
+layout: cover
+background: "#0f172a"
+---
+
+# Lumina AI
+
+## Intelligent Document Processing for the Enterprise
+
+Series A | $12M Raise | Q2 2026
+
+Jane Park, CEO & Co-founder
+```
+
+---
+
+## Cover (Photo Background)
+
+A cover slide with a full-bleed photo background, dark overlay, and white text.
+
+<SlidePreview code={`---
+title: "Annual Report"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  background: "#0f172a"
+  text: "#f8fafc"
+---
+
+---
+layout: cover
+background: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop"
+overlay: 0.55
+---
+
+# The Future of Connected Cities
+
+## Annual Innovation Report 2026
+
+Urban Infrastructure Lab | March 2026`} />
+
+```markdown
+---
+layout: cover
+background: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=1080&fit=crop"
+overlay: 0.55
+---
+
+# The Future of Connected Cities
+## Annual Innovation Report 2026
+```
+
+---
+
+## Section Break
+
+A dark interstitial slide that separates major sections. Minimal content -- just a title and tagline.
+
+<SlidePreview code={`---
+title: "Section Break"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: section
+background: "#1e293b"
+---
+
+# Part 2: Deep Dive
+## Architecture, performance benchmarks, and security model`} />
+
+```yaml
+---
+layout: section
+background: "#1e293b"
+---
+
+# Part 2: Deep Dive
+## Architecture, performance benchmarks, and security model
+```
+
+---
+
+## Default (Structured Argument)
+
+A heading, summary, and rich body content. Works for agenda slides, arguments, and general content.
+
+<SlidePreview code={`---
+title: "Structured Argument"
+aspectRatio: "16:9"
+palette:
+  primary: "#1e40af"
+  background: "#ffffff"
+  surface: "#f8fafc"
+  text: "#1e293b"
+  muted: "#64748b"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: default
+header: "Strategic Analysis"
+heading: "Market Entry Requires a Phased Approach"
+summary: "Three factors support a staged rollout over direct national launch"
+footer: true
+pageNumber: true
+---
+
+**Regulatory complexity varies by state**, making simultaneous launch across all 50 states high-risk. States with existing frameworks (CA, TX, NY) should be prioritized for Phase 1.
+
+- **Market readiness is uneven** — Top 8 metro areas represent 62% of addressable demand. Concentrating initial resources in these markets maximizes early revenue per dollar spent.
+
+- **Distribution partnerships are regional** — Existing agreements with three national distributors cover only 23 states. Phase 2 expansion should align with new partner onboarding timelines.
+
+- **Recommendation:** Launch in 8 target metros across 5 states in Q3 2026. Expand to 15 additional states by Q1 2027 once unit economics are validated and regulatory approvals are secured.`} />
+
+```yaml
+---
+layout: default
+header: "Strategic Analysis"
+heading: "Market Entry Requires a Phased Approach"
+summary: "Three factors support a staged rollout over direct national launch"
+footer: true
+pageNumber: true
+---
+
+**Regulatory complexity varies by state**, making simultaneous launch...
+
+- **Market readiness is uneven** — Top 8 metro areas represent 62%...
+- **Distribution partnerships are regional** — ...
+- **Recommendation:** Launch in 8 target metros...
+```
+
+---
+
+## Default (Agenda)
+
+A numbered agenda with time allocations using the default layout.
+
+<SlidePreview code={`---
+title: "Agenda"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: default
+heading: "Today's Agenda"
+summary: "Q1 Business Review | 60 minutes"
+footer: true
+pageNumber: true
+---
+
+1. **Financial Update** — Revenue, margins, and forecast vs. plan (15 min)
+
+2. **Product Roadmap** — Key releases shipped in Q1 and Q2 priorities (15 min)
+
+3. **Customer Insights** — NPS trends, churn analysis, and top feature requests (10 min)
+
+4. **Go-to-Market** — Pipeline health, win rates, and channel performance (10 min)
+
+5. **Open Discussion** — Questions, risks, and cross-functional dependencies (10 min)`} />
+
+```yaml
+---
+layout: default
+heading: "Today's Agenda"
+summary: "Q1 Business Review | 60 minutes"
+---
+
+1. **Financial Update** — Revenue, margins, and forecast vs. plan (15 min)
+2. **Product Roadmap** — Key releases shipped in Q1 and Q2 priorities (15 min)
+3. **Customer Insights** — NPS trends, churn analysis, and top feature requests (10 min)
+4. **Go-to-Market** — Pipeline health, win rates, and channel performance (10 min)
+5. **Open Discussion** — Questions, risks, and cross-functional dependencies (10 min)
+```
+
+---
+
+## Default (Code Showcase)
+
+A large code block as the main content. The heading and summary provide context.
+
+<SlidePreview code={`---
+title: "Code Showcase"
+aspectRatio: "16:9"
+palette:
+  primary: "#059669"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: default
+heading: "Define Once, Validate Everywhere"
+summary: "A single Zod schema powers your API types, runtime validation, and client SDK"
+footer: true
+pageNumber: true
+---
+
+\`\`\`typescript
+import { z } from 'zod';
+import { router, publicProcedure } from './trpc';
+
+const CreateUserSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  role: z.enum(['admin', 'member', 'viewer']),
+});
+
+export const userRouter = router({
+  create: publicProcedure
+    .input(CreateUserSchema)
+    .mutation(async ({ input, ctx }) => {
+      // input is fully typed as { name: string; email: string; role: ... }
+      const user = await ctx.db.user.create({ data: input });
+      return { id: user.id, ...input };
+    }),
+});
+\`\`\``} />
+
+```yaml
+---
+layout: default
+heading: "Define Once, Validate Everywhere"
+summary: "A single Zod schema powers your API types, runtime validation, and client SDK"
+---
+
+\`\`\`typescript
+import { z } from 'zod';
+// ...your code here
+\`\`\`
+```
+
+---
+
+## Two Column
+
+Side-by-side content. Great for problem/solution, before/after, or data + analysis.
+
+<SlidePreview code={`---
+title: "Problem / Solution"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: two-column
+heading: "The Problem We Solve"
+summary: "Enterprises waste 40% of knowledge worker time on manual document processing"
+footer: true
+pageNumber: true
+---
+
+## The Pain
+
+- **$4.1T** lost annually to manual document workflows
+- Average employee spends **2.5 hours/day** searching for information
+- 83% of contracts still require manual data extraction
+- Compliance review takes **6-8 weeks** per regulatory filing
+- Error rates in manual processing exceed **12%**
+
+## Our Solution
+
+- **AI-powered extraction** processes any document format in under 30 seconds
+- **Semantic search** finds answers across millions of documents instantly
+- **Automated compliance** flags risks and generates audit trails in real time
+- **API-first design** integrates with existing tools — SAP, Salesforce, Workday
+- Reduces processing errors to **under 0.3%**`} />
+
+```yaml
+---
+layout: two-column
+heading: "The Problem We Solve"
+summary: "Enterprises waste 40% of knowledge worker time on manual document processing"
+---
+
+## The Pain
+- **$4.1T** lost annually to manual document workflows
+- ...
+
+## Our Solution
+- **AI-powered extraction** processes any document format in under 30 seconds
+- ...
+```
+
+---
+
+## Two Column (Before & After)
+
+Side-by-side code comparison showing the old way vs. the new way.
+
+<SlidePreview code={`---
+title: "Before & After"
+aspectRatio: "16:9"
+palette:
+  primary: "#059669"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: two-column
+heading: "Before & After"
+summary: "Replacing hand-written fetch calls with type-safe RPC"
+footer: true
+pageNumber: true
+---
+
+## Before: Manual Fetch
+
+\`\`\`typescript
+// No type safety, no validation
+const res = await fetch('/api/users', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'Alice',
+    email: 'alice@example.com',
+    role: 'admin',
+  }),
+});
+
+// Hope the response shape is correct
+const user = await res.json();
+console.log(user.id); // any
+\`\`\`
+
+## After: tRPC Client
+
+\`\`\`typescript
+// Fully typed, validated, autocompleted
+const user = await trpc.user.create.mutate({
+  name: 'Alice',
+  email: 'alice@example.com',
+  role: 'admin',
+});
+
+// TypeScript knows the exact shape
+console.log(user.id); // string
+\`\`\``} />
+
+```yaml
+---
+layout: two-column
+heading: "Before & After"
+summary: "Replacing hand-written fetch calls with type-safe RPC"
+---
+
+## Before: Manual Fetch
+\`\`\`typescript
+// old code...
+\`\`\`
+
+## After: tRPC Client
+\`\`\`typescript
+// new code...
+\`\`\`
+```
+
+---
+
+## Two Column (Data Analysis)
+
+Data table on the left, narrative analysis on the right.
+
+<SlidePreview code={`---
+title: "Data Analysis"
+aspectRatio: "16:9"
+palette:
+  primary: "#1e40af"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: two-column
+header: "Financial Analysis"
+heading: "Revenue Mix Is Shifting Toward Recurring Streams"
+summary: "Subscription revenue now accounts for 58% of total, up from 31% in 2023"
+footer: true
+pageNumber: true
+---
+
+## Revenue Breakdown by Type
+
+| Year | Subscription | Services | License |
+|---|---|---|---|
+| 2023 | 31% | 42% | 27% |
+| 2024 | 44% | 35% | 21% |
+| 2025 | 58% | 28% | 14% |
+
+## Analysis & Implications
+
+The accelerating shift to subscription revenue has three key implications:
+
+- **Valuation uplift** — Recurring revenue commands 8-12x multiples vs. 3-5x for services. Current trajectory supports a re-rating at next funding round.
+- **Margin expansion** — Subscription gross margins (82%) significantly exceed services (41%). Blended margins should reach 68% by Q4 2026.
+- **Forecasting accuracy** — Higher recurring mix reduces quarterly revenue volatility from +/-18% to +/-6%, enabling more confident resource planning.`} />
+
+```yaml
+---
+layout: two-column
+header: "Financial Analysis"
+heading: "Revenue Mix Is Shifting Toward Recurring Streams"
+---
+
+## Revenue Breakdown by Type
+| Year | Subscription | Services | License |
+|---|---|---|---|
+| 2023 | 31% | 42% | 27% |
+| ... |
+
+## Analysis & Implications
+- **Valuation uplift** — ...
+- **Margin expansion** — ...
+```
+
+---
+
+## Stats
+
+Key metrics with icons and trend indicators. Great for KPIs, traction, and fund allocation.
+
+<SlidePreview code={`---
+title: "Traction"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: stats
+heading: "Our Traction"
+summary: "18 months post-launch with strong product-market fit"
+footer: true
+pageNumber: true
+---
+
+### :dollar-sign: $3.8M
+Annual Recurring Revenue
++240% YoY
+
+### :building: 87
+Enterprise Customers
++32 this quarter
+
+### :trending-up: 142%
+Net Dollar Retention
+Top decile
+
+### :file-text: 2.1M
+Documents Processed Monthly
++85% QoQ`} />
+
+```yaml
+---
+layout: stats
+heading: "Our Traction"
+summary: "18 months post-launch with strong product-market fit"
+---
+
+### :dollar-sign: $3.8M
+Annual Recurring Revenue
++240% YoY
+
+### :building: 87
+Enterprise Customers
++32 this quarter
+```
+
+---
+
+## Stats (Fund Allocation)
+
+<SlidePreview code={`---
+title: "The Ask"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: stats
+heading: "Series A: $12M"
+summary: "18 months of runway to reach $15M ARR and Series B readiness"
+footer: true
+pageNumber: true
+---
+
+### :cpu: $5M
+Engineering & AI R&D
+42% of funds
+
+### :megaphone: $4M
+Sales & Go-to-Market
+33% of funds
+
+### :headphones: $2M
+Customer Success
+17% of funds
+
+### :settings: $1M
+Operations & G&A
+8% of funds`} />
+
+```yaml
+---
+layout: stats
+heading: "Series A: $12M"
+summary: "18 months of runway to reach $15M ARR and Series B readiness"
+---
+
+### :cpu: $5M
+Engineering & AI R&D
+42% of funds
+```
+
+---
+
+## Features (Card Grid)
+
+Icon + title + description cards. Works for features, team members, or key findings.
+
+<SlidePreview code={`---
+title: "Feature Grid"
+aspectRatio: "16:9"
+palette:
+  primary: "#059669"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: features
+heading: "What You Get Out of the Box"
+summary: "Zero-config developer experience with escape hatches when you need them"
+columns: 3
+style: card
+footer: true
+pageNumber: true
+---
+
+### :type: End-to-End Type Safety
+Types flow from your database schema to the client with zero code generation steps.
+
+### :shield-check: Runtime Validation
+Every API call is validated at runtime using the same schema that defines your types.
+
+### :zap: Instant Hot Reload
+Schema changes propagate to your IDE in milliseconds. No build step required.
+
+### :globe: Framework Agnostic
+Works with Next.js, Remix, Nuxt, SvelteKit, or any HTTP framework you prefer.
+
+### :lock: Built-in Auth Middleware
+Composable middleware for authentication and authorization at the procedure level.
+
+### :activity: Observability Ready
+OpenTelemetry tracing, structured logging, and Prometheus metrics with one flag.`} />
+
+```yaml
+---
+layout: features
+heading: "What You Get Out of the Box"
+columns: 3
+style: card
+---
+
+### :type: End-to-End Type Safety
+Types flow from your database schema to the client...
+```
+
+---
+
+## Features (Team Grid)
+
+The features layout repurposed as a team grid with 4 columns.
+
+<SlidePreview code={`---
+title: "Team"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: features
+heading: "Leadership Team"
+summary: "Deep expertise in AI, enterprise software, and go-to-market"
+columns: 4
+style: card
+footer: true
+pageNumber: true
+---
+
+### :user: Jane Park
+CEO & Co-founder. Ex-Google AI Research. Stanford PhD in NLP. Led document understanding team at Google Cloud.
+
+### :user: Marcus Chen
+CTO & Co-founder. Ex-Stripe Staff Engineer. Built payment document processing systems handling $100B+ annually.
+
+### :user: Priya Sharma
+VP Engineering. Ex-Datadog. Scaled infrastructure from 10 to 500+ engineers. Expert in distributed systems.
+
+### :user: David Kim
+VP Sales. Ex-Salesforce Enterprise. Closed $50M+ in annual enterprise deals. Deep relationships in Fortune 500.`} />
+
+```yaml
+---
+layout: features
+heading: "Leadership Team"
+columns: 4
+style: card
+---
+
+### :user: Jane Park
+CEO & Co-founder. Ex-Google AI Research...
+```
+
+---
+
+## Features (Executive Summary)
+
+A 2-column card grid presenting numbered key findings.
+
+<SlidePreview code={`---
+title: "Executive Summary"
+aspectRatio: "16:9"
+palette:
+  primary: "#1e40af"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: features
+header: "Executive Summary"
+heading: "Four Key Findings from the Operational Review"
+summary: "90-day assessment of supply chain performance across North American operations"
+columns: 2
+style: card
+footer: true
+pageNumber: true
+---
+
+### :alert-triangle: 1. Inventory carrying costs are 34% above benchmark
+Excess safety stock across 12 distribution centers is driven by unreliable demand forecasts. Implementing ML-based forecasting could reduce carrying costs by $18M annually.
+
+### :truck: 2. Last-mile delivery is the primary margin erosion point
+Delivery cost per order has increased 22% YoY due to carrier rate increases and suboptimal route planning. Consolidating to two carriers and deploying route optimization would recover $7M.
+
+### :refresh-cw: 3. Returns processing creates a 14-day cash flow gap
+Current returns take an average of 14 days to process and restock. Automating inspection and grading could reduce this to 3 days, unlocking $12M in working capital.
+
+### :bar-chart: 4. Data visibility gaps prevent proactive decision-making
+Only 3 of 12 DCs have real-time inventory visibility. A unified data platform would enable demand sensing and reduce stockouts by an estimated 40%.`} />
+
+```yaml
+---
+layout: features
+heading: "Four Key Findings from the Operational Review"
+columns: 2
+style: card
+---
+
+### :alert-triangle: 1. Inventory carrying costs are 34% above benchmark
+Excess safety stock across 12 distribution centers...
+```
+
+---
+
+## Table
+
+A data table for comparisons, evaluations, and structured data.
+
+<SlidePreview code={`---
+title: "Comparison Table"
+aspectRatio: "16:9"
+palette:
+  primary: "#1e40af"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: table
+header: "Competitive Intelligence"
+heading: "Vendor Comparison: Cloud Data Platforms"
+summary: "Evaluation across six decision criteria weighted by client priorities"
+footer: true
+pageNumber: true
+---
+
+| Criterion | Weight | Snowflake | Databricks | BigQuery | Client Current |
+|---|---|---|---|---|---|
+| Query Performance | 25% | Strong | Strong | Moderate | Weak |
+| Real-time Ingestion | 20% | Moderate | Strong | Strong | Weak |
+| Cost at Scale | 20% | Moderate | Moderate | Strong | Strong |
+| ML Integration | 15% | Weak | Strong | Moderate | Weak |
+| Governance & Security | 10% | Strong | Moderate | Strong | Moderate |
+| Migration Complexity | 10% | Low | Medium | Medium | N/A |`} />
+
+```yaml
+---
+layout: table
+header: "Competitive Intelligence"
+heading: "Vendor Comparison: Cloud Data Platforms"
+---
+
+| Criterion | Weight | Snowflake | Databricks | BigQuery |
+|---|---|---|---|---|
+| Query Performance | 25% | Strong | Strong | Moderate |
+| ... |
+```
+
+---
+
+## Quote
+
+A customer testimonial or notable quote with attribution.
+
+<SlidePreview code={`---
+title: "Testimonial"
+aspectRatio: "16:9"
+palette:
+  primary: "#dc2626"
+  secondary: "#f97316"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: quote
+heading: "Trusted by Industry Leaders"
+footer: true
+pageNumber: true
+---
+
+> We evaluated six platforms over three months. This was the only one where our marketing team could self-serve without filing engineering tickets. Campaign setup went from two weeks to two hours, and our attribution accuracy improved by 60%.
+
+— **Rebecca Torres**, VP Marketing at NovaCraft`} />
+
+```yaml
+---
+layout: quote
+heading: "Trusted by Industry Leaders"
+---
+
+> We evaluated six platforms over three months. This was the only one where
+> our marketing team could self-serve without filing engineering tickets.
+
+— **Rebecca Torres**, VP Marketing at NovaCraft
+```
+
+---
+
+## Chart
+
+A bar chart showing trends over time.
+
+<SlidePreview code={`---
+title: "Performance"
+aspectRatio: "16:9"
+palette:
+  primary: "#dc2626"
+  secondary: "#f97316"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: chart
+heading: "Monthly Campaign Spend vs. Revenue"
+summary: "Consistent positive ROI across all months with improving efficiency"
+type: bar
+showValues: true
+showLegend: false
+footer: true
+pageNumber: true
+---
+
+### Oct: 42
+
+### Nov: 58
+
+### Dec: 71
+
+### Jan: 85
+
+### Feb: 94
+
+### Mar: 120`} />
+
+```yaml
+---
+layout: chart
+heading: "Monthly Campaign Spend vs. Revenue"
+type: bar
+showValues: true
+---
+
+### Oct: 42
+### Nov: 58
+### Dec: 71
+```
+
+---
+
+## Timeline
+
+Key milestones with dates. Use `active: true` to highlight the current phase.
+
+<SlidePreview code={`---
+title: "Product Timeline"
+aspectRatio: "16:9"
+palette:
+  primary: "#dc2626"
+  secondary: "#f97316"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: timeline
+heading: "Product Launch Roadmap"
+summary: "Key milestones from beta to general availability"
+footer: true
+pageNumber: true
+---
+
+### Jan 2026 — Private Beta
+Invite-only access for 50 design partners with weekly feedback sessions
+
+### Mar 2026 — Public Beta {active}
+Open registration with usage-based pricing. Launch on Product Hunt.
+
+### May 2026 — General Availability
+Full feature set with SLA guarantees, SOC 2 compliance, and enterprise tier
+
+### Aug 2026 — Platform Expansion
+Mobile SDK, Salesforce integration, and self-hosted deployment option`} />
+
+```yaml
+---
+layout: timeline
+heading: "Product Launch Roadmap"
+---
+
+### Jan 2026 — Private Beta
+Invite-only access for 50 design partners...
+
+### Mar 2026 — Public Beta {active}
+Open registration with usage-based pricing.
+```
+
+---
+
+## Image
+
+A full image slide with heading, summary, and caption.
+
+<SlidePreview code={`---
+title: "Image Showcase"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+defaults:
+  footer: true
+  pageNumber: true
+---
+
+---
+layout: image
+heading: "Product Dashboard"
+summary: "Unified view of all key metrics and alerts"
+src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop"
+fit: contain
+caption: "The dashboard consolidates data from 12 sources into a single real-time view"
+footer: true
+pageNumber: true
+---`} />
+
+```yaml
+---
+layout: image
+heading: "Product Dashboard"
+summary: "Unified view of all key metrics and alerts"
+src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=900&fit=crop"
+fit: contain
+caption: "The dashboard consolidates data from 12 sources into a single real-time view"
+---
+```
+
+---
+
+## Image (Product Photo)
+
+A product photo with heading and caption using Unsplash.
+
+<SlidePreview code={`---
+title: "Product Launch"
+aspectRatio: "16:9"
+palette:
+  primary: "#059669"
+---
+
+---
+layout: image
+heading: "Introducing AuraX Pro"
+summary: "The next generation of wireless audio — crafted for perfection"
+src: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1600&h=900&fit=crop"
+fit: cover
+caption: "AuraX Pro — Studio-quality sound in a design that disappears on your head"
+footer: true
+pageNumber: true
+---`} />
+
+```markdown
+---
+layout: image
+heading: "Introducing AuraX Pro"
+summary: "The next generation of wireless audio"
+src: "https://images.unsplash.com/photo-...?w=1600&h=900&fit=crop"
+fit: cover
+caption: "Studio-quality sound"
+---
+```
+
+---
+
+## Image Left (Text + Photo)
+
+Two-column layout with image on the left, text content on the right.
+
+<SlidePreview code={`---
+title: "Product Feature"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+---
+
+---
+layout: image-left
+heading: "Real-time Collaboration"
+summary: "Work together seamlessly across time zones"
+src: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&h=600&fit=crop"
+footer: true
+pageNumber: true
+---
+
+Our collaboration engine powers **real-time editing** for teams of any size.
+
+- **Live cursors** — See where your teammates are working in real time
+- **Inline comments** — Leave feedback directly on any element
+- **Version history** — Roll back to any previous state with one click
+- **Presence indicators** — Know who's online and what they're viewing`} />
+
+```markdown
+---
+layout: image-left
+heading: "Real-time Collaboration"
+src: "https://images.unsplash.com/photo-...?w=900&h=600&fit=crop"
+---
+
+- **Live cursors** — See where your teammates are working
+- **Inline comments** — Leave feedback directly
+```
+
+---
+
+## Image Right (Photo + Text)
+
+Two-column layout with text on the left, image on the right.
+
+<SlidePreview code={`---
+title: "Architecture"
+aspectRatio: "16:9"
+palette:
+  primary: "#059669"
+---
+
+---
+layout: image-right
+heading: "Built for Scale"
+summary: "Architecture that grows with your business"
+src: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=900&h=600&fit=crop"
+footer: true
+pageNumber: true
+---
+
+Our infrastructure handles **50M+ requests per day** across 42 global regions.
+
+- **Auto-scaling** — Instantly adapt to traffic spikes with zero configuration
+- **Multi-region** — Data replicated across 3 continents for low-latency access
+- **99.99% SLA** — Enterprise-grade reliability backed by financial guarantees`} />
+
+```markdown
+---
+layout: image-right
+heading: "Built for Scale"
+src: "https://images.unsplash.com/photo-...?w=900&h=600&fit=crop"
+---
+
+- **Auto-scaling** — Instantly adapt to traffic spikes
+- **Multi-region** — Data replicated across 3 continents
+```
+
+---
+
+## End (Thank You)
+
+A closing slide with contact information. Uses a dark background to bookend the deck.
+
+<SlidePreview code={`---
+title: "Thank You"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  background: "#0f172a"
+  text: "#f8fafc"
+---
+
+---
+layout: end
+background: "#0f172a"
+---
+
+# Thank You
+
+## Questions? Let's talk.
+
+Sarah Chen | sarah@company.com | @sarahchen
+
+Company, Inc. | company.com`} />
+
+```yaml
+---
+layout: end
+background: "#0f172a"
+---
+
+# Thank You
+
+## Questions? Let's talk.
+
+Sarah Chen | sarah@company.com | @sarahchen
+```
+
+---
+
+## Bento Grid
+
+A flexible grid layout where each cell can span multiple columns and rows. Cells support icon, title, description, image, value, and label. Use the `size` keyword for quick sizing or explicit `"CxR"` notation.
+
+### Size keywords
+
+| Keyword | Columns | Rows | Description |
+|---|---|---|---|
+| `sm` | 4 (1/3) | 1 | Small card |
+| `md` | 6 (1/2) | 1 | Medium card |
+| `lg` | 8 (2/3) | 1 | Large card |
+| `wide` | 12 (full) | 1 | Full-width banner |
+| `tall` | 4 (1/3) | 2 | Tall sidebar card |
+| `hero` | 8 (2/3) | 2 | Hero feature block |
+| `full` | 12 (full) | 2 | Full-width hero |
+
+You can also use explicit notation: `size: "6x2"` means 6 columns wide, 2 rows tall.
+
+### Basic Bento (with pastel backgrounds)
+
+Cells are automatically packed into the grid. Each cell can have its own `background` color.
+
+<SlidePreview code={`---
+title: "Bento Grid"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+  background: "#f5f5f5"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### :layers: Modular Architecture {hero}
+Compose your system from independent, tested modules. Each module owns its data, API, and lifecycle.
+
+### 50K+ {sm center}
+Active Developers
+
+### 4.9 {sm center}
+npm Rating
+
+### :git-branch: Version Control {sm}
+Built-in schema versioning and migration support
+
+### :terminal: CLI First {sm}
+Powerful command-line tools for every workflow
+
+### :lock: Enterprise Security {sm}
+SOC 2, GDPR, and HIPAA compliant out of the box`} />
+
+```yaml
+---
+layout: bento
+scheme: pastel
+---
+
+### :layers: Modular Architecture {hero}
+Compose your system from independent, tested modules. Each module owns its data, API, and lifecycle.
+
+### 50K+ {sm center}
+Active Developers
+
+### 4.9 {sm center}
+npm Rating
+```
+
+---
+
+### Bento with mixed sizes
+
+Use `md`, `lg`, and `sm` to create card-style feature grids like the reference images.
+
+<SlidePreview code={`---
+title: "Product Features"
+aspectRatio: "16:9"
+palette:
+  primary: "#059669"
+  background: "#fafaf9"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### :credit-card: Maximize Card Rewards {md}
+Maximize rewards on every purchase. Identify top cards for each spend.
+
+### :wallet: Manage Cards {sm}
+Manage multiple cards, track benefits, and set payment reminders.
+
+### :target: Set Goals {sm}
+Set trip goals or target annual fee waivers.
+
+### :map-pin: Lounges {sm}
+Track and find eligible airport and railway lounge access.
+
+### :bar-chart: Credit Card Strategy {lg}
+Personalized credit card plan that fits your lifestyle.
+
+### :search: Find, Compare & Apply {sm}
+Discover ideal cards. Compare features and apply in minutes.`} />
+
+```yaml
+---
+layout: bento
+scheme: pastel
+---
+
+### :credit-card: Maximize Card Rewards {md}
+Maximize rewards on every purchase. Identify top cards for each spend.
+
+### :wallet: Manage Cards {sm}
+Manage multiple cards, track benefits, and set payment reminders.
+```
+
+---
+
+### Bento with images
+
+Use the `image` field for background images. Title and description appear as an overlay.
+
+<SlidePreview code={`---
+title: "Portfolio"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  background: "#f5f5f4"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### Customization {md}
+Design with templates, stickers, and more
+![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
+
+### Scheduling {md}
+Schedule cards and gifts for later
+![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
+
+### Wallet {sm}
+Access all your gifts and cash
+![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
+
+### Inbox {sm}
+Track gifts and group chats
+![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
+
+### Reminders {sm}
+Never miss a special occasion
+![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)`} />
+
+```markdown
+### Customization {md}
+Design with templates, stickers, and more
+![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop)
+```
+
+---
+
+### Bento with inline images (product showcase)
+
+Cells with icon + title + image show the image as inline content, not background.
+
+<SlidePreview code={`---
+title: "Product Showcase"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+  background: "#f5f5f5"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### :camera: Smart Camera {hero}
+AI-powered 4K camera with real-time object tracking, night vision, and cloud storage.
+![](https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&h=400&fit=crop)
+
+### 4K Resolution
+Ultra HD
+
+### 180 Days
+Battery Life
+
+### :wifi: Always Connected {md}
+Dual-band WiFi 6 with automatic failover to LTE backup.
+![](https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=300&fit=crop)
+
+### :shield: Privacy First {sm}
+End-to-end encryption. All processing happens on-device.`} />
+
+---
+
+### Bento with tall (vertical span)
+
+Use `{tall}` to span a cell across 2 rows. Ocean color scheme.
+
+<SlidePreview code={`---
+title: "Platform Overview"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  background: "#f5f5f5"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: ocean
+---
+
+### :shield: Security & Compliance {tall}
+SOC 2 Type II, GDPR, HIPAA. End-to-end encryption with zero-trust architecture. Regular third-party audits.
+
+### :zap: Lightning Fast
+Sub-10ms P99 latency across all API endpoints.
+
+### :globe: Global Edge Network
+42 regions worldwide with automatic failover.
+
+### 99.99%
+Uptime SLA
+
+### 150ms
+Global P95 Latency
+
+### :code: Developer First {lg}
+Beautiful APIs, comprehensive SDKs, and interactive documentation. Ship in hours, not weeks.`} />
+
+---
+
+### Bento KPI Dashboard
+
+Value cells with `{center}` and `{wide}` for data-driven layouts.
+
+<SlidePreview code={`---
+title: "Q4 Dashboard"
+aspectRatio: "16:9"
+palette:
+  primary: "#6366f1"
+  background: "#f5f5f5"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### $12.4M {md center}
+Annual Recurring Revenue
+
+### 340% {sm center}
+YoY Growth
+
+### 98.7 {sm center}
+NPS Score
+
+### :users: 2,400+ Enterprise Customers {wide}
+Trusted by Fortune 500 companies across 45 countries. Average contract value of $52K with 142% net dollar retention.`} />
+
+---
+
+### Bento Photo Grid (Travel)
+
+Mix photos and text cards using `![](url)` with Unsplash images.
+
+<SlidePreview code={`---
+title: "Travel Guide"
+aspectRatio: "16:9"
+palette:
+  primary: "#0f766e"
+  background: "#f5f5f4"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: pastel
+---
+
+### Kyoto, Japan {hero}
+Ancient temples, serene gardens, and the magic of cherry blossom season. A city where tradition meets modernity.
+![](https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1200&h=800&fit=crop)
+
+### Tokyo {tall}
+Neon-lit streets and endless energy.
+![](https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=800&fit=crop)
+
+### :utensils: Food & Culture
+Michelin-starred ramen to street-side yakitori. Japan has more Michelin stars than any other country.
+
+### :map: Getting Around
+JR Pass covers bullet trains, local rails, and buses nationwide. Efficient, punctual, spotless.
+
+### Osaka {md}
+Street food capital of Japan. Don't miss Dotonbori at night.
+![](https://images.unsplash.com/photo-1590559899731-a382839e5549?w=800&h=400&fit=crop)`} />
+
+---
+
+### Bento Photo Grid (Portfolio)
+
+Design portfolio with photos, stats, and mono color scheme.
+
+<SlidePreview code={`---
+title: "Design Portfolio"
+aspectRatio: "16:9"
+palette:
+  primary: "#1e1b4b"
+  background: "#fafaf9"
+  surface: "#ffffff"
+---
+
+---
+layout: bento
+scheme: mono
+---
+
+### Brand Identity {hero}
+Complete visual identity system for a sustainable fashion brand. Logo, typography, color palette, and packaging.
+![](https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=800&fit=crop)
+
+### Mobile App {tall}
+![](https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=800&fit=crop)
+
+### :award: 12 Awards
+Red Dot, iF Design, Webby, and more.
+
+### :briefcase: 8 Years
+Professional design experience across startups and Fortune 500.
+
+### Web Design {lg}
+Responsive e-commerce platform with 40% conversion rate improvement.
+![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=400&fit=crop)`} />

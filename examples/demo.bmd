@@ -1,0 +1,79 @@
+---
+theme: default
+title: bentomd
+author: bentomd team
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  secondary: "#7c3aed"
+---
+
+---
+layout: cover
+background: "#1e293b"
+---
+
+# bentomd
+## Modular slide decks from Markdown + YAML
+
+Built for the AI era
+
+---
+layout: features
+columns: 3
+---
+
+### :zap: Lightning Fast
+Write markdown, get beautiful slides instantly.
+
+### :layout-grid: Modular Layouts
+Bento-style grids and multi-column designs out of the box.
+
+### :bot: AI-Native
+Designed for LLM generation with simple, consistent syntax.
+
+---
+layout: two-column
+ratio: "1:2"
+---
+
+::left::
+
+## Why bentomd?
+
+Traditional markdown slide tools limit you to single-column layouts.
+
+bentomd breaks that barrier.
+
+::right::
+
+### What you get
+
+- **Bento grids** — Apple-style layouts
+- **Charts** — Inline data visualization
+- **Icons** — 1000+ Lucide icons
+- **Themes** — Beautiful defaults
+- **AI-ready** — LLM-friendly syntax
+
+---
+layout: default
+---
+
+# Getting Started
+
+Install bentomd and create your first presentation:
+
+```bash
+npm install -g bentomd
+bentomd dev slides.bmd
+```
+
+Write your slides in `.bmd` format and see them instantly in the browser.
+
+---
+layout: end
+---
+
+# Thank You
+
+github.com/bentomd · MIT License

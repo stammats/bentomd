@@ -1,0 +1,103 @@
+# Global Configuration
+
+The first YAML block in a `.bmd` file contains the global configuration for the entire deck.
+
+## Full Reference
+
+```yaml
+---
+theme: default           # Theme name (built-in or custom)
+title: "Deck Title"      # Used in HTML <title> and cover fallback
+author: "Author Name"
+date: "2026-03-26"       # ISO date string
+
+aspectRatio: "16:9"      # "16:9" | "4:3"
+
+fonts:
+  heading: "Inter"       # Font for headings
+  body: "Inter"          # Font for body text
+  mono: "Fira Code"      # Font for code blocks
+
+palette:
+  primary: "#2563EB"     # Accent color (links, highlights, charts)
+  secondary: "#7C3AED"   # Secondary accent (gradients, tags)
+  background: "#FFFFFF"  # Slide background
+  surface: "#F8FAFC"     # Card/code block background
+  text: "#1E293B"        # Primary text color
+  muted: "#94A3B8"       # Subtle text (footers, captions)
+
+logo:
+  path: "./assets/logo.svg"
+  position: "top-right"  # "top-left" | "top-right" | "bottom-left" | "bottom-right"
+  height: 32             # px
+
+footer:
+  left: "{title}"        # Template: {title}, {author}, {date}
+  center: ""
+  right: "{slideNumber} / {totalSlides}"
+  show: true             # Global toggle
+
+lang: "en"
+dir: "ltr"               # "ltr" | "rtl"
+
+defaults:
+  layout: "default"      # Default layout when not specified
+  header: ""             # Default header/pillar text
+  footer: true           # Show footer by default
+  pageNumber: true       # Show page numbers by default
+---
+```
+
+## Fields
+
+### `theme`
+
+The visual theme to apply. Currently only `default` is built-in.
+
+### `title` / `author` / `date`
+
+Metadata used in the HTML `<title>` tag and available as template variables in footers: `{title}`, `{author}`, `{date}`.
+
+### `aspectRatio`
+
+Canvas dimensions. `"16:9"` renders at 1920x1080, `"4:3"` renders at 1024x768. The canvas scales to fit the viewport via CSS `transform: scale()`.
+
+### `fonts`
+
+| Field | Description | Default |
+|---|---|---|
+| `heading` | Font for H1, H2, H3 | System sans-serif |
+| `body` | Font for body text, bullets | System sans-serif |
+| `mono` | Font for code blocks | System monospace |
+
+### `palette`
+
+Six semantic color tokens that control the entire visual appearance:
+
+| Token | Default | Used For |
+|---|---|---|
+| `primary` | `#2563EB` | Links, accents, icon tints, chart colors |
+| `secondary` | `#7C3AED` | Gradient endpoints, tags |
+| `background` | `#FFFFFF` | Slide background |
+| `surface` | `#F8FAFC` | Card backgrounds, code blocks |
+| `text` | `#1E293B` | Headings, body text |
+| `muted` | `#94A3B8` | Subtitles, footers, secondary text |
+
+### `logo`
+
+Place a logo on every slide. The `path` is relative to the `.bmd` file.
+
+### `footer`
+
+Configure the three footer zones (left, center, right) with static text or template strings. Set `show: false` to hide footers globally.
+
+### `defaults`
+
+Set default values for per-slide options. Individual slides can override these.
+
+| Field | Description |
+|---|---|
+| `layout` | Default layout when a slide omits `layout:` |
+| `header` | Default pillar/section header text |
+| `footer` | Whether to show the footer |
+| `pageNumber` | Whether to show page numbers |

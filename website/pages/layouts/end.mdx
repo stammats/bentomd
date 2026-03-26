@@ -1,0 +1,63 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# end
+
+Closing slide with centered content. Visually mirrors the `cover` layout to bookend a deck.
+
+
+## Preview
+
+<SlidePreview code={`---
+title: "Thank You"
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  background: "#0f172a"
+  text: "#f8fafc"
+---
+
+---
+layout: end
+background: "#0f172a"
+---
+
+# Thank You
+
+## Questions? Let's talk.
+
+Sarah Chen | sarah@company.com | @sarahchen
+
+Company, Inc. | company.com`} />
+
+## Example
+
+```yaml
+---
+layout: end
+background: "#0f172a"
+---
+
+# Thank You
+
+## Questions? Let's talk.
+
+Sarah Chen | sarah@company.com | @sarahchen
+
+Company, Inc. | company.com
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `background` | `string` | palette background | Background color or gradient |
+| `align` | `string` | `"center"` | Text alignment |
+| `color` | `string` | auto | Text color |
+
+## Tips
+
+- Use the same `background` as your `cover` slide for visual consistency
+- `#` heading is the sign-off, `##` is a call to action
+- Body text below the headings is used for contact info
+- No headers, footers, or page numbers are shown
+- Keep it simple -- one CTA at most

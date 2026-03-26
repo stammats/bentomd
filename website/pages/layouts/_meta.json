@@ -1,0 +1,20 @@
+{
+  "cover": "cover",
+  "end": "end",
+  "section": "section",
+  "default": "default",
+  "two-column": "two-column",
+  "features": "features",
+  "stats": "stats",
+  "bento": "bento",
+  "chart": "chart",
+  "table": "table",
+  "quote": "quote",
+  "timeline": "timeline",
+  "comparison": "comparison",
+  "image": "image",
+  "image-left": "image-left",
+  "image-right": "image-right",
+  "code": "code",
+  "mermaid": "mermaid"
+}

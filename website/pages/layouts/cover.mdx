@@ -1,0 +1,74 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# cover
+
+Title slide with centered content. Use for the opening slide of any deck.
+
+
+## Preview
+
+<SlidePreview code={`---
+theme: default
+title: Product Strategy 2026
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  secondary: "#7c3aed"
+  background: "#ffffff"
+  surface: "#f8fafc"
+  text: "#0f172a"
+  muted: "#64748b"
+---
+
+---
+layout: cover
+background: "#1e293b"
+---
+
+# Product Strategy 2026
+## Accelerating Growth Through Innovation
+
+Sarah Chen · VP Product · March 2026`} />
+
+## Example
+
+```yaml
+---
+theme: default
+title: Product Strategy 2026
+aspectRatio: "16:9"
+palette:
+  primary: "#2563eb"
+  secondary: "#7c3aed"
+  background: "#ffffff"
+  surface: "#f8fafc"
+  text: "#0f172a"
+  muted: "#64748b"
+---
+
+---
+layout: cover
+background: "#1e293b"
+---
+
+# Product Strategy 2026
+## Accelerating Growth Through Innovation
+
+Sarah Chen · VP Product · March 2026
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `background` | `string` | palette background | Background color or gradient |
+| `align` | `string` | `"center"` | Text alignment |
+| `color` | `string` | auto | Text color (auto-detects light/dark based on background) |
+
+## Tips
+
+- The `#` heading becomes the main title, `##` becomes the subtitle
+- Any text below the subtitle becomes the attribution line (author, date, event)
+- Use a dark `background` with light palette text for high-impact covers
+- Keep titles to 3 lines max, subtitles to 2 lines
+- The cover layout does not show headers, footers, or page numbers
