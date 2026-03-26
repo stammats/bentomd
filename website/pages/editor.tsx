@@ -30,27 +30,181 @@ const STORAGE_KEY = 'bentomd-editor-docs'
 const ACTIVE_KEY = 'bentomd-editor-active'
 
 const DEFAULT_CONTENT = `---
-layout: cover
+title: bentomd Demo
+aspectRatio: "16:9"
+defaults:
+  pageNumber: true
 ---
-# Welcome to bentomd
-Create beautiful presentations from Markdown
+
+---
+layout: cover
+background: "#0f172a"
+color: "#f8fafc"
+---
+
+# bentomd
+## Slide decks from Markdown
+
+Edit this to see live preview →
 
 ---
 layout: bento
 ---
-### :zap: Fast
-Write slides in seconds
 
-### :palette: Beautiful
-Swiss typography defaults
+### :zap: Fast {sm}
+Write slides in plain Markdown
 
-### :package: Portable
-Single HTML output
+### :palette: Beautiful {sm}
+Swiss typography out of the box
+
+### :package: Export {sm}
+PDF and standalone HTML
+
+### :layout-grid: 18 Layouts {sm}
+Bento, stats, charts, and more
+
+### :code: Open Source {md}
+MIT licensed — extend freely
+
+### :monitor: Live Preview {md}
+Edit and see changes instantly
+
+---
+layout: stats
+heading: "Project Overview"
+---
+
+### :git-branch: 1.0
+Version
+
+### :box: 18
+Layouts
+
+### :puzzle: 15
+Modules
+
+### :check-circle: 79
+Tests Passing
++15 engine tests
+
+---
+layout: two-column
+heading: "Markdown Syntax"
+ratio: "1:1"
+---
+
+::left::
+
+### Write naturally
+
+No special tools needed. Just Markdown with \`---\` slide separators and YAML frontmatter.
+
+- **Layouts** via \`layout:\` field
+- **Icons** via \`:icon-name:\` syntax
+- **Sections** via \`::left::\` / \`::right::\`
+
+::right::
+
+### Example
+
+\`\`\`markdown
+---
+layout: stats
+heading: "Metrics"
+---
+
+### :users: 10k
+Active Users
+
+### :trending-up: 42%
+Growth Rate
+\`\`\`
+
+---
+layout: chart
+type: bar
+heading: "Quarterly Revenue"
+title: "2026 Performance (USD thousands)"
+---
+
+### Q1: 120
+### Q2: 185
+### Q3: 240
+### Q4: 310
+
+---
+layout: chart
+type: pie
+title: "Traffic Sources"
+---
+
+### Organic Search: 45
+### Direct: 25
+### Social: 20
+### Referral: 10
+
+---
+layout: features
+heading: "Why bentomd?"
+summary: "Everything you need for developer presentations"
+columns: 3
+---
+
+### :file-text: Markdown Native
+Write in the format you already know. No GUI, no drag-and-drop — just text.
+
+### :grid-3x3: Bento Grid
+Auto-packing layout inspired by Apple. Sizes: sm, md, lg, tall, hero, wide.
+
+### :bar-chart-2: Inline Charts
+Bar, pie, and line charts from simple data notation. No libraries to configure.
+
+### :git-merge: Mermaid Diagrams
+Flowcharts, sequence diagrams, Gantt charts — automatically themed to your palette.
+
+### :terminal: CLI First
+\`bentomd dev\` for hot reload, \`bentomd build\` for static HTML export.
+
+### :palette: Themeable
+6 color tokens control everything. Light, dark, or custom — one YAML block.
+
+---
+layout: quote
+---
+
+> The best way to predict the future of presentations is to write them in Markdown.
+
+---
+layout: table
+heading: "Layout Reference"
+---
+
+| Layout | Description | Best for |
+|--------|-------------|----------|
+| cover | Full-bleed title slide | Opening |
+| bento | Auto-packing grid | Dashboards |
+| stats | Metric cards with icons | KPIs |
+| chart | Bar, pie, line charts | Data |
+| two-column | Side-by-side content | Comparisons |
+| features | Icon card grid | Feature lists |
+| timeline | Chronological events | Roadmaps |
+| quote | Pull quote | Emphasis |
+
+---
+layout: end
+background: "#0f172a"
+color: "#f8fafc"
+---
+
+# Try it now
+## Edit the Markdown on the left
+
+bentomd.dev
 `
 
 const DEFAULT_DOC: Document = {
   id: 'default',
-  name: 'Untitled Presentation',
+  name: 'Demo Deck',
   content: DEFAULT_CONTENT,
   updatedAt: Date.now(),
 }
@@ -186,6 +340,7 @@ function EditorInner() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [renamingId, setRenamingId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
+  const [hoveredDocId, setHoveredDocId] = useState<string | null>(null)
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -401,8 +556,11 @@ function EditorInner() {
                   style={{
                     ...styles.docItem,
                     ...(doc.id === activeId ? styles.docItemActive : {}),
+                    ...(hoveredDocId === doc.id && doc.id !== activeId ? { background: '#1a2535' } : {}),
                   }}
                   onClick={() => handleSelectDoc(doc.id)}
+                  onMouseEnter={() => setHoveredDocId(doc.id)}
+                  onMouseLeave={() => setHoveredDocId(null)}
                 >
                   {renamingId === doc.id ? (
                     <input
@@ -421,7 +579,13 @@ function EditorInner() {
                   ) : (
                     <span style={styles.docName}>{doc.name}</span>
                   )}
-                  <div style={styles.docActions} onClick={(e) => e.stopPropagation()}>
+                  <div
+                    style={{
+                      ...styles.docActions,
+                      opacity: hoveredDocId === doc.id || renamingId === doc.id ? 1 : 0,
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <button
                       style={styles.docActionBtn}
                       title="Rename"
@@ -763,26 +927,12 @@ const styles: Record<string, React.CSSProperties> = {
   },
 }
 
-// ---------------------------------------------------------------------------
-// CSS hack: show doc action buttons on hover
-// ---------------------------------------------------------------------------
-
-const hoverStyle = `
-  .doc-item:hover .doc-actions { opacity: 1 !important; }
-  .doc-item:hover { background: #1a2535; }
-  .new-doc-btn:hover { background: #263344 !important; color: #f1f5f9 !important; }
-  .toolbar-btn:hover { background: #263344 !important; }
-  .toolbar-btn-primary:hover { background: #1d4ed8 !important; }
-`
+// Client-only wrapper — avoids SSR hydration issues with localStorage
+const EditorClientOnly = dynamic(() => Promise.resolve(EditorInner), { ssr: false })
 
 // Export as client-only page (no SSR, no Nextra layout)
 export default function EditorPage() {
-  return (
-    <>
-      <style>{hoverStyle}</style>
-      <EditorInner />
-    </>
-  )
+  return <EditorClientOnly />
 }
 
 // Opt out of Nextra layout

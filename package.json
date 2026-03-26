@@ -28,7 +28,9 @@
     "test:visual": "npx tsx test/visual/generate-pages.ts && npx playwright test",
     "test:watch": "vitest",
     "docs:dev": "cd website && npm run dev",
-    "docs:build": "cd website && npm run build"
+    "docs:build": "cd website && npm run build",
+    "desktop:dev": "cd desktop && npm run tauri:dev",
+    "desktop:build": "cd desktop && npm run tauri:build"
   },
   "keywords": [
     "slides",

@@ -2,5 +2,9 @@
   "index": "Home",
   "guide": "Guide",
   "layouts": "Layouts",
-  "patterns": "Patterns"
+  "patterns": "Patterns",
+  "editor": {
+    "title": "Editor",
+    "display": "hidden"
+  }
 }
