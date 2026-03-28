@@ -32,9 +32,6 @@ const ACTIVE_KEY = 'bentomd-editor-active'
 
 const DEFAULT_CONTENT = `---
 title: bentomd Demo
-aspectRatio: "16:9"
-defaults:
-  pageNumber: true
 ---
 
 ---
@@ -46,165 +43,137 @@ color: "#f8fafc"
 # bentomd
 ## Slide decks from Markdown
 
-Edit this to see live preview →
-
----
-layout: bento
 ---
 
-### :zap: Fast {sm}
-Write slides in plain Markdown
+## What is bentomd?
 
-### :palette: Beautiful {sm}
-Swiss typography out of the box
+### :zap: Lightning Fast
+Build presentations in seconds with plain Markdown. No GUI needed.
 
-### :package: Export {sm}
-PDF and standalone HTML
+### :palette: Swiss Typography
+Professional type scale, spacing, and grid system out of the box.
 
-### :layout-grid: 18 Layouts {sm}
-Bento, stats, charts, and more
-
-### :code: Open Source {md}
-MIT licensed — extend freely
-
-### :monitor: Live Preview {md}
-Edit and see changes instantly
+### :package: Single File Output
+Export to standalone HTML or PDF. Share anywhere.
 
 ---
-layout: stats
-heading: "Project Overview"
----
 
-### :git-branch: 1.0
+## Key Metrics
+
+### 1.0
 Version
 
-### :box: 18
-Layouts
-
-### :puzzle: 15
-Modules
-
-### :check-circle: 79
+### 79
 Tests Passing
-+15 engine tests
+
+### 12ms
+Avg Build Time
+
+### 0
+Config Required
 
 ---
-layout: two-column
-heading: "Markdown Syntax"
-ratio: "1:1"
----
 
-::left::
+## Platform Features
 
-### Write naturally
+### :rocket: Deploy Anywhere
+Export to static HTML and host on any platform. No server required.
 
-No special tools needed. Just Markdown with \`---\` slide separators and YAML frontmatter.
+### :shield: Enterprise Ready
+SOC 2 compliant patterns with role-based access and audit logging.
 
-- **Layouts** via \`layout:\` field
-- **Icons** via \`:icon-name:\` syntax
-- **Sections** via \`::left::\` / \`::right::\`
+### :code: Developer First
+Full CLI tooling, hot reload dev server, and extensible module system.
 
-::right::
+### :users: Team Collaboration
+Real-time editing with shared themes and reusable slide libraries.
 
-### Example
+### :globe: Internationalization
+RTL support, multi-language, and locale-aware formatting built in.
 
-\`\`\`markdown
----
-layout: stats
-heading: "Metrics"
----
-
-### :users: 10k
-Active Users
-
-### :trending-up: 42%
-Growth Rate
-\`\`\`
+### :bar-chart-2: Data Visualization
+Inline charts, tables, and Mermaid diagrams — all from Markdown.
 
 ---
-layout: chart
-type: bar
-heading: "Quarterly Revenue"
-title: "2026 Performance (USD thousands)"
----
 
-### Q1: 120
-### Q2: 185
-### Q3: 240
-### Q4: 310
+## Rich Content in Cells
 
----
-layout: chart
-type: pie
-title: "Traffic Sources"
----
+### :book: Formatted Text
+Cells support **bold**, *italic*, \`code\`, and [links](https://bentomd.dev). Write naturally in Markdown.
 
-### Organic Search: 45
-### Direct: 25
-### Social: 20
-### Referral: 10
+### :list: Lists
+- Ship faster with CI/CD
+- Monitor with real-time alerts
+- Scale automatically
+- Pay only for what you use
 
----
-layout: features
-heading: "Why bentomd?"
-summary: "Everything you need for developer presentations"
-columns: 3
----
+### :quote: Blockquotes
+> The best way to predict the future is to invent it. — Alan Kay
 
-### :file-text: Markdown Native
-Write in the format you already know. No GUI, no drag-and-drop — just text.
-
-### :grid-3x3: Bento Grid
-Auto-packing layout inspired by Apple. Sizes: sm, md, lg, tall, hero, wide.
-
-### :bar-chart-2: Inline Charts
-Bar, pie, and line charts from simple data notation. No libraries to configure.
-
-### :git-merge: Mermaid Diagrams
-Flowcharts, sequence diagrams, Gantt charts — automatically themed to your palette.
-
-### :terminal: CLI First
-\`bentomd dev\` for hot reload, \`bentomd build\` for static HTML export.
-
-### :palette: Themeable
-6 color tokens control everything. Light, dark, or custom — one YAML block.
+### :table: Data Tables
+| Feature | Free | Pro |
+|---------|------|-----|
+| Slides | 10 | Unlimited |
+| Export | HTML | HTML + PDF |
+| Themes | 3 | All |
 
 ---
-layout: quote
----
 
-> The best way to predict the future of presentations is to write them in Markdown.
+## Size Hints
 
----
-layout: table
-heading: "Layout Reference"
----
+### :layers: Hero Cell {hero}
+Use size hints like \`{hero}\`, \`{tall}\`, \`{md}\`, \`{sm}\` to control cell sizing. This cell spans 2 rows with \`{hero}\`. Combine with smaller cells for visual hierarchy.
 
-| Layout | Description | Best for |
-|--------|-------------|----------|
-| cover | Full-bleed title slide | Opening |
-| bento | Auto-packing grid | Dashboards |
-| stats | Metric cards with icons | KPIs |
-| chart | Bar, pie, line charts | Data |
-| two-column | Side-by-side content | Comparisons |
-| features | Icon card grid | Feature lists |
-| timeline | Chronological events | Roadmaps |
-| quote | Pull quote | Emphasis |
+### 99.9% {sm}
+Uptime SLA
+
+### :zap: 5ms {sm}
+Avg Response
 
 ---
-layout: end
+
+## Image + Text Mix
+
+### Product Dashboard {hero}
+![Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80)
+
+### :shield: Security First
+End-to-end encryption with SOC 2 Type II compliance and single sign-on.
+
+### :bar-chart: Real-time Analytics
+Custom dashboards with alerting, anomaly detection, and drill-down reports.
+
+---
+
+## Two Cell Layout
+
+### :terminal: How It Works
+Write \`---\` to separate slides. Write \`###\` to create bento cells. Add \`##\` for slide titles. Content type is auto-detected.
+
+### :file-text: Just Markdown
+No proprietary format. Your .bmd files are valid Markdown — readable in any editor, on GitHub, or in your IDE.
+
+---
+
+## Single Hero
+
+### :rocket: Ready to Launch {hero}
+bentomd turns your Markdown into beautiful, professional presentations. No design skills required. Just write content and let the bento grid handle the layout.
+
+---
+layout: cover
 background: "#0f172a"
 color: "#f8fafc"
 ---
 
-# Try it now
-## Edit the Markdown on the left
+# Get Started
+## npm install -g bentomd
 
 bentomd.dev
 `
 
 const DEFAULT_DOC: Document = {
-  id: 'default',
+  id: 'demo-v2',
   name: 'Demo Deck',
   content: DEFAULT_CONTENT,
   updatedAt: Date.now(),
@@ -233,7 +202,7 @@ function saveDocs(docs: Document[]) {
 
 function loadActiveId(): string {
   if (typeof window === 'undefined') return 'default'
-  return localStorage.getItem(ACTIVE_KEY) ?? 'default'
+  return localStorage.getItem(ACTIVE_KEY) ?? 'demo-v2'
 }
 
 function saveActiveId(id: string) {
@@ -308,6 +277,43 @@ interface PaletteOverride {
   muted?: string
 }
 
+// JS + CSS to show all slides in a scrollable vertical list.
+// Each slide keeps its 1920×1080 canvas but is scaled down to fit the container width.
+const SCROLL_PREVIEW_SCRIPT = `
+<script>
+(function() {
+  // Override the navigation script: show all slides
+  var style = document.createElement('style');
+  style.textContent = [
+    'html, body { overflow: auto !important; background: #1a1a2e !important; height: auto !important; width: 100% !important; margin: 0; padding: 12px !important; box-sizing: border-box; }',
+    '.slide-deck { transform: none !important; width: 100% !important; height: auto !important; position: relative !important; overflow: visible !important; display: flex !important; flex-direction: column !important; gap: 12px !important; }',
+    '.slide { display: block !important; position: relative !important; border-radius: 6px !important; overflow: hidden !important; box-shadow: 0 1px 8px rgba(0,0,0,0.3) !important; flex-shrink: 0 !important; transform-origin: top left; }',
+    '.slide-nav { display: none !important; }',
+    '.slide-counter { display: none !important; }',
+  ].join('\\n');
+  document.head.appendChild(style);
+
+  function scaleSlides() {
+    var slides = document.querySelectorAll('.slide');
+    var containerW = document.body.clientWidth - 24; // account for padding
+    for (var i = 0; i < slides.length; i++) {
+      var s = slides[i];
+      var w = parseInt(s.style.width) || 1920;
+      var h = parseInt(s.style.height) || 1080;
+      var scale = containerW / w;
+      s.style.transform = 'scale(' + scale + ')';
+      s.style.width = w + 'px';
+      s.style.height = h + 'px';
+      // Set the container height to the scaled height
+      s.style.marginBottom = (-(h * (1 - scale)) + 12) + 'px';
+    }
+  }
+  window.addEventListener('load', scaleSlides);
+  window.addEventListener('resize', scaleSlides);
+  setTimeout(scaleSlides, 100);
+})();
+</script>`
+
 function buildSlideHtml(code: string, paletteOverride?: PaletteOverride): { html: string; error: string } {
   try {
     const deck = parse(code)
@@ -328,7 +334,10 @@ function buildSlideHtml(code: string, paletteOverride?: PaletteOverride): { html
         },
       })
     )
-    return { html: renderDeck(slideHtmls, deck.config, { debugGrid: false }), error: '' }
+    let html = renderDeck(slideHtmls, deck.config, { debugGrid: false })
+    // Inject scroll preview script (overrides navigation to show all slides)
+    html = html.replace('</body>', SCROLL_PREVIEW_SCRIPT + '</body>')
+    return { html, error: '' }
   } catch (e: any) {
     return { html: '', error: e.message || String(e) }
   }
@@ -1264,17 +1273,12 @@ const styles: Record<string, React.CSSProperties> = {
   previewArea: {
     flex: 1,
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'auto',
-    padding: 24,
+    overflow: 'hidden',
   },
   previewIframe: {
     width: '100%',
-    aspectRatio: '16 / 9',
+    height: '100%',
     border: 'none',
-    borderRadius: 6,
-    boxShadow: '0 4px 32px rgba(0,0,0,0.4)',
   },
   errorBox: {
     background: '#1c0a0a',

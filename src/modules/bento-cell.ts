@@ -82,7 +82,7 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
     parts.push(`<p class="bento-label">${escapeHtml(cell.label)}</p>`);
   }
   if (cell.description) {
-    parts.push(`<p class="bento-desc">${renderMarkdown(cell.description).replace(/<\/?p>/g, '')}</p>`);
+    parts.push(`<div class="bento-desc">${renderMarkdown(cell.description)}</div>`);
   }
   if (cell.content) {
     parts.push(`<div class="bento-content">${renderMarkdown(cell.content)}</div>`);

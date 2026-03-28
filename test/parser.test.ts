@@ -201,14 +201,12 @@ Very secure`;
     expect(deck.slides[0].layout).toBe('features');
     expect(deck.slides[0].options).toEqual({ columns: 3 });
     expect(deck.slides[0].items).toHaveLength(2);
-    expect(deck.slides[0].items![0]).toEqual({
-      type: 'feature',
+    expect(deck.slides[0].items![0]).toMatchObject({
       icon: 'zap',
       title: 'Fast',
       description: 'Very fast',
     });
-    expect(deck.slides[0].items![1]).toEqual({
-      type: 'feature',
+    expect(deck.slides[0].items![1]).toMatchObject({
       icon: 'shield',
       title: 'Secure',
       description: 'Very secure',
@@ -232,13 +230,11 @@ Latency`;
 
     const deck = parse(source);
     expect(deck.slides[0].items).toHaveLength(2);
-    expect(deck.slides[0].items![0]).toEqual({
-      type: 'stat',
+    expect(deck.slides[0].items![0]).toMatchObject({
       value: '99.9%',
       label: 'Uptime',
     });
-    expect(deck.slides[0].items![1]).toEqual({
-      type: 'stat',
+    expect(deck.slides[0].items![1]).toMatchObject({
       value: '50ms',
       label: 'Latency',
     });
@@ -290,18 +286,11 @@ layout: comparison
 
     const deck = parse(source);
     expect(deck.slides[0].items).toHaveLength(2);
-    expect(deck.slides[0].items![0]).toEqual({
-      type: 'comparison',
-      label: 'Basic',
-      price: '$10',
-      features: ['Feature A', 'Feature B'],
+    expect(deck.slides[0].items![0]).toMatchObject({
+      title: 'Basic — $10',
     });
-    expect(deck.slides[0].items![1]).toEqual({
-      type: 'comparison',
-      label: 'Pro',
-      price: '$20',
-      features: ['Feature A', 'Feature B', 'Feature C'],
-      highlight: true,
+    expect(deck.slides[0].items![1]).toMatchObject({
+      title: 'Pro — $20',
     });
   });
 
@@ -347,8 +336,7 @@ layout: features
 ### :star: Custom`;
 
     const deck = parse(source);
-    expect(deck.slides[0].items![0]).toEqual({
-      type: 'feature',
+    expect(deck.slides[0].items![0]).toMatchObject({
       icon: 'star',
       title: 'Custom',
     });
@@ -368,7 +356,7 @@ Answer`;
 
     const deck = parse(source);
     expect(deck.slides[0].rawItems).toHaveLength(1);
-    expect(deck.slides[0].rawItems![0]).toEqual({ value: '42', label: 'Answer' });
+    expect(deck.slides[0].rawItems![0]).toMatchObject({ value: '42', label: 'Answer' });
   });
 
   it('handles two-column layout with ::left:: and ::right:: markers', () => {

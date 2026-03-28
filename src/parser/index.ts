@@ -17,6 +17,10 @@ const LIST_LAYOUTS = new Set([
   'comparison',
   'bento',
   'grid',
+  'three-column',
+  'image-left',
+  'image-right',
+  'default',  // auto-bento: default with ### items
 ]);
 
 /** Keys that belong in SlideOptions rather than being left in frontmatter */
@@ -194,8 +198,9 @@ function parseMarkdownItems(
   const blocks = splitMdItems(content);
   if (blocks.length === 0) return null;
 
-  // Bento: generate harmonious cell themes from palette
-  const cellThemes = layout === 'bento' ? generateCellThemes(palette) : undefined;
+  // Generate cell themes for bento and auto-bento layouts
+  const bentoLayouts = new Set(['bento', 'default', 'features', 'stats', 'comparison', 'three-column', 'image-left', 'image-right', 'grid']);
+  const cellThemes = bentoLayouts.has(layout) ? generateCellThemes(palette) : undefined;
 
   const rawItems: Record<string, unknown>[] = [];
 
@@ -231,20 +236,12 @@ function buildItem(
   index: number,
 ): Record<string, unknown> {
   switch (layout) {
-    case 'stats':
-      return buildStatItem(h, bodyLines);
-    case 'features':
-      return buildFeatureItem(h, bodyLines);
     case 'timeline':
       return buildTimelineItem(h, bodyLines);
-    case 'comparison':
-      return buildComparisonItem(h, bodyLines);
     case 'chart':
       return buildChartItem(h, bodyLines);
-    case 'bento':
-      return buildBentoItem(h, bodyLines, index);
     default:
-      return buildFeatureItem(h, bodyLines);
+      return buildBentoItem(h, bodyLines, index);
   }
 }
 
@@ -366,15 +363,21 @@ function buildBentoItem(
   }
 
   // Non-image body text = description or label
+  // Preserve newlines for markdown rendering (lists, tables, quotes)
   const textLines = bodyLines.filter((l) => !IMAGE_RE.test(l));
-  const text = textLines.join(' ').trim();
+  const text = textLines.join('\n').trim();
 
   if (item.value) {
-    // For value cells, body text is the label (unless label was already set from heading split)
-    if (text && !item.label) item.label = text;
-    else if (text && item.label) item.description = text;
+    // For value cells: first line is label, rest is description
+    if (text && !item.label) {
+      const lines = text.split('\n');
+      item.label = lines[0];
+      if (lines.length > 1) item.description = lines.slice(1).join('\n').trim();
+    } else if (text && item.label) {
+      item.description = text;
+    }
   } else {
-    // For title cells, body text is description
+    // For title cells, body text is description (preserves markdown)
     if (text) item.description = text;
   }
 
@@ -553,11 +556,36 @@ export function parse(source: string): Deck {
       i++;
     } else {
       // Block without layout - treat as content-only slide with default layout
+      const content = frontmatterBlock;
+      const options: SlideOptions = {};
+
+      // Extract ## heading and body text before first ###
+      const h2Match = content.match(/^##\s+(.+)$/m);
+      if (h2Match) {
+        options.heading = h2Match[1].trim();
+        // Text between ## and first ### is the summary/body
+        const h2End = (content.indexOf(h2Match[0]) + h2Match[0].length);
+        const firstH3 = content.indexOf('\n###');
+        if (firstH3 > h2End) {
+          const bodyText = content.substring(h2End, firstH3).trim();
+          if (bodyText) options.summary = bodyText;
+        }
+      }
+
       const slide: Slide = {
         layout: 'default',
-        options: {},
-        content: frontmatterBlock,
+        options,
+        content,
       };
+
+      // If it contains ### items, parse them for auto-bento
+      if (content.match(/^###\s/m)) {
+        const mdResult = parseMarkdownItems(content, 'default', options, config.palette);
+        if (mdResult) {
+          slide.items = mdResult.items;
+          slide.rawItems = mdResult.rawItems;
+        }
+      }
       slides.push(slide);
       i++;
     }

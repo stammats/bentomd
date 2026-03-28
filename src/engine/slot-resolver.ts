@@ -47,14 +47,25 @@ function getLayoutDefinition(slide: Slide): LayoutDefinition {
  * Adjust layout definition based on slide options.
  * e.g., two-column with ratio "2:1" changes column spans.
  */
+// Layouts that are handled by the bento engine
+const BENTO_LAYOUTS = new Set([
+  'bento', 'features', 'stats', 'comparison',
+  'three-column', 'image-left', 'image-right', 'grid',
+]);
+
 function adjustLayout(layout: LayoutDefinition, slide: Slide): LayoutDefinition {
   // Two-column ratio adjustment
   if (layout.name === 'two-column' && slide.options.ratio) {
     return adjustTwoColumnRatio(layout, String(slide.options.ratio));
   }
 
-  // Bento: generate slots from items
-  if (layout.name === 'bento') {
+  // Bento and all aliases: generate slots from items
+  if (BENTO_LAYOUTS.has(slide.layout || 'default')) {
+    return resolveBentoLayout(slide);
+  }
+
+  // Auto-bento: default layout with ### items → treat as bento
+  if (layout.name === 'default' && slide.content?.match(/^###\s/m)) {
     return resolveBentoLayout(slide);
   }
 
@@ -162,7 +173,7 @@ function hasExplicitSizes(items: BentoCell[]): boolean {
  */
 function resolveBentoLayout(slide: Slide): LayoutDefinition {
   const items = (slide.items ?? slide.rawItems ?? []) as BentoCell[];
-  const hasHeading = !!(slide.options.heading || slide.content?.match(/^#\s+/m));
+  const hasHeading = !!(slide.options.heading || slide.content?.match(/^#{1,2}\s+/m));
 
   let slots: Slot[];
   let numRows: number;

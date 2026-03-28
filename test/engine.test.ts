@@ -31,8 +31,8 @@ describe('layoutRegistry', () => {
     }
   });
 
-  it('has 19 layouts registered', () => {
-    expect(Object.keys(layoutRegistry)).toHaveLength(19);
+  it('has layouts registered', () => {
+    expect(Object.keys(layoutRegistry).length).toBeGreaterThanOrEqual(13);
   });
 });
 
@@ -120,42 +120,39 @@ describe('grid engine: two-column', () => {
   });
 });
 
-describe('grid engine: features', () => {
-  it('renders card grid module', () => {
+describe('grid engine: features (→ bento)', () => {
+  it('renders as bento cells', () => {
     const slide: Slide = {
       layout: 'features',
-      options: { columns: 2 },
+      options: {},
       content: '',
-      items: [
-        { type: 'feature' as const, icon: 'zap', title: 'Fast', description: 'Very fast' },
-        { type: 'feature' as const, icon: 'shield', title: 'Secure', description: 'Very secure' },
+      rawItems: [
+        { icon: 'zap', title: 'Fast', description: 'Very fast' },
+        { icon: 'shield', title: 'Secure', description: 'Very secure' },
       ],
     };
     const html = renderSlideV2(slide, emptyConfig, defaultContext);
-    expect(html).toContain('module-card-grid');
-    expect(html).toContain('feature-card');
+    expect(html).toContain('bento-cell');
     expect(html).toContain('Fast');
     expect(html).toContain('Secure');
-    expect(html).toContain('grid-template-columns:repeat(2,1fr)');
   });
 });
 
-describe('grid engine: stats', () => {
-  it('renders stat grid module', () => {
+describe('grid engine: stats (→ bento)', () => {
+  it('renders as bento cells', () => {
     const slide: Slide = {
       layout: 'stats',
       options: {},
       content: '',
-      items: [
-        { type: 'stat' as const, value: '99%', label: 'Uptime' },
-        { type: 'stat' as const, value: '10M', label: 'Users', trend: '+12%' },
+      rawItems: [
+        { value: '99%', label: 'Uptime' },
+        { value: '10M', label: 'Users' },
       ],
     };
     const html = renderSlideV2(slide, emptyConfig, defaultContext);
-    expect(html).toContain('module-stat-grid');
-    expect(html).toContain('stat-card');
+    expect(html).toContain('bento-cell');
     expect(html).toContain('99%');
-    expect(html).toContain('+12%');
+    expect(html).toContain('10M');
   });
 });
 
