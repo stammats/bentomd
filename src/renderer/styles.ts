@@ -606,36 +606,40 @@ tr:last-child td { border-bottom: none; }
 
 .bento-cell {
   background: ${surface};
+  color: ${text};
   transition: transform 0.15s ease;
 }
 .bento-value {
-  font-size: ${fontDisplay + 8}px;
+  font-size: ${fontDisplay}px;
   font-weight: 800;
-  color: ${primary};
+  color: inherit;
   font-family: ${fontHeading};
   letter-spacing: -0.03em;
+  line-height: 1;
 }
 .bento-title {
-  font-size: ${fontH3 + 2}px;
+  font-size: ${fontH3}px;
   font-weight: 700;
+  color: inherit;
   letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 .bento-label {
   font-size: ${fontBase}px;
-  color: ${muted};
+  opacity: 0.7;
   margin-top: 4px;
 }
 .bento-desc {
   font-size: ${fontBase}px;
-  color: ${muted};
+  opacity: 0.7;
   line-height: 1.5;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 .bento-icon {
-  color: ${primary};
-  margin-bottom: ${spLg}px;
+  color: inherit;
+  margin-bottom: ${spSm}px;
 }
-.bento-icon svg { width: 44px; height: 44px; }
+.bento-icon svg { width: 32px; height: 32px; }
 .bento-content { margin-top: ${spSm}px; }
 
 /* Bento inline image (content image, not background) */

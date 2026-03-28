@@ -94,7 +94,7 @@ const BENTO_SIZES: Record<string, { colSpan: number; rowSpan: number }> = {
   md:   { colSpan: 6,  rowSpan: 1 },  // 1/2 width
   lg:   { colSpan: 8,  rowSpan: 1 },  // 2/3 width
   wide: { colSpan: 12, rowSpan: 1 },  // full width
-  tall: { colSpan: 4,  rowSpan: 2 },  // 1/3 width, 2 rows
+  tall: { colSpan: 6,  rowSpan: 2 },  // 1/2 width, 2 rows
   hero: { colSpan: 8,  rowSpan: 2 },  // 2/3 width, 2 rows
   full: { colSpan: 12, rowSpan: 2 },  // full width, 2 rows
 };
@@ -126,38 +126,129 @@ function parseBentoSize(cell: BentoCell): { colSpan: number; rowSpan: number } {
   return BENTO_SIZES.sm;
 }
 
+// ---------------------------------------------------------------
+// Preset grid templates — optimal layouts for 1–12 items.
+// Each template is an array of rows, each row is an array of colSpans.
+// All rows sum to 12. Designed for ~square or 2:1 cell proportions.
+// ---------------------------------------------------------------
+
+const GRID_TEMPLATES: number[][][] = [
+  /* 0 */ [],
+  /* 1 */ [[12]],
+  /* 2 */ [[6, 6]],
+  /* 3 */ [[4, 4, 4]],
+  /* 4 */ [[6, 6], [6, 6]],
+  /* 5 */ [[4, 4, 4], [6, 6]],
+  /* 6 */ [[4, 4, 4], [4, 4, 4]],
+  /* 7 */ [[4, 4, 4], [3, 3, 3, 3]],
+  /* 8 */ [[4, 4, 4], [4, 4, 4], [6, 6]],
+  /* 9 */ [[4, 4, 4], [4, 4, 4], [4, 4, 4]],
+  /* 10 */ [[4, 4, 4], [4, 4, 4], [3, 3, 3, 3]],
+  /* 11 */ [[4, 4, 4], [4, 4, 4], [4, 4, 4], [6, 6]],
+  /* 12 */ [[4, 4, 4], [4, 4, 4], [4, 4, 4], [4, 4, 4]],
+];
+
+/**
+ * Check if any item has an explicit size hint (hero, md, lg, etc.)
+ */
+function hasExplicitSizes(items: BentoCell[]): boolean {
+  return items.some((cell) => cell.size || cell.span);
+}
+
 /**
  * Generate bento layout slots from BentoCell items.
- * Uses a greedy bin-packing algorithm on a 12-column grid.
+ * Uses preset grid templates for predictable, balanced layouts.
+ * Falls back to bin-packing only when items have explicit size hints.
  */
 function resolveBentoLayout(slide: Slide): LayoutDefinition {
   const items = (slide.items ?? slide.rawItems ?? []) as BentoCell[];
+  const hasHeading = !!(slide.options.heading || slide.content?.match(/^#\s+/m));
 
-  // Parse sizes
+  let slots: Slot[];
+  let numRows: number;
+
+  if (hasExplicitSizes(items)) {
+    // Explicit sizes → use bin-packing for those items
+    const result = resolveBentoWithBinPacking(items, hasHeading);
+    slots = result.slots;
+    numRows = result.numRows;
+  } else {
+    // No explicit sizes → use preset template
+    const count = Math.min(items.length, 12);
+    const template = GRID_TEMPLATES[count] ?? GRID_TEMPLATES[12];
+    const rowOffset = hasHeading ? 1 : 0;
+
+    slots = [];
+    let cellIdx = 0;
+    for (let rowIdx = 0; rowIdx < template.length; rowIdx++) {
+      let col = 1;
+      for (const colSpan of template[rowIdx]) {
+        if (cellIdx >= items.length) break;
+        slots.push({
+          id: `cell-${cellIdx}`,
+          row: rowIdx + 1 + rowOffset,
+          col,
+          colSpan,
+          rowSpan: 1,
+          module: 'raw' as const,
+          align: 'stretch',
+          justify: 'stretch',
+        });
+        col += colSpan;
+        cellIdx++;
+      }
+    }
+    numRows = template.length;
+  }
+
+  // Add heading slot if present
+  if (hasHeading) {
+    slots.unshift({
+      id: 'heading',
+      row: 1,
+      col: 1,
+      colSpan: 12,
+      module: 'heading',
+    });
+  }
+
+  const totalRows = hasHeading ? numRows + 1 : numRows;
+  const rowsTemplate = hasHeading
+    ? `auto repeat(${numRows}, minmax(160px, 1fr))`
+    : `repeat(${totalRows}, minmax(160px, 1fr))`;
+
+  return {
+    ...bentoLayout,
+    chrome: hasHeading ? 'full' : 'none',
+    rows: rowsTemplate,
+    slots,
+  };
+}
+
+/**
+ * Bin-packing fallback for items with explicit size hints.
+ */
+function resolveBentoWithBinPacking(
+  items: BentoCell[],
+  hasHeading: boolean,
+): { slots: Slot[]; numRows: number } {
   const cellSizes = items.map((cell) => parseBentoSize(cell));
-
-  // Determine how many rows we need
-  const maxRowSpan = Math.max(...cellSizes.map((s) => s.rowSpan), 1);
   const totalCols = 12;
-
-  // Greedy first-fit placement on a grid
-  // Track occupied cells: grid[row][col] = true if occupied
-  const maxRows = Math.max(items.length * 2, maxRowSpan + 2);
+  const maxRows = Math.max(items.length * 2, 4);
   const grid: boolean[][] = Array.from({ length: maxRows }, () => Array(totalCols).fill(false));
+  const rowOffset = hasHeading ? 1 : 0;
 
   const slots: Slot[] = cellSizes.map((size, i) => {
     const placement = findPlacement(grid, size.colSpan, size.rowSpan, totalCols, maxRows);
-    // Mark cells as occupied
     for (let r = placement.row; r < placement.row + size.rowSpan; r++) {
       for (let c = placement.col; c < placement.col + size.colSpan; c++) {
         if (r < maxRows && c < totalCols) grid[r][c] = true;
       }
     }
-
     return {
       id: `cell-${i}`,
-      row: placement.row + 1, // 1-based
-      col: placement.col + 1, // 1-based
+      row: placement.row + 1 + rowOffset,
+      col: placement.col + 1,
       colSpan: size.colSpan,
       rowSpan: size.rowSpan,
       module: 'raw' as const,
@@ -166,60 +257,88 @@ function resolveBentoLayout(slide: Slide): LayoutDefinition {
     };
   });
 
-  // Fill row gaps — expand the last cell in each row to fill remaining space
-  fillRowGaps(slots, totalCols);
+  // Distribute row-end gaps evenly across single-row cells
+  distributeRowGaps(slots, totalCols);
 
-  // Determine actual row count used and build row template
-  const usedRows = Math.max(...slots.map((s) => (s.row as number) + (s.rowSpan ?? 1) - 1), 1);
-  const rowsTemplate = `repeat(${usedRows}, minmax(140px, 1fr))`;
-
-  return {
-    ...bentoLayout,
-    rows: rowsTemplate,
-    slots,
-  };
+  const numRows = Math.max(...slots.map((s) => (s.row as number) + (s.rowSpan ?? 1) - 1 - rowOffset), 1);
+  return { slots, numRows };
 }
 
 /**
- * Fill gaps at the end of each row by expanding the last single-row cell
- * in that row to cover the remaining columns.
+ * Distribute leftover columns in each row evenly across expandable cells.
+ * Caps expansion at 1.5× original size. Remaining gap is left empty.
  */
-function fillRowGaps(slots: Slot[], totalCols: number): void {
-  // Group slots by their row (only single-row-span cells are expandable)
+function distributeRowGaps(slots: Slot[], totalCols: number): void {
+  // Group single-row cells by their row
   const rowMap = new Map<number, Slot[]>();
-  for (const slot of slots) {
-    const row = slot.row as number;
+  for (const s of slots) {
+    const row = s.row as number;
     if (!rowMap.has(row)) rowMap.set(row, []);
-    rowMap.get(row)!.push(slot);
+    rowMap.get(row)!.push(s);
   }
 
   for (const [row, rowSlots] of rowMap) {
-    // Check if any multi-row cell covers this row (those columns are occupied)
-    const occupiedCols = new Set<number>();
+    // Count occupied cols (including multi-row cells spanning this row)
+    let usedCols = 0;
     for (const s of slots) {
       const sRow = s.row as number;
-      const sRowSpan = s.rowSpan ?? 1;
-      if (sRow <= row && sRow + sRowSpan - 1 >= row) {
-        for (let c = s.col; c < s.col + s.colSpan; c++) {
-          occupiedCols.add(c);
+      const sSpan = s.rowSpan ?? 1;
+      if (sRow <= row && sRow + sSpan - 1 >= row) {
+        usedCols += s.colSpan;
+      }
+    }
+
+    let gap = totalCols - usedCols;
+    if (gap <= 0) continue;
+
+    const expandable = rowSlots.filter((s) => (s.rowSpan ?? 1) === 1);
+    if (expandable.length === 0) continue;
+
+    // If only one expandable cell in this row, fill remaining width (no cap)
+    // but respect multi-row cells occupying columns in this row
+    if (expandable.length === 1) {
+      expandable[0].colSpan = totalCols - (usedCols - expandable[0].colSpan);
+      // Don't move col position — it's already placed correctly by bin-packing
+      continue;
+    }
+
+    // Store original sizes
+    const origSizes = new Map(expandable.map((s) => [s, s.colSpan]));
+
+    // Round-robin, 1.5× cap
+    let changed = true;
+    while (gap > 0 && changed) {
+      changed = false;
+      for (const cell of expandable) {
+        if (gap <= 0) break;
+        const maxSpan = Math.ceil(origSizes.get(cell)! * 1.5);
+        if (cell.colSpan < maxSpan) {
+          cell.colSpan++;
+          gap--;
+          changed = true;
         }
       }
     }
 
-    const usedCols = occupiedCols.size;
-    const gap = totalCols - usedCols;
-    if (gap <= 0) continue;
+    // Re-lay out col positions left-to-right, skipping multi-row cell columns
+    const multiRowCols = new Set<number>();
+    for (const s of slots) {
+      const sRow = s.row as number;
+      const sSpan = s.rowSpan ?? 1;
+      if ((s.rowSpan ?? 1) > 1 && sRow <= row && sRow + sSpan - 1 >= row) {
+        for (let c = s.col; c < s.col + s.colSpan; c++) multiRowCols.add(c);
+      }
+    }
 
-    // Find the rightmost single-row cell in this row to expand
-    const expandable = rowSlots
-      .filter((s) => (s.rowSpan ?? 1) === 1)
-      .sort((a, b) => b.col - a.col);
-
-    if (expandable.length > 0) {
-      expandable[0].colSpan += gap;
+    let col = 1;
+    for (const cell of expandable) {
+      while (multiRowCols.has(col) && col <= totalCols) col++;
+      cell.col = col;
+      col += cell.colSpan;
     }
   }
 }
+
 
 /**
  * Find the first available position for a cell of given size.

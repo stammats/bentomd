@@ -299,9 +299,21 @@ async function preRenderMermaid(html: string): Promise<string> {
 // Render helper
 // ---------------------------------------------------------------------------
 
-function buildSlideHtml(code: string): { html: string; error: string } {
+interface PaletteOverride {
+  primary?: string
+  secondary?: string
+  background?: string
+  surface?: string
+  text?: string
+  muted?: string
+}
+
+function buildSlideHtml(code: string, paletteOverride?: PaletteOverride): { html: string; error: string } {
   try {
     const deck = parse(code)
+    if (paletteOverride) {
+      deck.config.palette = { ...deck.config.palette, ...paletteOverride }
+    }
     const slideHtmls = deck.slides.map((slide: any, i: number) =>
       renderSlide(slide, deck.config, {
         slideIndex: i,
@@ -320,6 +332,37 @@ function buildSlideHtml(code: string): { html: string; error: string } {
   } catch (e: any) {
     return { html: '', error: e.message || String(e) }
   }
+}
+
+// ---------------------------------------------------------------------------
+// Color presets
+// ---------------------------------------------------------------------------
+
+const COLOR_PRESETS: Record<string, { label: string; palette: PaletteOverride }> = {
+  default: {
+    label: 'Default',
+    palette: {},
+  },
+  ocean: {
+    label: 'Ocean',
+    palette: { primary: '#0984e3', secondary: '#00cec9', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+  },
+  sunset: {
+    label: 'Sunset',
+    palette: { primary: '#e17055', secondary: '#fdcb6e', surface: '#ffeaa7', text: '#2d3436', muted: '#636e72' },
+  },
+  forest: {
+    label: 'Forest',
+    palette: { primary: '#00b894', secondary: '#55efc4', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+  },
+  berry: {
+    label: 'Berry',
+    palette: { primary: '#6c5ce7', secondary: '#e84393', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+  },
+  dark: {
+    label: 'Dark',
+    palette: { primary: '#74b9ff', secondary: '#a29bfe', background: '#2d3436', surface: '#636e72', text: '#dfe6e9', muted: '#b2bec3' },
+  },
 }
 
 // ---------------------------------------------------------------------------
@@ -344,6 +387,17 @@ function EditorInner() {
   const [hoveredDocId, setHoveredDocId] = useState<string | null>(null)
   const [mobileTab, setMobileTab] = useState<'editor' | 'preview'>('editor')
   const [isMobile, setIsMobile] = useState(false)
+
+  // ---- Settings state ----
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [selectedPreset, setSelectedPreset] = useState('default')
+  const [customMode, setCustomMode] = useState(false)
+  const [customPalette, setCustomPalette] = useState<PaletteOverride>({})
+
+  const activePalette = useMemo(() => {
+    if (customMode) return customPalette
+    return COLOR_PRESETS[selectedPreset]?.palette ?? {}
+  }, [customMode, customPalette, selectedPreset])
 
   // ---- Icon picker state ----
   const [iconPicker, setIconPicker] = useState<{
@@ -397,10 +451,11 @@ function EditorInner() {
     }, 500)
   }, [])
 
-  // ---- Update preview on content change ----
+  // ---- Update preview on content or palette change ----
   useEffect(() => {
     if (!isLoaded) return
-    const { html, error } = buildSlideHtml(editorContent)
+    const override = Object.keys(activePalette).length > 0 ? activePalette : undefined
+    const { html, error } = buildSlideHtml(editorContent, override)
     if (error) {
       setPreviewError(error)
       setPreviewHtml('')
@@ -410,7 +465,7 @@ function EditorInner() {
     preRenderMermaid(html)
       .then(setPreviewHtml)
       .catch(() => setPreviewHtml(html))
-  }, [editorContent, isLoaded])
+  }, [editorContent, activePalette, isLoaded])
 
   // ---- Handlers ----
 
@@ -811,7 +866,6 @@ function EditorInner() {
                   if (!ta) return
                   const cursor = ta.selectionStart
                   const val = editorContent
-                  // Insert ":" at cursor to trigger icon picker
                   const newVal = val.substring(0, cursor) + ':' + val.substring(cursor)
                   handleContentChange(newVal)
                   requestAnimationFrame(() => {
@@ -823,6 +877,13 @@ function EditorInner() {
                 title="Insert icon (or type : in a ### line)"
               >
                 &#9671;{!isMobile && ' Icon'}
+              </button>
+              <button
+                style={styles.toolbarBtn}
+                onClick={() => setSettingsOpen(true)}
+                title="Settings"
+              >
+                &#9881;{!isMobile && ' Settings'}
               </button>
               <button style={styles.toolbarBtn} onClick={handlePresentationMode} title="Present">
                 &#9654;{!isMobile && ' Present'}
@@ -864,6 +925,80 @@ function EditorInner() {
             {previewPane}
           </div>
         </div>
+
+        {/* Settings dialog */}
+        {settingsOpen && (
+          <>
+            <div style={styles.sidebarOverlay} onClick={() => setSettingsOpen(false)} />
+            <div style={styles.settingsDialog}>
+              <div style={styles.settingsHeader}>
+                <span style={{ fontSize: 16, fontWeight: 700 }}>Settings</span>
+                <button style={styles.iconBtn} onClick={() => setSettingsOpen(false)}>&#x2715;</button>
+              </div>
+
+              <div style={styles.settingsBody}>
+                <div style={{ marginBottom: 20 }}>
+                  <div style={styles.settingsLabel}>Color Theme</div>
+                  <div style={styles.presetGrid}>
+                    {Object.entries(COLOR_PRESETS).map(([key, preset]) => (
+                      <button
+                        key={key}
+                        style={{
+                          ...styles.presetBtn,
+                          ...(selectedPreset === key && !customMode ? styles.presetBtnActive : {}),
+                        }}
+                        onClick={() => { setSelectedPreset(key); setCustomMode(false) }}
+                      >
+                        <div style={{ display: 'flex', gap: 3, marginBottom: 4 }}>
+                          <div style={{ width: 14, height: 14, borderRadius: 3, background: preset.palette.primary || '#0984e3' }} />
+                          <div style={{ width: 14, height: 14, borderRadius: 3, background: preset.palette.secondary || '#6c5ce7' }} />
+                          <div style={{ width: 14, height: 14, borderRadius: 3, background: preset.palette.surface || '#dfe6e9' }} />
+                        </div>
+                        <span style={{ fontSize: 11 }}>{preset.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                    <div
+                      style={{
+                        width: 36, height: 20, borderRadius: 10,
+                        background: customMode ? '#0984e3' : '#334155',
+                        position: 'relative', transition: 'background 0.2s', flexShrink: 0,
+                      }}
+                      onClick={() => setCustomMode(!customMode)}
+                    >
+                      <div style={{
+                        width: 16, height: 16, borderRadius: 8,
+                        background: '#fff', position: 'absolute', top: 2,
+                        left: customMode ? 18 : 2, transition: 'left 0.2s',
+                      }} />
+                    </div>
+                    <span style={styles.settingsLabel} onClick={() => setCustomMode(!customMode)}>Custom Colors</span>
+                  </label>
+                </div>
+
+                {customMode && (
+                  <div style={styles.customColorGrid}>
+                    {(['primary', 'secondary', 'background', 'surface', 'text', 'muted'] as const).map((key) => (
+                      <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <input
+                          type="color"
+                          value={customPalette[key] || (COLOR_PRESETS[selectedPreset]?.palette[key] ?? '#ffffff')}
+                          onChange={(e) => setCustomPalette((p) => ({ ...p, [key]: e.target.value }))}
+                          style={{ width: 32, height: 28, border: 'none', background: 'none', cursor: 'pointer', padding: 0 }}
+                        />
+                        <span style={{ fontSize: 12, color: '#94a3b8', textTransform: 'capitalize' }}>{key}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   )
@@ -1157,6 +1292,65 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#334155',
     fontSize: 13,
     fontFamily: 'monospace',
+  },
+  settingsDialog: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 200,
+    background: '#1e293b',
+    border: '1px solid #334155',
+    borderRadius: 12,
+    boxShadow: '0 16px 64px rgba(0,0,0,0.5)',
+    width: 380,
+    maxWidth: '90vw',
+    maxHeight: '80vh',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+  } as React.CSSProperties,
+  settingsHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '16px 20px',
+    borderBottom: '1px solid #334155',
+  },
+  settingsBody: {
+    padding: '20px',
+    overflowY: 'auto',
+  } as React.CSSProperties,
+  settingsLabel: {
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#94a3b8',
+    marginBottom: 8,
+  },
+  presetGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: 8,
+  },
+  presetBtn: {
+    padding: '10px 8px',
+    background: '#0f172a',
+    border: '2px solid transparent',
+    borderRadius: 8,
+    cursor: 'pointer',
+    color: '#94a3b8',
+    textAlign: 'center',
+    transition: 'border-color 0.15s',
+  } as React.CSSProperties,
+  presetBtnActive: {
+    borderColor: '#0984e3',
+    color: '#f1f5f9',
+  },
+  customColorGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: 10,
+    padding: '12px 0',
   },
 }
 

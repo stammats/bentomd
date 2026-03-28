@@ -2,6 +2,7 @@ import yaml from 'js-yaml';
 import type {
   Deck,
   GlobalConfig,
+  Palette,
   Slide,
   SlideOptions,
   ContentModule,
@@ -26,35 +27,91 @@ const SLIDE_OPTION_KEYS = new Set([
   'type', 'title', 'showValues', 'showLegend', 'colors',
   'language', 'highlight',
   'direction',
-  'scheme',
 ]);
 
 // ============================================================
-// Color schemes for auto-coloring (bento, features)
+// Cell theme generation for bento grid
 // ============================================================
 
-const COLOR_SCHEMES: Record<string, string[]> = {
-  pastel: [
-    '#e8d5f5', '#fce4ec', '#fff9c4', '#e8f5e9', '#e3f2fd', '#fff3e0',
-    '#f3e5f5', '#fce7f3', '#dcfce7', '#dbeafe', '#fef3c7', '#ede9fe',
-  ],
-  ocean: [
-    '#dbeafe', '#bfdbfe', '#e0f2fe', '#cffafe', '#ccfbf1', '#d1fae5',
-    '#a7f3d0', '#99f6e4', '#a5f3fc', '#bae6fd', '#c7d2fe', '#ddd6fe',
-  ],
-  warm: [
-    '#fef3c7', '#fed7aa', '#fecaca', '#fce7f3', '#fbcfe8', '#fde68a',
-    '#fed7aa', '#fecdd3', '#ffe4e6', '#fff1f2', '#fef9c3', '#ffedd5',
-  ],
-  mono: [
-    '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#f8fafc', '#f1f5f9',
-    '#e2e8f0', '#cbd5e1', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1',
-  ],
-  slate: [
-    '#dfe6e9', '#74b9ff', '#a29bfe', '#55efc4', '#ffeaa7', '#fab1a0',
-    '#81ecec', '#fd79a8', '#dfe6e9', '#74b9ff', '#55efc4', '#ffeaa7',
-  ],
-};
+// ---------------------------------------------------------------------------
+// Cell theme: bright/dark paired color system (Wise-inspired)
+// ---------------------------------------------------------------------------
+//
+// Hand-tuned color pairs ordered warm/cool alternating.
+// Each pair has a bright variant and a dark variant.
+// Bright bg → dark text, dark bg → bright text.
+// Internal contrast is guaranteed so mixing is safe.
+
+interface CellTheme {
+  background: string;
+  color: string;
+}
+
+/** Default bright/dark pairs — warm/cool alternating, muted tones.
+ *  Bright = soft pastel for bg, Dark = rich deep for bg.
+ *  Warm and cool colors interleave so any subset looks balanced. */
+const DEFAULT_PAIRS: { bright: string; dark: string }[] = [
+  { bright: '#fce4b8', dark: '#5c3d0e' },  // Honey / warm
+  { bright: '#c5dde8', dark: '#1a3a4a' },  // Slate Blue / cool
+  { bright: '#f5c6c6', dark: '#6b2020' },  // Blush / warm
+  { bright: '#c2e0c6', dark: '#1a4028' },  // Sage / cool
+  { bright: '#e8d0f0', dark: '#3b1f50' },  // Mauve / warm
+  { bright: '#b8ddd6', dark: '#1a3833' },  // Mint / cool
+];
+
+/**
+ * Generate cell themes from palette.
+ * If custom primary/secondary are set, derive pairs from them and mix with defaults.
+ */
+function generateCellThemes(palette?: {
+  primary?: string; secondary?: string;
+}): CellTheme[] {
+  const primary = palette?.primary;
+  const secondary = palette?.secondary;
+
+  let pairs = [...DEFAULT_PAIRS];
+
+  // If user set custom palette colors, prepend derived pairs
+  if (primary && primary !== '#0984e3') {
+    pairs.unshift({ bright: tintColor(primary, 0.65), dark: shadeColor(primary, 0.6) });
+  }
+  if (secondary && secondary !== '#6c5ce7') {
+    pairs.splice(1, 0, { bright: tintColor(secondary, 0.65), dark: shadeColor(secondary, 0.6) });
+  }
+
+  // Generate themes: for each pair, bright-bg then dark-bg
+  const themes: CellTheme[] = [];
+  for (const pair of pairs) {
+    themes.push({ background: pair.bright, color: pair.dark });
+    themes.push({ background: pair.dark, color: pair.bright });
+  }
+
+  return themes;
+}
+
+/** Mix a color with white by ratio (0=original, 1=white) */
+function tintColor(hex: string, ratio: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const tr = Math.round(r + (255 - r) * ratio);
+  const tg = Math.round(g + (255 - g) * ratio);
+  const tb = Math.round(b + (255 - b) * ratio);
+  return `#${tr.toString(16).padStart(2, '0')}${tg.toString(16).padStart(2, '0')}${tb.toString(16).padStart(2, '0')}`;
+}
+
+/** Mix a color with black by ratio (0=original, 1=black) */
+function shadeColor(hex: string, ratio: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const tr = Math.round(r * (1 - ratio));
+  const tg = Math.round(g * (1 - ratio));
+  const tb = Math.round(b * (1 - ratio));
+  return `#${tr.toString(16).padStart(2, '0')}${tg.toString(16).padStart(2, '0')}${tb.toString(16).padStart(2, '0')}`;
+}
+
+
 
 // ============================================================
 // Markdown Item Parser
@@ -130,16 +187,15 @@ function parseMarkdownItems(
   content: string,
   layout: string,
   options: SlideOptions,
+  palette?: Palette,
 ): { items: ContentModule[]; rawItems: Record<string, unknown>[] } | null {
   if (!content.match(/^###\s/m)) return null;
 
   const blocks = splitMdItems(content);
   if (blocks.length === 0) return null;
 
-  const scheme = options.scheme as string | undefined;
-  const defaultScheme = layout === 'bento' ? 'slate' : undefined;
-  const schemeName = scheme ?? defaultScheme;
-  const colors = schemeName ? COLOR_SCHEMES[schemeName] ?? COLOR_SCHEMES.pastel : undefined;
+  // Bento: generate harmonious cell themes from palette
+  const cellThemes = layout === 'bento' ? generateCellThemes(palette) : undefined;
 
   const rawItems: Record<string, unknown>[] = [];
 
@@ -149,7 +205,15 @@ function parseMarkdownItems(
     if (!parsed) continue;
 
     const bodyText = body.map((l) => l.trim()).filter(Boolean);
-    const item = buildItem(layout, parsed, bodyText, idx, colors);
+    const item = buildItem(layout, parsed, bodyText, idx);
+
+    // Apply cell theme for bento (unless user set background manually)
+    if (cellThemes && !item.background) {
+      const theme = cellThemes[idx % cellThemes.length];
+      item.background = theme.background;
+      item.color = theme.color;
+    }
+
     rawItems.push(item);
   }
 
@@ -165,7 +229,6 @@ function buildItem(
   h: ParsedMdHeading,
   bodyLines: string[],
   index: number,
-  colors?: string[],
 ): Record<string, unknown> {
   switch (layout) {
     case 'stats':
@@ -179,7 +242,7 @@ function buildItem(
     case 'chart':
       return buildChartItem(h, bodyLines);
     case 'bento':
-      return buildBentoItem(h, bodyLines, index, colors);
+      return buildBentoItem(h, bodyLines, index);
     default:
       return buildFeatureItem(h, bodyLines);
   }
@@ -276,7 +339,6 @@ function buildBentoItem(
   h: ParsedMdHeading,
   bodyLines: string[],
   index: number,
-  colors?: string[],
 ): Record<string, unknown> {
   const item: Record<string, unknown> = {};
 
@@ -324,11 +386,6 @@ function buildBentoItem(
     } else if (mod === 'center') {
       item.align = 'center';
     }
-  }
-
-  // Auto-assign color from scheme
-  if (colors && !item.background) {
-    item.background = colors[index % colors.length];
   }
 
   return item;
@@ -477,7 +534,7 @@ export function parse(source: string): Deck {
       let rawItems: Record<string, unknown>[] | undefined;
 
       if (LIST_LAYOUTS.has(layout)) {
-        const mdResult = parseMarkdownItems(content, layout, options);
+        const mdResult = parseMarkdownItems(content, layout, options, config.palette);
         if (mdResult) {
           items = mdResult.items;
           rawItems = mdResult.rawItems;

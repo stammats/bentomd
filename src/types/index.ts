@@ -262,6 +262,8 @@ export interface BentoCell {
   /** @deprecated Use size instead */
   span?: string;
   background?: string;
+  /** Text/icon color — auto-derived from background for contrast */
+  color?: string;
   content?: string;
   icon?: string;
   title?: string;

@@ -1,0 +1,430 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
+# Bento Grid Patterns
+
+Test page for all bento grid patterns from 1 to 12 items, plus edge cases.
+
+## 1 Item
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Launch Your Product Today {hero}
+Build and deploy beautiful landing pages in minutes. No code required — just write Markdown and let bentomd handle the rest.`} />
+
+## 2 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :shield: Enterprise Security
+SOC 2 Type II certified with end-to-end encryption and role-based access control.
+
+### 99.99%
+Uptime SLA`} />
+
+## 3 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :zap: Lightning Fast
+Sub-10ms response times globally with edge caching and smart routing.
+
+### 2.4M
+API Calls / Day
+
+### :lock: Secure by Default
+Built-in authentication, encryption, and compliance tooling.`} />
+
+## 4 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :code: Developer First
+Full API access, CLI tools, and SDKs for every major platform.
+
+### :users: Team Collaboration
+Real-time editing with comments, mentions, and version history.
+
+### 150+
+Integrations
+
+### 4.9
+App Store Rating`} />
+
+## 5 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Deploy
+Ship to production with one command.
+
+### :shield: Secure
+SOC 2 certified and encrypted.
+
+### :zap: Fast
+Sub-10ms response globally.
+
+### :users: Teams
+Real-time collaboration.
+
+### :code: API First
+Full developer access and webhooks.`} />
+
+## 6 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Deploy
+Ship to production with one command. Zero-downtime releases included.
+
+### :shield: Secure
+SOC 2 certified. Encryption at rest and in transit.
+
+### :zap: Fast
+Global edge network with sub-10ms latency.
+
+### :users: Teams
+Collaborate in real-time with role-based permissions.
+
+### :code: API First
+RESTful APIs and webhooks for every feature.
+
+### :bar-chart: Analytics
+Real-time dashboards and custom reporting.`} />
+
+## 7 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Deploy
+Ship to production with one command.
+
+### :shield: Secure
+SOC 2 certified and encrypted.
+
+### :zap: Fast
+Sub-10ms response globally.
+
+### :users: Teams
+Collaborate in real-time.
+
+### :code: API
+Full developer access.
+
+### :bar-chart: Analytics
+Real-time dashboards.
+
+### :heart: Support
+24/7 dedicated support.`} />
+
+## 8 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Deploy
+Zero-downtime releases.
+
+### :shield: Secure
+SOC 2 certified.
+
+### :zap: Fast
+Edge-cached globally.
+
+### :users: Teams
+Role-based permissions.
+
+### :code: API
+RESTful and GraphQL.
+
+### :bar-chart: Analytics
+Custom dashboards.
+
+### :globe: Global
+20+ regions worldwide.
+
+### :heart: Support
+24/7 dedicated support.`} />
+
+## 9 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Deploy
+Ship fast.
+
+### :shield: Secure
+Encrypted.
+
+### :zap: Fast
+10ms latency.
+
+### :users: Teams
+Collaborate.
+
+### :code: API
+Full access.
+
+### :bar-chart: Charts
+Dashboards.
+
+### :globe: Global
+20+ regions.
+
+### :heart: Support
+24/7 help.
+
+### :settings: Config
+Flexible setup.`} />
+
+## 12 Items
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Deploy
+Ship it.
+
+### :shield: Secure
+Protected.
+
+### :zap: Fast
+Quick.
+
+### :users: Teams
+Together.
+
+### :code: API
+Connect.
+
+### :bar-chart: Charts
+Visualize.
+
+### :globe: Global
+Worldwide.
+
+### :heart: Support
+Always.
+
+### :settings: Config
+Customize.
+
+### :key: Auth
+SSO ready.
+
+### :database: Data
+Managed.
+
+### :cloud: Cloud
+Hosted.`} />
+
+---
+
+## Edge Cases
+
+### With Heading
+
+<SlidePreview code={`---
+layout: bento
+heading: "Platform Overview"
+summary: "Everything you need to ship faster"
+---
+
+### :rocket: Deploy
+Zero-downtime releases with automated rollbacks.
+
+### :shield: Secure
+SOC 2 certified with end-to-end encryption.
+
+### :zap: Fast
+Sub-10ms response times with global edge caching.
+
+### 99.99%
+Uptime SLA`} />
+
+### Mixed Sizes (explicit)
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :layers: Architecture {hero}
+Build modular systems with independent, tested components. Each module owns its data and lifecycle.
+
+### 50K+ {sm center}
+Developers
+
+### 4.9 {sm center}
+Rating
+
+### :terminal: CLI {md}
+Powerful command-line tools for automation.
+
+### Mobile {md}
+![Mobile](https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&q=80)`} />
+
+### Image Heavy
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### Brand {hero}
+![Brand](https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80)
+
+### Mobile {sm}
+![Mobile](https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80)
+
+### :palette: Design System
+Typography, color, spacing — all cohesive.
+
+### Product {md}
+![Product](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80)`} />
+
+### Single Value Cell
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### 42%
+Growth Rate`} />
+
+---
+
+## Size Hint Patterns
+
+### tall + 2 small (left tall, right stacked)
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Main Feature {tall}
+Build and deploy with confidence. Our platform handles scaling, security, and monitoring so you can focus on your product.
+
+### 99.99%  {sm}
+Uptime SLA
+
+### :zap: 12ms {sm}
+Avg Response`} />
+
+### hero + 2 small
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### Dashboard {hero}
+![Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80)
+
+### 2.4M {sm center}
+API Calls / Day
+
+### :shield: Secure {sm}
+SOC 2 certified`} />
+
+### hero + 4 small
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :layers: Platform {hero}
+End-to-end developer platform with built-in CI/CD, monitoring, and security. Ship faster with less overhead.
+
+### :zap: Fast {sm}
+10ms latency
+
+### :shield: Secure {sm}
+Encrypted
+
+### :users: Teams {sm}
+Collaborate
+
+### :code: API {sm}
+Full access`} />
+
+### tall + tall + 2 small
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### Product {tall}
+![Product](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80)
+
+### :rocket: Ship Fast {tall}
+Deploy multiple times a day with automated rollbacks and feature flags.
+
+### 150+ {sm center}
+Integrations
+
+### 4.9 {sm center}
+Rating`} />
+
+### wide + 3 equal
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :globe: Global Infrastructure {wide}
+20+ regions worldwide with automatic failover and edge caching for sub-10ms response times.
+
+### :shield: Security
+SOC 2 certified with encryption at rest and in transit.
+
+### :bar-chart: Analytics
+Real-time dashboards and custom alerting.
+
+### :heart: Support
+24/7 dedicated support with 1-hour SLA.`} />
+
+### md + md + sm + sm
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :code: Developer Tools {md}
+Full API access, CLI tools, and SDKs for every major platform. Automate everything.
+
+### Team Workspace {md}
+![Workspace](https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80)
+
+### 500K+ {sm center}
+Active Users
+
+### :zap: 99.9% {sm center}
+Uptime`} />
+
+### lg + sm
+
+<SlidePreview code={`---
+layout: bento
+---
+
+### :rocket: Get Started in Minutes {lg}
+No credit card required. Sign up, connect your repo, and deploy your first app in under 5 minutes.
+
+### Free {sm center}
+Forever Plan`} />
+

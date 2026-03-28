@@ -27,9 +27,12 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
     'overflow:hidden',
   ];
 
-  // Background
+  // Background + text color from cell theme
   const bg = cell.background ?? config.palette?.surface ?? '#dfe6e9';
   styles.push(`background:${bg}`);
+  if (cell.color) {
+    styles.push(`color:${cell.color}`);
+  }
 
   // Full-bleed image cell (image only, no icon/value — title overlays)
   if (cell.image && !cell.icon && !cell.value) {
@@ -48,23 +51,27 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
 
   const parts: string[] = [];
 
+  // Color overrides for icon and value (inherit from cell theme)
+  const iconStyle = cell.color ? `color:${cell.color}` : '';
+  const valueStyle = cell.color ? `color:${cell.color}` : '';
+
   // Wide cells: group icon + value horizontally
   const hasHeroContent = cell.icon || cell.value;
   if (isWide && hasHeroContent) {
     const heroParts: string[] = [];
     if (cell.icon) {
-      heroParts.push(`<div class="bento-icon" style="margin-bottom:0;margin-right:16px;flex-shrink:0">${renderIcon(cell.icon, { size: 44 })}</div>`);
+      heroParts.push(`<div class="bento-icon" style="margin-bottom:0;margin-right:16px;flex-shrink:0;${iconStyle}">${renderIcon(cell.icon, { size: 32 })}</div>`);
     }
     if (cell.value) {
-      heroParts.push(`<div class="bento-value">${escapeHtml(cell.value)}</div>`);
+      heroParts.push(`<div class="bento-value" style="${valueStyle}">${escapeHtml(cell.value)}</div>`);
     }
     parts.push(`<div style="display:flex;align-items:center">${heroParts.join('')}</div>`);
   } else {
     if (cell.icon) {
-      parts.push(`<div class="bento-icon">${renderIcon(cell.icon, { size: 44 })}</div>`);
+      parts.push(`<div class="bento-icon" style="${iconStyle}">${renderIcon(cell.icon, { size: 32 })}</div>`);
     }
     if (cell.value) {
-      parts.push(`<div class="bento-value">${escapeHtml(cell.value)}</div>`);
+      parts.push(`<div class="bento-value" style="${valueStyle}">${escapeHtml(cell.value)}</div>`);
     }
   }
 

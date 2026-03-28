@@ -49,10 +49,55 @@ export function generateNavigationScript(): string {
     }
   });
 
+  // Click to advance (desktop only, not on nav buttons)
   document.addEventListener('click', function(e) {
-    if (e.target.closest('a')) return;
+    if (e.target.closest('a') || e.target.closest('.slide-nav')) return;
     goto(current + 1);
   });
+
+  // Touch swipe navigation
+  var touchStartX = 0;
+  var touchStartY = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
+    if (dx < 0) goto(current + 1);
+    else goto(current - 1);
+  }, { passive: true });
+
+  // Navigation buttons
+  var nav = document.createElement('div');
+  nav.className = 'slide-nav';
+  nav.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:9999;opacity:0;transition:opacity 0.3s';
+  var btnStyle = 'padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.6);color:#fff;font-size:14px;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)';
+  var prevBtn = document.createElement('button');
+  prevBtn.textContent = '\\u2190 Prev';
+  prevBtn.style.cssText = btnStyle;
+  prevBtn.onclick = function(e) { e.stopPropagation(); goto(current - 1); };
+  var nextBtn = document.createElement('button');
+  nextBtn.textContent = 'Next \\u2192';
+  nextBtn.style.cssText = btnStyle;
+  nextBtn.onclick = function(e) { e.stopPropagation(); goto(current + 1); };
+  nav.appendChild(prevBtn);
+  nav.appendChild(counter || document.createElement('span'));
+  nav.appendChild(nextBtn);
+  document.body.appendChild(nav);
+
+  // Show nav on hover/touch, auto-hide
+  var hideTimer;
+  function showNav() {
+    nav.style.opacity = '1';
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(function() { nav.style.opacity = '0'; }, 3000);
+  }
+  document.addEventListener('mousemove', showNav);
+  document.addEventListener('touchstart', showNav, { passive: true });
+  showNav();
 
   window.addEventListener('hashchange', function() {
     var h = parseInt(location.hash.replace('#', ''), 10);

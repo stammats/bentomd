@@ -10,41 +10,36 @@ Flexible grid layout with cells of varying sizes. Each cell supports icon, title
 <SlidePreview code={`---
 title: "Bento Grid"
 aspectRatio: "16:9"
-palette:
-  primary: "#6366f1"
-  background: "#f5f5f5"
-  surface: "#ffffff"
 ---
 
 ---
 layout: bento
-scheme: pastel
 ---
 
-### :layers: Modular Architecture {hero}
-Compose your system from independent, tested modules. Each module owns its data, API, and lifecycle.
+### Dashboard {hero}
+![Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80)
 
-### 50K+ {sm center}
-Active Developers
+### 99.99% {sm center}
+Uptime SLA
 
-### 4.9 {sm center}
-npm Rating
+### :zap: 12ms {sm center}
+Avg Response
 
-### :git-branch: Version Control {sm}
-Built-in schema versioning and migration support
+### :shield: Security First {md}
+SOC 2 Type II certified with end-to-end encryption, SSO, and role-based access control in every plan.
 
-### :terminal: CLI First {sm}
-Powerful command-line tools for every workflow
+### Analytics {md}
+![Analytics](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80)
 
-### :lock: Enterprise Security {sm}
-SOC 2, GDPR, and HIPAA compliant out of the box`} />
+### :users: Built for Teams {sm}
+Real-time collaboration with audit logs and granular permissions`} />
 
 ## Example
 
 ```markdown
 ---
 layout: bento
-scheme: pastel
+
 ---
 
 ### :layers: Modular Architecture {hero}
@@ -107,34 +102,29 @@ Use different sizes to create card-style feature grids. Row gaps are automatical
 <SlidePreview code={`---
 title: "Product Features"
 aspectRatio: "16:9"
-palette:
-  primary: "#059669"
-  background: "#fafaf9"
-  surface: "#ffffff"
 ---
 
 ---
 layout: bento
-scheme: pastel
 ---
 
-### :credit-card: Maximize Card Rewards {md}
-Maximize rewards on every purchase. Identify top cards for each spend category.
-
-### :wallet: Manage Cards {sm}
-Manage multiple cards, track benefits, and set payment reminders.
+### Workspace {hero}
+![Workspace](https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80)
 
 ### :target: Set Goals {sm}
-Set trip goals or target annual fee waivers.
+Define milestones and track progress toward quarterly objectives.
 
-### :map-pin: Lounges {sm}
-Track and find eligible airport and railway lounge access.
+### :bar-chart: Analytics {sm}
+Real-time insights into team performance and project health.
 
-### :bar-chart: Credit Card Strategy {lg}
-Personalized credit card plan that fits your lifestyle and spending habits.
+### :users: Team Collaboration {md}
+Work together in real-time with shared docs, comments, and @mentions. Keep everyone aligned.
 
-### :search: Find, Compare & Apply {sm}
-Discover ideal cards. Compare features and apply in minutes.`} />
+### Mobile App {md}
+![Mobile](https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&q=80)
+
+### :zap: Integrations {sm}
+Connect with Slack, GitHub, Figma, and 200+ tools your team already uses.`} />
 
 ---
 
@@ -153,7 +143,7 @@ palette:
 
 ---
 layout: bento
-scheme: ocean
+
 ---
 
 ### :shield: Security & Compliance {tall}
@@ -191,7 +181,7 @@ palette:
 
 ---
 layout: bento
-scheme: pastel
+
 ---
 
 ### $12.4M {md center}
@@ -223,7 +213,7 @@ palette:
 
 ---
 layout: bento
-scheme: pastel
+
 ---
 
 ### Kyoto, Japan {hero}
@@ -261,7 +251,7 @@ palette:
 
 ---
 layout: bento
-scheme: mono
+
 ---
 
 ### Brand Identity {hero}
@@ -298,7 +288,7 @@ palette:
 
 ---
 layout: bento
-scheme: pastel
+
 ---
 
 ### :camera: Smart Camera {hero}
@@ -326,7 +316,7 @@ Image behavior:
 
 - Cells are auto-placed using a greedy bin-packing algorithm -- no positions needed
 - Row gaps are automatically filled by expanding the last cell in each row
-- Use `scheme: pastel` in the slide frontmatter for automatic pastel cell colors
+- Cell colors are automatically generated from your palette for visual harmony
 - Mix `hero`/`tall`/`lg` with `sm` cells for visual hierarchy
 - Image cells: add `![](url)` in the body -- title/description overlay at bottom
 - Value cells: start the heading with a number or `$` (e.g. `### $4.2M {sm center}`)
