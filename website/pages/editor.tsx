@@ -912,7 +912,7 @@ function EditorInner() {
   const isDev = process.env.NODE_ENV === 'development'
   useEffect(() => {
     if (isDev) {
-      setDocs([DEFAULT_DOC, BRAND_DOC, LIGHT_DOC])
+      setDocs([DEFAULT_DOC])
       setActiveId(DEFAULT_DOC.id)
       setEditorContent(DEFAULT_CONTENT)
       setIsLoaded(true)
@@ -1070,7 +1070,7 @@ function EditorInner() {
     const newDoc: Document = {
       id: generateId(),
       name: 'New Presentation',
-      content: DEFAULT_CONTENT,
+      content: `---\ntitle: New Presentation\n---\n\n---\nlayout: cover\n---\n\n# Title\n## Subtitle\n`,
       updatedAt: Date.now(),
     }
     setDocs((prev) => {
@@ -1080,7 +1080,7 @@ function EditorInner() {
     })
     setActiveId(newDoc.id)
     saveActiveId(newDoc.id)
-    setEditorContent(DEFAULT_CONTENT)
+    setEditorContent(newDoc.content)
     setTimeout(() => textareaRef.current?.focus(), 50)
   }, [])
 
@@ -1188,6 +1188,9 @@ function EditorInner() {
       <button style={styles.newDocBtn} onClick={handleNewDoc}>
         + New Presentation
       </button>
+      <a href="/templates" style={{ ...styles.newDocBtn, display: 'block', textDecoration: 'none', color: '#64748b', fontSize: 12, margin: '0 12px 6px', padding: '6px 12px' }}>
+        Browse Templates
+      </a>
 
       <div style={styles.docList}>
         {docs.map((doc) => (
@@ -1493,6 +1496,7 @@ function EditorInner() {
             </div>
           </>
         )}
+
       </div>
     </>
   )

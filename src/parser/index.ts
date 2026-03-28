@@ -79,56 +79,105 @@ function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
   const accents = [primary, secondary, '#00b894', '#e17055', '#00cec9', '#fdcb6e'];
   const cellStyle = (style ?? 'mixed') as CellStyle;
 
+  // Helper: ensure text color has sufficient contrast against background.
+  // Uses WCAG relative luminance to guarantee ≥ 3:1 contrast ratio.
+  function ensureContrast(bg: string, fg: string): string {
+    const lum = (hex: string) => {
+      const r = parseInt(hex.slice(1, 3), 16) / 255;
+      const g = parseInt(hex.slice(3, 5), 16) / 255;
+      const b = parseInt(hex.slice(5, 7), 16) / 255;
+      const toLinear = (c: number) => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+    };
+    const L1 = lum(bg);
+    const L2 = lum(fg);
+    const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+    if (ratio >= 3) return fg;
+    // Darken or lighten fg to meet 3:1
+    if (L1 > 0.5) {
+      // Light bg → darken text
+      for (let s = 0.1; s <= 0.9; s += 0.05) {
+        const darker = shadeColor(fg, s);
+        const r2 = (lum(bg) + 0.05) / (lum(darker) + 0.05);
+        if (r2 >= 3) return darker;
+      }
+      return '#000000';
+    } else {
+      // Dark bg → lighten text
+      for (let s = 0.1; s <= 0.9; s += 0.05) {
+        const lighter = tintColor(fg, s);
+        const r2 = (lum(lighter) + 0.05) / (lum(bg) + 0.05);
+        if (r2 >= 3) return lighter;
+      }
+      return '#ffffff';
+    }
+  }
+
   switch (cellStyle) {
     case 'tint':
-      return accents.map((c) => ({
-        background: tintColor(c, 0.8),
-        color: shadeColor(c, 0.6),
-      }));
+      return accents.map((c) => {
+        const bg = tintColor(c, 0.82);
+        const fg = shadeColor(c, 0.65);
+        return { background: bg, color: ensureContrast(bg, fg) };
+      });
 
     case 'solid':
-      return accents.map((c) => ({
-        background: c,
-        color: '#ffffff',
-      }));
+      return accents.map((c) => {
+        // Same hue family for harmony.
+        // Only truly bright colors (yellow etc.) get dark text.
+        // Everything else gets a light tint of the same hue.
+        const fg = needsDarkText(c) ? shadeColor(c, 0.7) : tintColor(c, 0.85);
+        return { background: c, color: ensureContrast(c, fg) };
+      });
 
-    case 'outline':
-      return accents.map((c) => ({
+    case 'outline': {
+      // All cells use primary for border and text — unified, calm look.
+      const slideBg = palette?.background ?? '#ffffff';
+      const outlineFg = isDarkHex(slideBg)
+        ? tintColor(primary, 0.3)
+        : shadeColor(primary, 0.5);
+      // Return multiple entries so round-robin still works, but all identical
+      return accents.map(() => ({
         background: 'transparent',
-        color: shadeColor(c, 0.2),
-        border: c,
+        color: outlineFg,
+        border: primary,
       }));
+    }
 
-    case 'white':
-      return accents.map((c) => ({
+    case 'white': {
+      // All cells white bg, text is primary or text color — no random accents.
+      const whiteFg = ensureContrast('#ffffff', text);
+      return accents.map(() => ({
         background: '#ffffff',
-        color: shadeColor(c, 0.2),
+        color: whiteFg,
       }));
+    }
 
     case 'mono': {
-      return [
-        { background: tintColor(primary, 0.8), color: shadeColor(primary, 0.6) },
-        { background: primary, color: '#ffffff' },
-        { background: tintColor(primary, 0.9), color: shadeColor(primary, 0.5) },
-        { background: shadeColor(primary, 0.4), color: tintColor(primary, 0.9) },
-      ];
+      // All tint variations of primary — no solid cell that creates unintended emphasis.
+      // Gentle gradient from lighter to slightly deeper tints for rhythm.
+      const tints = [0.82, 0.88, 0.75, 0.92];
+      return tints.map((t) => {
+        const bg = tintColor(primary, t);
+        const fg = shadeColor(primary, 0.65);
+        return { background: bg, color: ensureContrast(bg, fg) };
+      });
     }
 
     case 'mixed':
     default: {
-      // Bright/dark pairs from primary + secondary + default accents
       const pairs = [
-        { bright: tintColor(primary, 0.75), dark: shadeColor(primary, 0.65) },
-        { bright: tintColor(secondary, 0.75), dark: shadeColor(secondary, 0.65) },
-        { bright: '#fce4b8', dark: '#5c3d0e' },
-        { bright: '#c5dde8', dark: '#1a3a4a' },
-        { bright: '#f5c6c6', dark: '#6b2020' },
-        { bright: '#c2e0c6', dark: '#1a4028' },
+        { bright: tintColor(primary, 0.78), dark: shadeColor(primary, 0.7) },
+        { bright: tintColor(secondary, 0.78), dark: shadeColor(secondary, 0.7) },
+        { bright: '#fce4b8', dark: '#4a2e06' },
+        { bright: '#c5dde8', dark: '#12303e' },
+        { bright: '#f5c6c6', dark: '#561818' },
+        { bright: '#c2e0c6', dark: '#143520' },
       ];
       const themes: CellTheme[] = [];
       for (const pair of pairs) {
-        themes.push({ background: pair.bright, color: pair.dark });
-        themes.push({ background: pair.dark, color: pair.bright });
+        themes.push({ background: pair.bright, color: ensureContrast(pair.bright, pair.dark) });
+        themes.push({ background: pair.dark, color: ensureContrast(pair.dark, pair.bright) });
       }
       return themes;
     }
@@ -159,13 +208,27 @@ function resolveTheme(themeName?: string, userPalette?: Palette): Palette {
   return resolved;
 }
 
-/** Check if a hex color is dark (luminance < 0.4) */
+/** Check if a hex color is dark — used for slide background auto-detection */
 function isDarkHex(hex: string): boolean {
   if (!hex.startsWith('#')) return false;
+  return hexLuminance(hex) < 0.4;
+}
+
+/** Relative luminance of a hex color */
+function hexLuminance(hex: string): number {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
   const b = parseInt(hex.slice(5, 7), 16) / 255;
-  return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 0.4;
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * For solid/mono cell themes: should text be light or dark?
+ * Only truly bright colors (yellow, light green) get dark text.
+ * Mid-tones (teal, green, coral) get light text for harmony.
+ */
+function needsDarkText(hex: string): boolean {
+  return hexLuminance(hex) > 0.55;
 }
 
 /** Mix a color with white by ratio (0=original, 1=white) */

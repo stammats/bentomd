@@ -3,6 +3,10 @@
   "guide": "Guide",
   "layouts": "Layouts",
   "gallery": "Style Gallery",
+  "templates": {
+    "title": "Templates",
+    "display": "hidden"
+  },
   "editor": {
     "title": "Editor",
     "display": "hidden"

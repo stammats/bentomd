@@ -1,0 +1,101 @@
+import type { Template } from './index'
+
+export const startupPitchTemplate: Template = {
+  id: 'startup-pitch',
+  name: 'Startup Pitch Deck',
+  description: 'Investor pitch with metrics, problem/solution, and team',
+  category: 'business',
+  thumbnail: {
+    background: '#0f172a',
+    accent: '#38bdf8',
+    style: 'mono',
+  },
+  content: `---
+title: Pitch Deck
+theme: ocean
+style: mono
+borderRadius: 24
+palette:
+  primary: "#38bdf8"
+  background: "#0f172a"
+  surface: "#1e293b"
+  text: "#f8fafc"
+  muted: "#94a3b8"
+defaults:
+  pageNumber: true
+---
+
+---
+layout: cover
+background: "#0f172a"
+color: "#f8fafc"
+---
+
+# YourApp
+## チームコラボを再定義する
+
+---
+
+## 課題
+
+### :alert-triangle: **73%** が週5h浪費 {hero}
+ツール分断で10+アプリを毎日切り替え
+
+### :clock: **$12K** /人/年の損失
+ツール分断の隠れたコスト
+
+### :users: **500M** 人の市場
+巨大な未開拓セグメント
+
+---
+
+## 解決策
+
+### :rocket: 統合プラットフォーム {hero}
+チャット・ドキュメント・タスク・コードを一つに
+
+### :zap: **3x** 高速化
+統合ワークフローで開発速度3倍
+
+### :link: コンテキスト維持
+すべてが繋がり、切り替え不要
+
+---
+
+## トラクション
+
+### :trending-up: **$2.4M** ARR
+MoM 25% 成長
+
+### :users: **15K** チーム
+スタートアップから Fortune 500 まで
+
+### :heart: NPS **72**
+業界トップクラスの満足度
+
+### :repeat: **95%** 継続率
+年間コホート全セグメント
+
+---
+
+## チーム
+
+### :user: CEO — Jane Smith
+Ex-Stripe。開発ツール領域10年。前回Exit $50M。
+
+### :code: CTO — Alex Chen
+Ex-Google Chrome DevTools。15年のプラットフォーム開発。
+
+### :bar-chart: COO — Maria Lopez
+Ex-Notion。10→500名のスケーリング経験。
+
+---
+layout: cover
+background: "#0f172a"
+color: "#f8fafc"
+---
+
+# Series A $10M 調達中
+## 一緒に未来をつくりましょう
+`,
+}

@@ -168,6 +168,11 @@ function generateMermaidScript(config: GlobalConfig): string {
       document.querySelectorAll('pre.mermaid svg').forEach(function(svg) {
         svg.removeAttribute('style');
         svg.setAttribute('width', '100%');
+        // Inside bento cells, also constrain height to fit the cell
+        if (svg.closest('.bento-cell')) {
+          svg.setAttribute('height', '100%');
+          svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+        }
       });
     }
     renderMermaid().catch(function() {});

@@ -17,6 +17,9 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   const colSpan = slot.colSpan ?? 4;
   const rowSpan = slot.rowSpan ?? 1;
   const isWide = colSpan / rowSpan > 4;
+  const area = colSpan * rowSpan;
+  // Size tier: lg (hero/full), md (half-width+), sm (small cells in 6-cell grids)
+  const sizeTier = area >= 12 ? 'lg' : area >= 6 ? 'md' : 'sm';
 
   // Build inline styles
   const borderRadius = config.borderRadius ?? 40;
@@ -38,13 +41,15 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
     styles.push(`border:2px solid ${cell.border}`);
   }
 
-  // Full-bleed image cell (image only, no icon/value — title overlays)
-  if (cell.image && !cell.icon && !cell.value) {
+  // Full-bleed image cell: image is the sole content (no icon, no description, no body text).
+  // Title-only overlay is allowed. If there's any text content besides title, render inline.
+  const hasBodyContent = !!(cell.icon || cell.description || cell.content || cell.value);
+  if (cell.image && !hasBodyContent) {
     return renderImageCell(cell, styles);
   }
 
   // Padding for non-image cells
-  styles.push('padding:40px');
+  styles.push('padding:48px');
 
   // Content alignment
   if (cell.align === 'center') {
@@ -53,41 +58,48 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
     styles.push('justify-content:center');
   }
 
-  const parts: string[] = [];
+  // Build text parts (title, description, content, etc.)
+  const textParts: string[] = [];
 
-  // Title with optional inline icon — **bold** parts render large (bento-value style)
   if (cell.title) {
-    const iconHtml = cell.icon
-      ? `<span class="bento-icon">${renderIcon(cell.icon)}</span> `
-      : '';
     const titleHtml = escapeHtml(cell.title)
       .replace(/\*\*([^*]+)\*\*/g, '<span class="bento-value">$1</span>');
     if (titleHtml.includes('bento-value')) {
-      parts.push(`<div class="bento-title">${iconHtml}${titleHtml}</div>`);
+      textParts.push(`<div class="bento-title">${titleHtml}</div>`);
     } else {
-      parts.push(`<h3 class="bento-title">${iconHtml}${titleHtml}</h3>`);
+      textParts.push(`<h3 class="bento-title">${titleHtml}</h3>`);
     }
-  } else if (cell.icon) {
-    // Icon only, no title
-    parts.push(`<div class="bento-icon">${renderIcon(cell.icon)}</div>`);
   }
   if (cell.description) {
-    parts.push(`<div class="bento-desc">${renderMarkdown(cell.description)}</div>`);
+    textParts.push(`<div class="bento-desc">${renderMarkdown(cell.description)}</div>`);
   }
   if (cell.content) {
-    parts.push(`<div class="bento-content">${renderMarkdown(cell.content)}</div>`);
+    textParts.push(`<div class="bento-content">${renderMarkdown(cell.content)}</div>`);
   }
   if (cell.mermaid) {
-    parts.push(`<pre class="mermaid">${cell.mermaid}</pre>`);
+    textParts.push(`<pre class="mermaid">${cell.mermaid}</pre>`);
+  }
+  if (cell.image) {
+    textParts.push(`<div class="bento-inline-image"><img src="${escapeHtml(cell.image)}" alt="${escapeHtml(cell.title ?? '')}" /></div>`);
   }
 
-  // Inline image (content image, not background)
-  if (cell.image) {
-    parts.push(`<div class="bento-inline-image"><img src="${escapeHtml(cell.image)}" alt="${escapeHtml(cell.title ?? '')}" /></div>`);
+  const parts: string[] = [];
+
+  if (cell.icon && isWide) {
+    // Wide cell: horizontal 2-column layout — icon left, text right
+    const iconHtml = `<div class="bento-icon">${renderIcon(cell.icon)}</div>`;
+    const textHtml = `<div class="bento-text">${textParts.join('\n')}</div>`;
+    parts.push(`<div class="bento-horizontal">${iconHtml}${textHtml}</div>`);
+  } else {
+    // Tall/square cell: vertical stack — icon on top, text below
+    if (cell.icon) {
+      parts.push(`<div class="bento-icon">${renderIcon(cell.icon)}</div>`);
+    }
+    parts.push(...textParts);
   }
 
   return (
-    `<div class="bento-cell" style="${styles.join(';')}">` +
+    `<div class="bento-cell bento-${sizeTier}" style="${styles.join(';')}">` +
     parts.join('\n') +
     `</div>`
   );
@@ -98,7 +110,10 @@ function renderImageCell(cell: BentoCell, baseStyles: string[]): string {
 
   const overlayParts: string[] = [];
   if (cell.title) {
-    overlayParts.push(`<h3 class="bento-title">${escapeHtml(cell.title)}</h3>`);
+    const titleHtml = escapeHtml(cell.title)
+      .replace(/\*\*([^*]+)\*\*/g, '<span class="bento-value">$1</span>');
+    const tag = titleHtml.includes('bento-value') ? 'div' : 'h3';
+    overlayParts.push(`<${tag} class="bento-title">${titleHtml}</${tag}>`);
   }
   if (cell.description) {
     overlayParts.push(`<p class="bento-desc">${escapeHtml(cell.description)}</p>`);
