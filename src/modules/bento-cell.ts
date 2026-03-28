@@ -19,7 +19,7 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   const isWide = colSpan / rowSpan > 4;
 
   // Build inline styles
-  const borderRadius = config.borderRadius ?? 20;
+  const borderRadius = config.borderRadius ?? 40;
   const styles: string[] = [
     'display:flex',
     'flex-direction:column',
@@ -41,7 +41,7 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   }
 
   // Padding for non-image cells
-  styles.push('padding:24px');
+  styles.push('padding:32px');
 
   // Content alignment
   if (cell.align === 'center') {
@@ -52,35 +52,22 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
 
   const parts: string[] = [];
 
-  // Color overrides for icon and value (inherit from cell theme)
+  // Icon
   const iconStyle = cell.color ? `color:${cell.color}` : '';
-  const valueStyle = cell.color ? `color:${cell.color}` : '';
-
-  // Wide cells: group icon + value horizontally
-  const hasHeroContent = cell.icon || cell.value;
-  if (isWide && hasHeroContent) {
-    const heroParts: string[] = [];
-    if (cell.icon) {
-      heroParts.push(`<div class="bento-icon" style="margin-bottom:0;margin-right:16px;flex-shrink:0;${iconStyle}">${renderIcon(cell.icon, { size: 32 })}</div>`);
-    }
-    if (cell.value) {
-      heroParts.push(`<div class="bento-value" style="${valueStyle}">${escapeHtml(cell.value)}</div>`);
-    }
-    parts.push(`<div style="display:flex;align-items:center">${heroParts.join('')}</div>`);
-  } else {
-    if (cell.icon) {
-      parts.push(`<div class="bento-icon" style="${iconStyle}">${renderIcon(cell.icon, { size: 32 })}</div>`);
-    }
-    if (cell.value) {
-      parts.push(`<div class="bento-value" style="${valueStyle}">${escapeHtml(cell.value)}</div>`);
-    }
+  if (cell.icon) {
+    parts.push(`<div class="bento-icon" style="${iconStyle}">${renderIcon(cell.icon, { size: 32 })}</div>`);
   }
 
+  // Title — **bold** parts render large (bento-value style)
   if (cell.title) {
-    parts.push(`<h3 class="bento-title">${escapeHtml(cell.title)}</h3>`);
-  }
-  if (cell.label) {
-    parts.push(`<p class="bento-label">${escapeHtml(cell.label)}</p>`);
+    const titleHtml = escapeHtml(cell.title)
+      .replace(/\*\*([^*]+)\*\*/g, '<span class="bento-value">$1</span>');
+    // If title contains a bento-value span, wrap in a title div
+    if (titleHtml.includes('bento-value')) {
+      parts.push(`<div class="bento-title">${titleHtml}</div>`);
+    } else {
+      parts.push(`<h3 class="bento-title">${titleHtml}</h3>`);
+    }
   }
   if (cell.description) {
     parts.push(`<div class="bento-desc">${renderMarkdown(cell.description)}</div>`);

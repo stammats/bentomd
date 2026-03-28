@@ -361,19 +361,9 @@ function buildBentoItem(
 
   const bodyLinesForText = mermaid ? filteredBodyLines : bodyLines;
 
-  // Check if title looks like a value (starts with $, digit, or is a percentage)
-  if (/^[\$€£¥]?\d/.test(h.title) || /^\d+[%kKmMbB+]/.test(h.title)) {
-    // Split "12 Awards" → value: "12", label: "Awards"
-    const valMatch = h.title.match(/^([\$€£¥]?[\d,.]+[%kKmMbB+]*)\s+(.+)$/);
-    if (valMatch) {
-      item.value = valMatch[1];
-      item.label = valMatch[2];
-    } else {
-      item.value = h.title;
-    }
-  } else {
-    item.title = h.title;
-  }
+  // Title is always stored as title.
+  // **bold** parts in title will be rendered large (value-style) by bento-cell.
+  item.title = h.title;
 
   // Check for image in body
   const imageLine = bodyLinesForText.find((l) => IMAGE_RE.test(l));
@@ -387,19 +377,8 @@ function buildBentoItem(
   const textLines = bodyLinesForText.filter((l) => !IMAGE_RE.test(l));
   const text = textLines.join('\n').trim();
 
-  if (item.value) {
-    // For value cells: first line is label, rest is description
-    if (text && !item.label) {
-      const lines = text.split('\n');
-      item.label = lines[0];
-      if (lines.length > 1) item.description = lines.slice(1).join('\n').trim();
-    } else if (text && item.label) {
-      item.description = text;
-    }
-  } else {
-    // For title cells, body text is description (preserves markdown)
-    if (text) item.description = text;
-  }
+  // Body text is description (preserves markdown for lists, tables, etc.)
+  if (text) item.description = text;
 
   // Modifiers → size, align
   const sizeKeywords = new Set(['sm', 'md', 'lg', 'wide', 'tall', 'hero', 'full']);

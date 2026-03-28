@@ -231,12 +231,12 @@ Latency`;
     const deck = parse(source);
     expect(deck.slides[0].items).toHaveLength(2);
     expect(deck.slides[0].items![0]).toMatchObject({
-      value: '99.9%',
-      label: 'Uptime',
+      title: '99.9%',
+      description: 'Uptime',
     });
     expect(deck.slides[0].items![1]).toMatchObject({
-      value: '50ms',
-      label: 'Latency',
+      title: '50ms',
+      description: 'Latency',
     });
   });
 
@@ -356,7 +356,7 @@ Answer`;
 
     const deck = parse(source);
     expect(deck.slides[0].rawItems).toHaveLength(1);
-    expect(deck.slides[0].rawItems![0]).toMatchObject({ value: '42', label: 'Answer' });
+    expect(deck.slides[0].rawItems![0]).toMatchObject({ title: '42', description: 'Answer' });
   });
 
   it('handles two-column layout with ::left:: and ::right:: markers', () => {

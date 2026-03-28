@@ -31,8 +31,11 @@ const STORAGE_KEY = 'bentomd-editor-docs'
 const ACTIVE_KEY = 'bentomd-editor-active'
 
 const DEFAULT_CONTENT = `---
-title: bentomd Demo
-borderRadius: 20
+title: bentomd Complete Demo
+borderRadius: 40
+palette:
+  primary: "#0984e3"
+  secondary: "#6c5ce7"
 ---
 
 ---
@@ -46,82 +49,68 @@ color: "#f8fafc"
 
 ---
 
-## Custom Theme Example
-
-### :palette: Branded
-This deck uses custom colors and border radius set in the global frontmatter above.
-
-### :settings: Configurable
-Change \`palette\` and \`borderRadius\` in the YAML header to customize the entire deck.
-
----
-
-## What is bentomd?
+## 1. Three Cells (auto grid)
 
 ### :zap: Lightning Fast
-Build presentations in seconds with plain Markdown. No GUI needed.
+Build presentations in seconds with plain Markdown.
 
 ### :palette: Swiss Typography
-Professional type scale, spacing, and grid system out of the box.
+Professional type scale, spacing, and grid out of the box.
 
-### :package: Single File Output
+### :package: Single File
 Export to standalone HTML or PDF. Share anywhere.
 
 ---
 
-## Key Metrics
+## 2. Four Metrics (2x2 grid)
 
-### 1.0
-Version
+### **1.0** Version
 
-### 79
-Tests Passing
+### **79** Tests Passing
 
-### 12ms
-Avg Build Time
+### **12**ms Avg Build Time
 
-### 0
-Config Required
+### **0** Config Required
 
 ---
 
-## Platform Features
+## 3. Six Features (3x2 grid)
 
-### :rocket: Deploy Anywhere
-Export to static HTML and host on any platform. No server required.
+### :rocket: Deploy
+Static HTML export — host on any platform.
 
-### :shield: Enterprise Ready
-SOC 2 compliant patterns with role-based access and audit logging.
+### :shield: Secure
+SOC 2 compliant with encryption and SSO.
 
 ### :code: Developer First
-Full CLI tooling, hot reload dev server, and extensible module system.
+CLI tools, hot reload, and extensible modules.
 
-### :users: Team Collaboration
-Real-time editing with shared themes and reusable slide libraries.
+### :users: Teams
+Real-time collaboration with role-based access.
 
-### :globe: Internationalization
-RTL support, multi-language, and locale-aware formatting built in.
+### :globe: Global
+RTL support and locale-aware formatting.
 
-### :bar-chart-2: Data Visualization
-Inline charts, tables, and Mermaid diagrams — all from Markdown.
+### :bar-chart-2: Data
+Charts, tables, and Mermaid diagrams from Markdown.
 
 ---
 
-## Rich Content in Cells
+## 4. Rich Text Content
 
 ### :book: Formatted Text
-Cells support **bold**, *italic*, \`code\`, and [links](https://bentomd.dev). Write naturally in Markdown.
+Cells support **bold**, *italic*, \`inline code\`, and [hyperlinks](https://bentomd.dev).
 
-### :list: Lists
+### :list: Bullet Lists
 - Ship faster with CI/CD
 - Monitor with real-time alerts
-- Scale automatically
+- Scale automatically under load
 - Pay only for what you use
 
-### :quote: Blockquotes
+### :message-circle: Blockquote
 > The best way to predict the future is to invent it. — Alan Kay
 
-### :table: Data Tables
+### :table: Table Data
 | Feature | Free | Pro |
 |---------|------|-----|
 | Slides | 10 | Unlimited |
@@ -130,9 +119,9 @@ Cells support **bold**, *italic*, \`code\`, and [links](https://bentomd.dev). Wr
 
 ---
 
-## Diagrams
+## 5. Mermaid Diagrams
 
-### System Flow
+### System Architecture
 \`\`\`mermaid
 graph LR
   A[User] --> B[API Gateway]
@@ -140,61 +129,70 @@ graph LR
   B --> D[Data Service]
 \`\`\`
 
-### :code: Code in Cells
-Mermaid diagrams render automatically when you use the \`\`\`mermaid code fence inside a cell.
+### :code: Auto-Detected
+Use \`\`\`mermaid code fences inside any cell. Diagrams are themed to match your palette.
 
 ---
 
-## Size Hints
+## 6. Metrics with Images in Cells
+
+### :trending-up: **+42**% Revenue Growth
+![Chart](https://images.unsplash.com/photo-1543286386-713bdd548da4?w=400&q=80)
+
+### :users: **150K** Active Users
+![Team](https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80)
+
+### **$4.2M** Annual Revenue
+![Revenue](https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&q=80)
+
+---
+
+## 8. Size Hints
 
 ### :layers: Hero Cell {hero}
-Use size hints like \`{hero}\`, \`{tall}\`, \`{md}\`, \`{sm}\` to control cell sizing. This cell spans 2 rows with \`{hero}\`. Combine with smaller cells for visual hierarchy.
+Use \`{hero}\`, \`{tall}\`, \`{md}\`, \`{sm}\`, \`{wide}\` to control sizing. This cell spans 2 rows. Combine with smaller cells for hierarchy.
 
-### 99.9% {sm}
-Uptime SLA
+### **99.9**% Uptime SLA {sm}
 
-### :zap: 5ms {sm}
-Avg Response
+### :zap: **5**ms Response {sm}
 
 ---
 
-## Image + Text Mix
+## 9. Full-bleed Image Cell
 
 ### Product Dashboard {hero}
 ![Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80)
 
-### :shield: Security First
-End-to-end encryption with SOC 2 Type II compliance and single sign-on.
+### :shield: Security
+End-to-end encryption with SOC 2 compliance.
 
-### :bar-chart: Real-time Analytics
-Custom dashboards with alerting, anomaly detection, and drill-down reports.
+### :bar-chart: Analytics
+Real-time dashboards with custom alerting.
 
 ---
 
-## Rich Cells
+## 10. Icon + Title + Text + Image
 
 ### :rocket: Product Launch
 Our new dashboard is live with real-time analytics, custom alerts, and team collaboration built in.
-![Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80)
+![Product](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80)
 
-### :users: 50K+
-Active Users
+### :users: **50K+** Active Users
 
-### :star: 4.9
-App Store Rating
+### :star: **4.9** App Store Rating
 
 ---
 
-## Combined Content
+## 11. Lists + Tables in Cells
 
 ### :shield: Security Overview
-We take security seriously. Here's what's included:
+We take security seriously:
 - End-to-end encryption
 - SOC 2 Type II certified
 - SSO with SAML and OIDC
 - Role-based access control
 
-### :bar-chart: Performance
+### :bar-chart: Performance Metrics
 | Metric | Value |
 |--------|-------|
 | Uptime | 99.99% |
@@ -203,20 +201,44 @@ We take security seriously. Here's what's included:
 
 ---
 
-## Two Cell Layout
+## 12. Vertical Stack (wide)
 
-### :terminal: How It Works
-Write \`---\` to separate slides. Write \`###\` to create bento cells. Add \`##\` for slide titles. Content type is auto-detected.
+### :terminal: Step 1: Install {wide}
+\`npm install -g bentomd\` — one command to get started.
 
-### :file-text: Just Markdown
-No proprietary format. Your .bmd files are valid Markdown — readable in any editor, on GitHub, or in your IDE.
+### :file-text: Step 2: Write Markdown {wide}
+Create a \`.bmd\` file with \`---\` slide separators and \`###\` cell separators.
+
+### :rocket: Step 3: Present {wide}
+Run \`bentomd dev\` for live preview, or \`bentomd build\` for static HTML export.
 
 ---
 
-## Single Hero
+## 13. Two Cell Layout
+
+### :terminal: How It Works
+Write \`---\` to separate slides. Write \`###\` to create bento cells. Add \`##\` for slide titles. Content type is auto-detected from what you write inside each cell.
+
+### :file-text: Just Markdown
+No proprietary format. Your \`.bmd\` files are valid Markdown — readable in any text editor, on GitHub, or in your IDE.
+
+---
+
+## 14. Tall + Right Stack
+
+### :layers: Main Feature {tall}
+Build and deploy with confidence. Our platform handles scaling, security, and monitoring so your team can focus on building great products.
+
+### **99.99**% Uptime {sm}
+
+### :zap: **12**ms Response {sm}
+
+---
+
+## 15. Single Hero
 
 ### :rocket: Ready to Launch {hero}
-bentomd turns your Markdown into beautiful, professional presentations. No design skills required. Just write content and let the bento grid handle the layout.
+bentomd turns your Markdown into beautiful, professional presentations. No design skills required — just write content and let the bento grid handle the layout automatically.
 
 ---
 layout: cover
@@ -231,8 +253,8 @@ bentomd.dev
 `
 
 const DEFAULT_DOC: Document = {
-  id: 'demo-v2',
-  name: 'Demo Deck',
+  id: 'demo-v3',
+  name: 'Complete Demo',
   content: DEFAULT_CONTENT,
   updatedAt: Date.now(),
 }
@@ -260,7 +282,7 @@ function saveDocs(docs: Document[]) {
 
 function loadActiveId(): string {
   if (typeof window === 'undefined') return 'default'
-  return localStorage.getItem(ACTIVE_KEY) ?? 'demo-v2'
+  return localStorage.getItem(ACTIVE_KEY) ?? 'demo-v3'
 }
 
 function saveActiveId(id: string) {

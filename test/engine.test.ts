@@ -145,14 +145,14 @@ describe('grid engine: stats (→ bento)', () => {
       options: {},
       content: '',
       rawItems: [
-        { value: '99%', label: 'Uptime' },
-        { value: '10M', label: 'Users' },
+        { title: '**99**% Uptime' },
+        { title: '**10M** Users' },
       ],
     };
     const html = renderSlideV2(slide, emptyConfig, defaultContext);
     expect(html).toContain('bento-cell');
-    expect(html).toContain('99%');
-    expect(html).toContain('10M');
+    expect(html).toContain('bento-value');
+    expect(html).toContain('99');
   });
 });
 

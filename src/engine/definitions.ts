@@ -233,7 +233,7 @@ export const bentoLayout: LayoutDefinition = {
   chrome: 'none',
   rows: 'repeat(3, 1fr)',
   cols: 'repeat(12, 1fr)',
-  gap: { row: 16, col: 16 },
+  gap: { row: 24, col: 24 },
   slots: [
     // Bento slots are dynamic — resolved at runtime from items
     // The slot-resolver generates slots from BentoCell[] items
