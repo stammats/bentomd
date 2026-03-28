@@ -16,6 +16,8 @@ export interface GlobalConfig {
   lang?: string;
   dir?: 'ltr' | 'rtl';
   defaults?: SlideDefaults;
+  /** Border radius for bento cells in pixels. Default: 20 */
+  borderRadius?: number;
 }
 
 export interface FontConfig {
@@ -272,6 +274,8 @@ export interface BentoCell {
   value?: string;
   label?: string;
   align?: string;
+  /** Mermaid diagram source extracted from a ```mermaid code block in the cell body */
+  mermaid?: string;
 }
 
 // Generic fallback

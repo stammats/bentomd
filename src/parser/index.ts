@@ -332,6 +332,20 @@ function buildChartItem(h: ParsedMdHeading, _bodyLines: string[]): Record<string
   return { label: h.title, value: 0 };
 }
 
+/** Extract a mermaid code block from body lines.
+ * Returns the mermaid source if found, and the remaining lines without the block. */
+function extractMermaidBlock(bodyLines: string[]): { mermaid: string | null; remaining: string[] } {
+  const fullBody = bodyLines.join('\n');
+  const mermaidRe = /^```mermaid\s*\n([\s\S]*?)^```/m;
+  const match = fullBody.match(mermaidRe);
+  if (!match) return { mermaid: null, remaining: bodyLines };
+
+  const mermaidCode = match[1].trim();
+  const withoutBlock = fullBody.replace(match[0], '').trim();
+  const remaining = withoutBlock ? withoutBlock.split('\n') : [];
+  return { mermaid: mermaidCode, remaining };
+}
+
 function buildBentoItem(
   h: ParsedMdHeading,
   bodyLines: string[],
@@ -340,6 +354,12 @@ function buildBentoItem(
   const item: Record<string, unknown> = {};
 
   if (h.icon) item.icon = h.icon;
+
+  // Extract mermaid code block before other body processing
+  const { mermaid, remaining: filteredBodyLines } = extractMermaidBlock(bodyLines);
+  if (mermaid) item.mermaid = mermaid;
+
+  const bodyLinesForText = mermaid ? filteredBodyLines : bodyLines;
 
   // Check if title looks like a value (starts with $, digit, or is a percentage)
   if (/^[\$€£¥]?\d/.test(h.title) || /^\d+[%kKmMbB+]/.test(h.title)) {
@@ -356,7 +376,7 @@ function buildBentoItem(
   }
 
   // Check for image in body
-  const imageLine = bodyLines.find((l) => IMAGE_RE.test(l));
+  const imageLine = bodyLinesForText.find((l) => IMAGE_RE.test(l));
   if (imageLine) {
     const imgMatch = imageLine.match(IMAGE_RE);
     if (imgMatch) item.image = imgMatch[2];
@@ -364,7 +384,7 @@ function buildBentoItem(
 
   // Non-image body text = description or label
   // Preserve newlines for markdown rendering (lists, tables, quotes)
-  const textLines = bodyLines.filter((l) => !IMAGE_RE.test(l));
+  const textLines = bodyLinesForText.filter((l) => !IMAGE_RE.test(l));
   const text = textLines.join('\n').trim();
 
   if (item.value) {
@@ -481,6 +501,7 @@ function parseGlobalConfig(raw: Record<string, unknown>): GlobalConfig {
   if (raw.logo != null) config.logo = raw.logo as GlobalConfig['logo'];
   if (raw.footer != null) config.footer = raw.footer as GlobalConfig['footer'];
   if (raw.defaults != null) config.defaults = raw.defaults as GlobalConfig['defaults'];
+  if (raw.borderRadius != null) config.borderRadius = Number(raw.borderRadius);
 
   return config;
 }

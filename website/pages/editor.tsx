@@ -32,6 +32,7 @@ const ACTIVE_KEY = 'bentomd-editor-active'
 
 const DEFAULT_CONTENT = `---
 title: bentomd Demo
+borderRadius: 20
 ---
 
 ---
@@ -42,6 +43,16 @@ color: "#f8fafc"
 
 # bentomd
 ## Slide decks from Markdown
+
+---
+
+## Custom Theme Example
+
+### :palette: Branded
+This deck uses custom colors and border radius set in the global frontmatter above.
+
+### :settings: Configurable
+Change \`palette\` and \`borderRadius\` in the YAML header to customize the entire deck.
 
 ---
 
@@ -119,6 +130,21 @@ Cells support **bold**, *italic*, \`code\`, and [links](https://bentomd.dev). Wr
 
 ---
 
+## Diagrams
+
+### System Flow
+\`\`\`mermaid
+graph LR
+  A[User] --> B[API Gateway]
+  B --> C[Auth Service]
+  B --> D[Data Service]
+\`\`\`
+
+### :code: Code in Cells
+Mermaid diagrams render automatically when you use the \`\`\`mermaid code fence inside a cell.
+
+---
+
 ## Size Hints
 
 ### :layers: Hero Cell {hero}
@@ -142,6 +168,38 @@ End-to-end encryption with SOC 2 Type II compliance and single sign-on.
 
 ### :bar-chart: Real-time Analytics
 Custom dashboards with alerting, anomaly detection, and drill-down reports.
+
+---
+
+## Rich Cells
+
+### :rocket: Product Launch
+Our new dashboard is live with real-time analytics, custom alerts, and team collaboration built in.
+![Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80)
+
+### :users: 50K+
+Active Users
+
+### :star: 4.9
+App Store Rating
+
+---
+
+## Combined Content
+
+### :shield: Security Overview
+We take security seriously. Here's what's included:
+- End-to-end encryption
+- SOC 2 Type II certified
+- SSO with SAML and OIDC
+- Role-based access control
+
+### :bar-chart: Performance
+| Metric | Value |
+|--------|-------|
+| Uptime | 99.99% |
+| Latency | 12ms |
+| Regions | 20+ |
 
 ---
 

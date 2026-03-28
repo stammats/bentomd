@@ -19,10 +19,11 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   const isWide = colSpan / rowSpan > 4;
 
   // Build inline styles
+  const borderRadius = config.borderRadius ?? 20;
   const styles: string[] = [
     'display:flex',
     'flex-direction:column',
-    'border-radius:16px',
+    `border-radius:${borderRadius}px`,
     'height:100%',
     'overflow:hidden',
   ];
@@ -86,6 +87,9 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   }
   if (cell.content) {
     parts.push(`<div class="bento-content">${renderMarkdown(cell.content)}</div>`);
+  }
+  if (cell.mermaid) {
+    parts.push(`<pre class="mermaid">${cell.mermaid}</pre>`);
   }
 
   // Inline image (content image, not background)

@@ -51,6 +51,7 @@ export function generateCSS(config: GlobalConfig): string {
   const rMd = 8;
   const rLg = 12;
   const rXl = is43 ? 12 : 16;
+  const rCell = config.borderRadius ?? 20;
 
   // Grid engine CSS (replaces ~400 lines of layout-specific CSS)
   const gridCSS = generateGridCSS();
@@ -607,6 +608,7 @@ tr:last-child td { border-bottom: none; }
 .bento-cell {
   background: ${surface};
   color: ${text};
+  border-radius: ${rCell}px;
   transition: transform 0.15s ease;
 }
 .bento-value {
