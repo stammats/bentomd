@@ -3,10 +3,8 @@
   "cover": "cover",
   "section": "section",
   "end": "end",
-  "chart": "chart",
-  "table": "table",
-  "quote": "quote",
-  "timeline": "timeline",
-  "code": "code",
-  "bento-test": "Bento Test"
+  "bento-test": {
+    "title": "Bento Test",
+    "display": "hidden"
+  }
 }

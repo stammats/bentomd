@@ -254,6 +254,85 @@ Zero-trust architecture with end-to-end encryption across all tiers.
 ### :zap: Fast {sm}
 12ms avg response`} />
 
+## Tables in Cells
+
+Standard Markdown tables work inside any cell:
+
+<SlidePreview code={`---
+theme: default
+style: tint
+---
+
+## Pricing Comparison
+
+### Starter
+| | Included |
+|---|---|
+| Projects | 3 |
+| Storage | 5 GB |
+| Support | Community |
+
+### Pro
+| | Included |
+|---|---|
+| Projects | Unlimited |
+| Storage | 100 GB |
+| Support | Priority |
+
+### Enterprise
+| | Included |
+|---|---|
+| Projects | Unlimited |
+| Storage | Unlimited |
+| Support | Dedicated |`} />
+
+## Blockquotes in Cells
+
+Use `>` for pull quotes inside cells:
+
+<SlidePreview code={`---
+theme: berry
+style: tint
+---
+
+## What People Say
+
+### :message-circle: Customer Feedback
+> "This tool changed how our team builds presentations. We ship decks 10x faster now."
+
+### :star: Press Review
+> "The most elegant Markdown-to-slides tool we've seen. Bento grid layout is genius."
+
+### :heart: Community
+> "Finally, a presentation tool that respects plain text and version control."`} />
+
+## Code Blocks in Cells
+
+Fenced code blocks render with syntax highlighting:
+
+<SlidePreview code={`---
+theme: mono
+style: outline
+---
+
+## Quick Start
+
+### Install
+\\\`\\\`\\\`bash
+npm install -g bentomd
+\\\`\\\`\\\`
+
+### Create a File
+\\\`\\\`\\\`markdown
+# My Presentation
+## Built with bentomd
+\\\`\\\`\\\`
+
+### Preview
+\\\`\\\`\\\`bash
+bentomd dev slides.bmd
+\\\`\\\`\\\``} />
+
 ## Tips
 
 - Cells are auto-placed — you never specify grid coordinates
@@ -261,3 +340,4 @@ Zero-trust architecture with end-to-end encryption across all tiers.
 - Mix `{hero}` or `{tall}` with `{sm}` cells for visual hierarchy
 - `{center}` works best on metric cards with large bold values
 - Image cells: `![](url)` alone = background fill; with text = inline image below content
+- Any Markdown content works inside cells: bold, italic, links, lists, tables, quotes, code blocks, and mermaid diagrams
