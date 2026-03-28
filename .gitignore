@@ -21,13 +21,14 @@ devlogs/
 .claude/
 CLAUDE.md
 
-# Screenshots and images in root (dev artifacts)
+# Screenshots, images, and docs in root (dev artifacts)
 *.png
 *.jpg
 *.jpeg
 *.webp
 *.WEBP
 *.JPG
+*.pdf
 
 # Build cache
 website/tsconfig.tsbuildinfo
