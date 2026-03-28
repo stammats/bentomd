@@ -16,8 +16,10 @@ export interface GlobalConfig {
   lang?: string;
   dir?: 'ltr' | 'rtl';
   defaults?: SlideDefaults;
-  /** Border radius for bento cells in pixels. Default: 20 */
+  /** Border radius for bento cells in pixels. Default: 40 */
   borderRadius?: number;
+  /** Font size scale factor (1.0 = default). E.g. 0.8 for smaller, 1.2 for larger */
+  fontSize?: number;
 }
 
 export interface FontConfig {

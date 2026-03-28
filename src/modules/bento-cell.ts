@@ -41,7 +41,7 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   }
 
   // Padding for non-image cells
-  styles.push('padding:32px');
+  styles.push('padding:40px');
 
   // Content alignment
   if (cell.align === 'center') {

@@ -25,15 +25,16 @@ export function generateCSS(config: GlobalConfig): string {
 
   // Typography — Swiss Typographic Scale (presentation-grade)
   const is43 = ar === '4:3';
-  const fontDisplay = is43 ? 72 : 96;
-  const fontH1 = is43 ? 52 : 64;
-  const fontH2 = is43 ? 38 : 44;
-  const fontH3 = is43 ? 28 : 34;
-  const fontH4 = is43 ? 24 : 28;
-  const fontBodySize = is43 ? 22 : 28;
-  const fontBase = is43 ? 20 : 22;
-  const fontSmall = is43 ? 16 : 18;
-  const fontCaption = is43 ? 14 : 16;
+  const fs = config.fontSize ?? 1.0; // scale factor
+  const fontDisplay = Math.round((is43 ? 72 : 96) * fs);
+  const fontH1 = Math.round((is43 ? 52 : 64) * fs);
+  const fontH2 = Math.round((is43 ? 38 : 44) * fs);
+  const fontH3 = Math.round((is43 ? 28 : 34) * fs);
+  const fontH4 = Math.round((is43 ? 24 : 28) * fs);
+  const fontBodySize = Math.round((is43 ? 22 : 28) * fs);
+  const fontBase = Math.round((is43 ? 20 : 22) * fs);
+  const fontSmall = Math.round((is43 ? 16 : 18) * fs);
+  const fontCaption = Math.round((is43 ? 14 : 16) * fs);
 
   // Spacing — generous Swiss grid spacing
   const gutter = is43 ? 20 : 28;
@@ -237,7 +238,7 @@ tr:last-child td { border-bottom: none; }
    Module: Heading
    ========================================================== */
 
-.module-heading { margin-bottom: 0; }
+.module-heading { margin-bottom: ${spXl}px; }
 .module-heading h1 {
   font-size: ${fontH1}px;
   font-weight: 800;
@@ -250,6 +251,7 @@ tr:last-child td { border-bottom: none; }
   font-size: ${fontH4}px;
   color: ${muted};
   line-height: 1.4;
+  margin-top: ${spMd}px;
   margin-top: 12px;
 }
 
@@ -620,28 +622,32 @@ tr:last-child td { border-bottom: none; }
   line-height: 1;
 }
 .bento-title {
-  font-size: ${fontH3}px;
+  font-size: ${fontH2}px;
   font-weight: 700;
   color: inherit;
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
 .bento-label {
-  font-size: ${fontBase}px;
+  font-size: ${fontH3}px;
   opacity: 0.7;
   margin-top: 4px;
 }
 .bento-desc {
-  font-size: ${fontBase}px;
+  font-size: ${fontH3}px;
   opacity: 0.7;
-  line-height: 1.5;
-  margin-top: 6px;
+  line-height: 1.4;
+  margin-top: 8px;
 }
+.bento-desc p { margin: 0 0 0.4em; }
+.bento-desc ul, .bento-desc ol { margin: 0; padding-left: 1.2em; }
+.bento-desc li { margin-bottom: 0.3em; }
+.bento-desc table { font-size: ${fontBase}px; }
 .bento-icon {
   color: inherit;
   margin-bottom: ${spSm}px;
 }
-.bento-icon svg { width: 32px; height: 32px; }
+.bento-icon svg { width: 40px; height: 40px; }
 .bento-content { margin-top: ${spSm}px; }
 
 /* Bento inline image (content image, not background) */
@@ -649,7 +655,7 @@ tr:last-child td { border-bottom: none; }
   flex: 1;
   min-height: 0;
   margin-top: ${spMd}px;
-  border-radius: ${rMd}px;
+  border-radius: ${Math.round(rCell * 0.5)}px;
   overflow: hidden;
 }
 .bento-inline-image img {

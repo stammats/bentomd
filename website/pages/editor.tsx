@@ -36,6 +36,8 @@ borderRadius: 40
 palette:
   primary: "#0984e3"
   secondary: "#6c5ce7"
+defaults:
+  pageNumber: true
 ---
 
 ---
@@ -49,7 +51,20 @@ color: "#f8fafc"
 
 ---
 
+---
+layout: section
+background: "#1e293b"
+color: "#f8fafc"
+---
+
+# Part 1
+## Core Features
+
+---
+
 ## 1. Three Cells (auto grid)
+
+Write \`###\` to create cells. Content type is auto-detected.
 
 ### :zap: Lightning Fast
 Build presentations in seconds with plain Markdown.
@@ -64,6 +79,8 @@ Export to standalone HTML or PDF. Share anywhere.
 
 ## 2. Four Metrics (2x2 grid)
 
+Highlight numbers with **bold** syntax.
+
 ### **1.0** Version
 
 ### **79** Tests Passing
@@ -75,6 +92,10 @@ Export to standalone HTML or PDF. Share anywhere.
 ---
 
 ## 3. Six Features (3x2 grid)
+
+Everything you need to ship faster:
+- Zero-config deployment
+- Built-in security
 
 ### :rocket: Deploy
 Static HTML export — host on any platform.
@@ -96,7 +117,20 @@ Charts, tables, and Mermaid diagrams from Markdown.
 
 ---
 
+---
+layout: section
+background: "#0f172a"
+color: "#f8fafc"
+---
+
+# Part 2
+## Content Types
+
+---
+
 ## 4. Rich Text Content
+
+Each cell auto-detects its content type:
 
 ### :book: Formatted Text
 Cells support **bold**, *italic*, \`inline code\`, and [hyperlinks](https://bentomd.dev).
@@ -149,8 +183,12 @@ Use \`\`\`mermaid code fences inside any cell. Diagrams are themed to match your
 
 ## 8. Size Hints
 
-### :layers: Hero Cell {hero}
-Use \`{hero}\`, \`{tall}\`, \`{md}\`, \`{sm}\`, \`{wide}\` to control sizing. This cell spans 2 rows. Combine with smaller cells for hierarchy.
+### :layers: **Size Hints** {hero}
+Control cell layout with size modifiers:
+- \`{hero}\` — large, 2 rows
+- \`{tall}\` — half width, 2 rows
+- \`{sm}\` — compact, 1/3 width
+- \`{wide}\` — full width, 1 row
 
 ### **99.9**% Uptime SLA {sm}
 
@@ -226,8 +264,12 @@ No proprietary format. Your \`.bmd\` files are valid Markdown — readable in an
 
 ## 14. Tall + Right Stack
 
-### :layers: Main Feature {tall}
-Build and deploy with confidence. Our platform handles scaling, security, and monitoring so your team can focus on building great products.
+### :layers: **Main Feature** {tall}
+Build and deploy with confidence:
+- Zero-downtime releases
+- Automated rollback
+- Built-in monitoring
+- Feature flags included
 
 ### **99.99**% Uptime {sm}
 
@@ -237,8 +279,11 @@ Build and deploy with confidence. Our platform handles scaling, security, and mo
 
 ## 15. Single Hero
 
-### :rocket: Ready to Launch {hero}
-bentomd turns your Markdown into beautiful, professional presentations. No design skills required — just write content and let the bento grid handle the layout automatically.
+### :rocket: **Ready to Launch** {hero}
+bentomd turns your Markdown into beautiful, professional presentations. No design skills needed — just write content and the bento grid handles layout automatically.
+- Write in Markdown
+- Export to HTML or PDF
+- Present from any browser
 
 ---
 layout: cover
@@ -511,8 +556,17 @@ function EditorInner() {
     return () => mq.removeEventListener('change', handler)
   }, [])
 
-  // ---- Load from localStorage on mount ----
+  // ---- Load on mount ----
+  // In dev mode, always load the latest default template (skip localStorage)
+  const isDev = process.env.NODE_ENV === 'development'
   useEffect(() => {
+    if (isDev) {
+      setDocs([DEFAULT_DOC])
+      setActiveId(DEFAULT_DOC.id)
+      setEditorContent(DEFAULT_CONTENT)
+      setIsLoaded(true)
+      return
+    }
     const storedDocs = loadDocs()
     const storedActiveId = loadActiveId()
     const activeDoc = storedDocs.find((d) => d.id === storedActiveId) ?? storedDocs[0]

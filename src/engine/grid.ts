@@ -127,6 +127,11 @@ function buildChrome(
   slideOptions?: Record<string, unknown>,
 ): { header: string; footer: string } {
   if (layout.chrome === 'none') {
+    // Even with no chrome, show footer if pageNumber is enabled
+    const showPageNumber = slideOptions?.pageNumber ?? config.defaults?.pageNumber ?? false;
+    if (showPageNumber) {
+      return { header: '', footer: buildFooter(config, context, slideOptions) };
+    }
     return { header: '', footer: '' };
   }
 

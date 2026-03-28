@@ -481,6 +481,7 @@ function parseGlobalConfig(raw: Record<string, unknown>): GlobalConfig {
   if (raw.footer != null) config.footer = raw.footer as GlobalConfig['footer'];
   if (raw.defaults != null) config.defaults = raw.defaults as GlobalConfig['defaults'];
   if (raw.borderRadius != null) config.borderRadius = Number(raw.borderRadius);
+  if (raw.fontSize != null) config.fontSize = Number(raw.fontSize);
 
   return config;
 }

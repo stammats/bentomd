@@ -1,5 +1,5 @@
 import type { Slide, GlobalConfig } from '../types/index.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, renderMarkdown } from './utils.js';
 
 export function renderHeading(slide: Slide, _config: GlobalConfig): string {
   let heading = slide.options.heading;
@@ -16,7 +16,7 @@ export function renderHeading(slide: Slide, _config: GlobalConfig): string {
 
   const summary = slide.options.summary;
   const summaryHtml = summary
-    ? `<p class="slide-summary">${escapeHtml(String(summary))}</p>`
+    ? `<div class="slide-summary">${renderMarkdown(String(summary))}</div>`
     : '';
 
   return (
