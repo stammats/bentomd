@@ -1,17 +1,21 @@
 # Global Configuration
 
-The first YAML block in a `.bmd` file contains the global configuration for the entire deck.
+The first YAML block in a `.bmd` file configures the entire deck. All fields are optional.
 
 ## Full Reference
 
-```yaml
+```markdown
 ---
-theme: default           # Theme name (built-in or custom)
-title: "Deck Title"      # Used in HTML <title> and cover fallback
+theme: default           # Theme preset: default, ocean, sunset, forest, berry, mono
+style: mixed             # Cell style: mixed, tint, solid, outline, white, mono
+title: "Deck Title"      # Used in HTML <title> and footer template variables
 author: "Author Name"
-date: "2026-03-26"       # ISO date string
+date: "2026-03-26"
 
-aspectRatio: "16:9"      # "16:9" | "4:3"
+aspectRatio: "16:9"      # "16:9" (1920×1080) | "4:3" (1440×1080)
+
+borderRadius: 40         # Bento cell corner radius in pixels (default: 40)
+fontSize: 1.0            # Body text scale factor (default: 1.0)
 
 fonts:
   heading: "Inter"       # Font for headings
@@ -19,8 +23,8 @@ fonts:
   mono: "Fira Code"      # Font for code blocks
 
 palette:
-  primary: "#2563EB"     # Accent color (links, highlights, charts)
-  secondary: "#7C3AED"   # Secondary accent (gradients, tags)
+  primary: "#2563EB"     # Accent color (cell tints, icons, charts)
+  secondary: "#7C3AED"   # Secondary accent
   background: "#FFFFFF"  # Slide background
   surface: "#F8FAFC"     # Card/code block background
   text: "#1E293B"        # Primary text color
@@ -41,63 +45,103 @@ lang: "en"
 dir: "ltr"               # "ltr" | "rtl"
 
 defaults:
-  layout: "default"      # Default layout when not specified
-  header: ""             # Default header/pillar text
-  footer: true           # Show footer by default
   pageNumber: true       # Show page numbers by default
+  footer: true           # Show footer by default
 ---
 ```
 
-## Fields
+## Field Reference
 
 ### `theme`
 
-The visual theme to apply. Currently only `default` is built-in.
+Theme preset name. Sets the base palette for the entire deck. Available values: `default`, `ocean`, `sunset`, `forest`, `berry`, `mono`.
+
+User-defined `palette` values override the theme preset on a per-token basis.
+
+### `style`
+
+Controls how bento cells are painted. Available values: `mixed`, `tint`, `solid`, `outline`, `white`, `mono`.
+
+Individual slides can override with `style:` in their own frontmatter (when using explicit slide frontmatter).
 
 ### `title` / `author` / `date`
 
-Metadata used in the HTML `<title>` tag and available as template variables in footers: `{title}`, `{author}`, `{date}`.
+Metadata available as template variables in footers: `{title}`, `{author}`, `{date}`.
 
 ### `aspectRatio`
 
-Canvas dimensions. `"16:9"` renders at 1920x1080, `"4:3"` renders at 1024x768. The canvas scales to fit the viewport via CSS `transform: scale()`.
+Canvas dimensions:
+
+| Value | Canvas Size |
+|---|---|
+| `"16:9"` | 1920 × 1080 |
+| `"4:3"` | 1440 × 1080 |
+
+The canvas is scaled to fit the viewport via CSS `transform: scale()`. Content never reflows.
+
+### `borderRadius`
+
+Corner radius for bento cells in pixels. Default: `40`. Applies to all cells deck-wide.
+
+### `fontSize`
+
+A multiplier applied to cell body text size. Default: `1.0`.
+
+- `0.8` — smaller text, fits more content per cell
+- `1.0` — default
+- `1.2` — larger text for presentation-style slides
 
 ### `fonts`
 
 | Field | Description | Default |
 |---|---|---|
-| `heading` | Font for H1, H2, H3 | System sans-serif |
-| `body` | Font for body text, bullets | System sans-serif |
+| `heading` | Font for `##` titles and cell titles | System sans-serif |
+| `body` | Font for cell body text and lists | System sans-serif |
 | `mono` | Font for code blocks | System monospace |
+
+Fonts are loaded from Google Fonts automatically.
 
 ### `palette`
 
-Six semantic color tokens that control the entire visual appearance:
+Six semantic color tokens. You only need to set the tokens you want to override — the rest come from the `theme` preset.
 
 | Token | Default | Used For |
 |---|---|---|
-| `primary` | `#2563EB` | Links, accents, icon tints, chart colors |
-| `secondary` | `#7C3AED` | Gradient endpoints, tags |
+| `primary` | theme-dependent | Cell accents, icons, chart colors |
+| `secondary` | theme-dependent | Gradient endpoints, secondary accents |
 | `background` | `#FFFFFF` | Slide background |
 | `surface` | `#F8FAFC` | Card backgrounds, code blocks |
 | `text` | `#1E293B` | Headings, body text |
-| `muted` | `#94A3B8` | Subtitles, footers, secondary text |
+| `muted` | `#94A3B8` | Subtitles, footers, captions |
 
 ### `logo`
 
-Place a logo on every slide. The `path` is relative to the `.bmd` file.
-
-### `footer`
-
-Configure the three footer zones (left, center, right) with static text or template strings. Set `show: false` to hide footers globally.
-
-### `defaults`
-
-Set default values for per-slide options. Individual slides can override these.
+Places a logo image on every slide.
 
 | Field | Description |
 |---|---|
-| `layout` | Default layout when a slide omits `layout:` |
-| `header` | Default pillar/section header text |
-| `footer` | Whether to show the footer |
-| `pageNumber` | Whether to show page numbers |
+| `path` | Path to image file, relative to `.bmd` file |
+| `position` | `"top-left"`, `"top-right"`, `"bottom-left"`, or `"bottom-right"` |
+| `height` | Logo height in pixels (width scales proportionally) |
+
+### `footer`
+
+Configure the three footer zones with static text or template strings.
+
+| Field | Description |
+|---|---|
+| `left` | Left zone content |
+| `center` | Center zone content |
+| `right` | Right zone content |
+| `show` | Set to `false` to hide footers deck-wide |
+
+Template variables: `{title}`, `{author}`, `{date}`, `{slideNumber}`, `{totalSlides}`.
+
+### `defaults`
+
+Set default values for all slides.
+
+| Field | Description |
+|---|---|
+| `pageNumber` | Show page numbers by default (`true`/`false`) |
+| `footer` | Show footer bar by default (`true`/`false`) |

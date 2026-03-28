@@ -1,223 +1,134 @@
 import { SlidePreview } from '../../components/SlidePreview'
 
-# bento
+# Bento
 
-Flexible grid layout with cells of varying sizes. Each cell supports icon, title, description, image, value, and label. Cells are auto-placed using bin-packing, and row gaps are automatically filled.
+The default layout. Any slide with `###` cells uses the bento grid automatically — no `layout:` declaration needed. Cells are placed with bin-packing so you never need to specify positions.
 
+## Basic Example
 
-## Preview
-
-<SlidePreview code={`---
-title: "Bento Grid"
-aspectRatio: "16:9"
+```markdown
+---
+theme: default
 ---
 
----
-layout: bento
----
+## Product Features
 
-### Dashboard {hero}
-![Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80)
+### :zap: Fast by Default {md}
+Sub-10ms P99 latency across all API endpoints worldwide.
 
-### 99.99% {sm center}
+### **99.99%** {sm center}
 Uptime SLA
-
-### :zap: 12ms {sm center}
-Avg Response
 
 ### :shield: Security First {md}
-SOC 2 Type II certified with end-to-end encryption, SSO, and role-based access control in every plan.
-
-### Analytics {md}
-![Analytics](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80)
+SOC 2 Type II certified. End-to-end encryption on every plan.
 
 ### :users: Built for Teams {sm}
-Real-time collaboration with audit logs and granular permissions`} />
+Real-time collaboration with role-based access control.
 
-## Example
+### 42 Regions
+Global edge
 
-```markdown
----
-layout: bento
-
----
-
-### :layers: Modular Architecture {hero}
-Compose your system from independent modules.
-
-### 50K+ {sm center}
-Active Developers
-
-### :terminal: CLI First {sm}
-Powerful command-line tools
+### 2,400+
+Customers
 ```
 
-## Size Keywords
-
-| Keyword | Columns | Rows | Description |
-|---|---|---|---|
-| `sm` | 4 (1/3) | 1 | Small card |
-| `md` | 6 (1/2) | 1 | Medium card |
-| `lg` | 8 (2/3) | 1 | Large card |
-| `wide` | 12 (full) | 1 | Full-width banner |
-| `tall` | 4 (1/3) | 2 | Tall sidebar card |
-| `hero` | 8 (2/3) | 2 | Hero feature block |
-| `full` | 12 (full) | 2 | Full-width hero |
-
-You can also use explicit notation: `size: "6x2"` means 6 columns wide, 2 rows tall.
-
-## Item Syntax
-
-Each `###` heading defines one cell:
-
-```markdown
-### :icon-name: Title text {size modifier}
-Description text below the heading.
-![](image-url)
-```
-
-- `:icon-name:` -- Lucide icon (optional, at start of heading)
-- `{size}` -- Size keyword (optional, at end of heading)
-- `{center}` -- Center-align content
-- Value cells: start the title with a number or currency symbol (e.g. `### $4.2M`)
-- Image cells: add `![](url)` in the body
-
-## Color Schemes
-
-Use `scheme` in the slide frontmatter for automatic cell coloring:
-
-| Scheme | Style |
-|---|---|
-| `pastel` | Soft pastels (purple, pink, yellow, green, blue, orange) |
-| `ocean` | Cool blues and teals |
-| `warm` | Warm yellows, oranges, and pinks |
-| `mono` | Neutral grays |
-
----
-
-## Mixed Layout
-
-Use different sizes to create card-style feature grids. Row gaps are automatically filled.
-
 <SlidePreview code={`---
-title: "Product Features"
-aspectRatio: "16:9"
+theme: default
+title: Product Features
 ---
 
----
-layout: bento
----
+## Product Features
 
-### Workspace {hero}
-![Workspace](https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80)
+### :zap: Fast by Default {md}
+Sub-10ms P99 latency across all API endpoints worldwide.
 
-### :target: Set Goals {sm}
-Define milestones and track progress toward quarterly objectives.
-
-### :bar-chart: Analytics {sm}
-Real-time insights into team performance and project health.
-
-### :users: Team Collaboration {md}
-Work together in real-time with shared docs, comments, and @mentions. Keep everyone aligned.
-
-### Mobile App {md}
-![Mobile](https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&q=80)
-
-### :zap: Integrations {sm}
-Connect with Slack, GitHub, Figma, and 200+ tools your team already uses.`} />
-
----
-
-## Tall (Vertical Span)
-
-Use `{tall}` to span a cell across 2 rows. Great for sidebar-style content.
-
-<SlidePreview code={`---
-title: "Platform Overview"
-aspectRatio: "16:9"
-palette:
-  primary: "#2563eb"
-  background: "#f5f5f5"
-  surface: "#ffffff"
----
-
----
-layout: bento
-
----
-
-### :shield: Security & Compliance {tall}
-SOC 2 Type II, GDPR, HIPAA. End-to-end encryption with zero-trust architecture. Regular third-party audits.
-
-### :zap: Lightning Fast
-Sub-10ms P99 latency across all API endpoints.
-
-### :globe: Global Edge Network
-42 regions worldwide with automatic failover.
-
-### 99.99%
+### **99.99%** {sm center}
 Uptime SLA
 
-### 150ms
-Global P95 Latency
+### :shield: Security First {md}
+SOC 2 Type II certified. End-to-end encryption on every plan.
 
-### :code: Developer First {lg}
-Beautiful APIs, comprehensive SDKs, and interactive documentation. Ship in hours, not weeks.`} />
+### :users: Built for Teams {sm}
+Real-time collaboration with role-based access control.
 
----
+### 42 Regions
+Global edge
 
-## Dashboard (KPI Cards)
+### 2,400+
+Customers`} />
 
-Use value cells with `{center}` and `{wide}` for data-driven layouts.
+## Size Hints
 
-<SlidePreview code={`---
-title: "Q4 Dashboard"
-aspectRatio: "16:9"
-palette:
-  primary: "#6366f1"
-  background: "#f5f5f5"
-  surface: "#ffffff"
----
+Add `{size}` at the end of any `###` line:
 
----
-layout: bento
+| Hint | Grid Span | Description |
+|---|---|---|
+| `{sm}` | 4 cols × 1 row | Small card |
+| `{md}` | 6 cols × 1 row | Medium card — half width |
+| `{lg}` | 8 cols × 1 row | Large card — two-thirds |
+| `{wide}` | 12 cols × 1 row | Full-width banner |
+| `{tall}` | 4 cols × 2 rows | Tall sidebar card |
+| `{hero}` | 8 cols × 2 rows | Hero feature block |
 
----
+Add `{center}` to center-align content inside any cell.
 
-### $12.4M {md center}
+## Metric Cards
+
+Use `**bold**` in a `###` title to render the bold portion at large display size:
+
+```markdown
+### **$12.4M** {md center}
 Annual Recurring Revenue
 
-### 340% {sm center}
+### **340%** {sm center}
 YoY Growth
 
-### 98.7 {sm center}
+### **98.7** {sm center}
+NPS Score
+```
+
+<SlidePreview code={`---
+theme: sunset
+title: Q4 Results
+style: tint
+---
+
+## Q4 Results
+
+### **$12.4M** {md center}
+Annual Recurring Revenue
+
+### **340%** {sm center}
+YoY Growth
+
+### **98.7** {sm center}
 NPS Score
 
 ### :users: 2,400+ Enterprise Customers {wide}
 Trusted by Fortune 500 companies across 45 countries. Average contract value of $52K with 142% net dollar retention.`} />
 
----
+## Image Cells
 
-## Photo Grid
+Add `![](url)` as the only body content for a full-bleed image card. Add it alongside text for an inline image below the content.
 
-Use `![](url)` in the body to add background images. Title and description overlay at the bottom.
+```markdown
+### Tokyo {tall}
+Neon-lit streets and endless energy.
+![](https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=800&fit=crop)
+
+### :utensils: Food Culture
+Japan has more Michelin stars than any other country.
+```
 
 <SlidePreview code={`---
-title: "Travel Guide"
-aspectRatio: "16:9"
-palette:
-  primary: "#0f766e"
-  background: "#f5f5f4"
-  surface: "#ffffff"
+theme: forest
+title: Japan Guide
 ---
 
----
-layout: bento
-
----
+## Japan Travel Guide
 
 ### Kyoto, Japan {hero}
-Ancient temples, serene gardens, and the magic of cherry blossom season. A city where tradition meets modernity.
+Ancient temples, serene gardens, and cherry blossom season.
 ![](https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1200&h=800&fit=crop)
 
 ### Tokyo {tall}
@@ -225,99 +136,128 @@ Neon-lit streets and endless energy.
 ![](https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=800&fit=crop)
 
 ### :utensils: Food & Culture
-Michelin-starred ramen to street-side yakitori. Japan has more Michelin stars than any other country.
+More Michelin stars than any other country.
 
 ### :map: Getting Around
-JR Pass covers bullet trains, local rails, and buses nationwide. Efficient, punctual, spotless.
+JR Pass covers bullet trains nationwide.`} />
 
-### Osaka {md}
-Street food capital of Japan. Don't miss Dotonbori at night.
-![](https://images.unsplash.com/photo-1590559899731-a382839e5549?w=800&h=400&fit=crop)`} />
+## Lists in Cells
 
----
+Markdown bullet lists inside a cell render as a styled list:
 
-## Portfolio
-
-Mix photos and text cards for creative showcases.
-
-<SlidePreview code={`---
-title: "Design Portfolio"
-aspectRatio: "16:9"
-palette:
-  primary: "#1e1b4b"
-  background: "#fafaf9"
-  surface: "#ffffff"
----
-
----
-layout: bento
-
----
-
-### Brand Identity {hero}
-Complete visual identity system for a sustainable fashion brand. Logo, typography, color palette, and packaging.
-![](https://images.unsplash.com/photo-1561070791-2526d30994b5?w=1200&h=800&fit=crop)
-
-### Mobile App {tall}
-![](https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&h=800&fit=crop)
-
-### :award: 12 Awards
-Red Dot, iF Design, Webby, and more.
-
-### :briefcase: 8 Years
-Professional design experience across startups and Fortune 500.
-
-### Web Design {lg}
-Responsive e-commerce platform with 40% conversion rate improvement.
-![](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=400&fit=crop)`} />
-
----
-
-## Inline Images (Product Showcase)
-
-When a cell has both an icon/title AND an image, the image appears as inline content (not background).
+```markdown
+### :check-circle: What's Included {md}
+- Unlimited projects
+- Priority support
+- Custom domain
+- SSO and audit logs
+```
 
 <SlidePreview code={`---
-title: "Product Showcase"
-aspectRatio: "16:9"
-palette:
-  primary: "#6366f1"
-  background: "#f5f5f5"
-  surface: "#ffffff"
+theme: berry
+title: Pricing
+style: tint
 ---
 
+## Pricing
+
+### Starter — Free {md}
+- Up to 3 projects
+- Community support
+- Public repos only
+
+### Pro — $49/mo {md highlight}
+- Unlimited projects
+- Priority support
+- Custom domain
+
+### :check-circle: All Plans Include {wide}
+- 99.99% uptime SLA · End-to-end encryption · 42 global regions · SOC 2 compliance`} />
+
+## Mermaid Diagrams in Cells
+
+Add a ` ```mermaid ``` ` block inside any cell to render a diagram:
+
+````markdown
+### Architecture {hero}
+```mermaid
+graph LR
+  A[Client] --> B[API Gateway]
+  B --> C[Auth Service]
+  B --> D[Data Service]
+  C --> E[(Users DB)]
+  D --> F[(Data DB)]
+```
+````
+
+<SlidePreview code={`---
+theme: ocean
+title: System Architecture
+---
+
+## System Architecture
+
+### Architecture Overview {hero}
+\`\`\`mermaid
+graph LR
+  A[Client] --> B[API Gateway]
+  B --> C[Auth Service]
+  B --> D[Data Service]
+  C --> E[(Users DB)]
+  D --> F[(Data DB)]
+\`\`\`
+
+### :zap: Edge Cached {sm}
+All static assets served from CDN
+
+### :shield: Zero Trust {sm}
+Every request authenticated
+
+### **42** Regions {sm center}
+Worldwide`} />
+
+## Using Explicit `layout: bento`
+
+You can also use explicit frontmatter for slides that need additional options like `background:` or `style:`:
+
+```markdown
 ---
 layout: bento
-
+background: "#0f172a"
+style: solid
+heading: "Dark Slide"
 ---
 
-### :camera: Smart Camera {hero}
-AI-powered 4K camera with real-time object tracking, night vision, and cloud storage.
-![](https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&h=400&fit=crop)
+### :moon: Night Mode {md}
+Dark background with solid cell colors.
 
-### 4K Resolution
-Ultra HD
+### **100%** {sm center}
+Test coverage
+```
 
-### 180 Days
-Battery Life
+<SlidePreview code={`---
+theme: default
+title: Dark Slide
+---
 
-### :wifi: Always Connected {md}
-Dual-band WiFi 6 with automatic failover to LTE backup.
-![](https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=300&fit=crop)
+## Dark Slide Example
 
-### :shield: Privacy First {sm}
-End-to-end encryption. All processing happens on-device.`} />
+### :moon: Night Mode {md}
+Dark backgrounds work automatically — text color adapts for contrast.
 
-Image behavior:
-- **Background image**: `![](url)` without icon/value -- image fills the entire cell
-- **Inline image**: `![](url)` with `:icon:` or title -- image appears below the text content
+### **100%** {sm center}
+Test coverage
+
+### :shield: Secure by Default {md}
+Zero-trust architecture with end-to-end encryption across all tiers.
+
+### :zap: Fast {sm}
+12ms avg response`} />
 
 ## Tips
 
-- Cells are auto-placed using a greedy bin-packing algorithm -- no positions needed
-- Row gaps are automatically filled by expanding the last cell in each row
-- Cell colors are automatically generated from your palette for visual harmony
-- Mix `hero`/`tall`/`lg` with `sm` cells for visual hierarchy
-- Image cells: add `![](url)` in the body -- title/description overlay at bottom
-- Value cells: start the heading with a number or `$` (e.g. `### $4.2M {sm center}`)
-- `{tall}` creates a 2-row vertical span -- great for sidebars and featured content
+- Cells are auto-placed — you never specify grid coordinates
+- Row gaps are automatically filled by expanding the last cell in a row
+- Mix `{hero}` or `{tall}` with `{sm}` cells for visual hierarchy
+- `{center}` works best on metric cards with large bold values
+- Image cells: `![](url)` alone = background fill; with text = inline image below content

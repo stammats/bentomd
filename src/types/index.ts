@@ -20,6 +20,8 @@ export interface GlobalConfig {
   borderRadius?: number;
   /** Font size scale factor (1.0 = default). E.g. 0.8 for smaller, 1.2 for larger */
   fontSize?: number;
+  /** Cell style: mixed, tint, solid, outline, white, mono */
+  style?: string;
 }
 
 export interface FontConfig {
@@ -278,6 +280,8 @@ export interface BentoCell {
   align?: string;
   /** Mermaid diagram source extracted from a ```mermaid code block in the cell body */
   mermaid?: string;
+  /** Border color for outline style */
+  border?: string;
 }
 
 // Generic fallback

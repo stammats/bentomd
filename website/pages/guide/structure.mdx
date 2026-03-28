@@ -1,131 +1,249 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
 # Slide Structure
 
-Every bentomd slide follows a consistent 5-layer page anatomy. Understanding this structure is key to creating effective slides.
+A bentomd file is plain Markdown. Three constructs cover the entire syntax.
 
-## File Format
+## File Layout
 
-A `.bmd` file starts with a global config block, followed by slides separated by `---`:
-
-```yaml
+```
+[global frontmatter]
 ---
-# Global config (first block)
+[slide 1 content]
+---
+[slide 2 content]
+---
+[slide 3 content]
+```
+
+The first block before any `---` is the **global frontmatter** (YAML). Everything after is slides separated by `---`.
+
+## Global Frontmatter
+
+The first block configures the whole deck:
+
+```markdown
+---
+theme: ocean
+title: Q4 Review
+style: tint
+borderRadius: 24
+---
+```
+
+See [Global Config](/guide/config) for all options.
+
+## Slides
+
+Each slide is a block of Markdown. The `---` separator begins a new slide.
+
+```markdown
+---
 theme: default
-title: "Deck Title"
-palette:
-  primary: "#2563eb"
+title: Platform Overview
 ---
 
+## Platform Overview
+
+### :shield: Security {md}
+SOC 2 Type II, GDPR, HIPAA compliant.
+
+### **99.99%** {sm center}
+Uptime SLA
+
 ---
-# Slide 1
+
+## Pricing
+
+### Starter — Free
+Up to 3 projects
+
+### Pro — $49/mo {md highlight}
+Unlimited projects, priority support
+
+### Enterprise
+Custom pricing and SLAs
+```
+
+<SlidePreview code={`---
+theme: default
+title: Platform Overview
+---
+
+## Platform Overview
+
+### :shield: Security {md}
+SOC 2 Type II, GDPR, HIPAA compliant.
+
+### **99.99%** {sm center}
+Uptime SLA
+
+### :zap: Fast by Default {md}
+Sub-10ms P99 latency on all API endpoints worldwide.
+
+### 42 Regions
+Global edge network
+
+### 150ms
+Global P95`} />
+
+## `##` — Slide Title
+
+The `##` heading sets the slide title. Text between `##` and the first `###` becomes subtitle text.
+
+```markdown
+## Market Analysis
+
+This slide summarizes our Q3 findings.
+
+### North America {md}
+Strong growth in enterprise segment.
+
+### EMEA {md}
+Expansion opportunity in mid-market.
+```
+
+The subtitle text ("This slide summarizes...") appears below the heading before the bento grid.
+
+## `###` — Bento Cells
+
+Each `###` heading defines one bento cell. Content inside determines how it renders:
+
+| Content | Renders As |
+|---|---|
+| Plain text in the body | Text card |
+| Bullet list (`- item`) | List card |
+| `> blockquote` | Quote card |
+| `![](url)` as the only body content | Full-bleed image card |
+| `![](url)` with text above it | Card with inline image |
+| ` ```mermaid ``` ` block | Diagram card |
+| Markdown table | Table card |
+| `**bold**` in the title | Large metric value |
+
+### Size Hints
+
+Add `{size}` at the end of the `###` line to control the cell's grid span:
+
+| Hint | Columns | Rows | Description |
+|---|---|---|---|
+| `{sm}` | 4 of 12 | 1 | Small card (default when unspecified with peers) |
+| `{md}` | 6 of 12 | 1 | Medium card — half width |
+| `{lg}` | 8 of 12 | 1 | Large card — two-thirds width |
+| `{wide}` | 12 of 12 | 1 | Full-width banner |
+| `{tall}` | 4 of 12 | 2 | Tall sidebar card — double height |
+| `{hero}` | 8 of 12 | 2 | Hero block — two-thirds wide, double height |
+
+```markdown
+### :camera: Hero Feature {hero}
+The main selling point gets the biggest card.
+
+### **2.4K** {sm center}
+Active users
+
+### :star: Highly Rated {sm}
+4.9 / 5 from 800+ reviews
+```
+
+<SlidePreview code={`---
+theme: berry
+title: Size Hints
+---
+
+## Size Hints
+
+### :camera: Hero Feature {hero}
+The main selling point gets the biggest card. Supports text, image, or both.
+
+### **2.4K** {sm center}
+Active users
+
+### :star: Highly Rated {sm}
+4.9 / 5 from 800+ reviews
+
+### :globe: Global {sm}
+45 countries`} />
+
+### `{center}` Modifier
+
+Add `{center}` (alone or combined with a size) to center the cell content. Useful for metric cards.
+
+```markdown
+### **$4.2M** {md center}
+Annual Recurring Revenue
+
+### **340%** {sm center}
+YoY Growth
+```
+
+### `**bold**` for Large Values
+
+Bold text in a `###` title renders at large display size — perfect for KPI cards:
+
+```markdown
+### **42**% Growth {sm center}
+Year over year
+
+### **$1.2M** Revenue {sm center}
+Last quarter
+```
+
+<SlidePreview code={`---
+theme: sunset
+title: KPI Dashboard
+style: tint
+---
+
+## Q4 Results
+
+### **$12.4M** {md center}
+Annual Recurring Revenue
+
+### **340%** {sm center}
+YoY Growth
+
+### **98.7** {sm center}
+NPS Score
+
+### :users: 2,400+ Enterprise Customers {wide}
+Trusted by Fortune 500 companies across 45 countries.`} />
+
+## Full-Screen Layouts
+
+Three layouts bypass the bento grid and render full-screen:
+
+- **`cover`** — opening title slide. Use `# Title`, `## Subtitle`, and a plain line for attribution.
+- **`section`** — divider slide between major sections.
+- **`end`** — closing slide.
+
+These require explicit frontmatter with `layout:`:
+
+```markdown
+---
 layout: cover
 background: "#1e293b"
 ---
 
-# Title Here
+# Product Strategy 2026
+## Accelerating Growth Through Innovation
 
+Sarah Chen · VP Product · March 2026
+```
+
+All other slides — anything with `###` cells — use the auto-bento grid automatically.
+
+## `background:` on Any Slide
+
+Any slide can have a background color:
+
+```markdown
 ---
-# Slide 2
-layout: default
-heading: "Slide Title"
----
-
-Body content in Markdown.
-```
-
-## Slide Separators
-
-Slides are separated by a line containing only `---`. The first `---` block is always the global configuration. Each subsequent `---` block starts a new slide.
-
-## The 5-Layer Page Anatomy
-
-Every slide is composed of five vertical zones:
-
-### 1. Header (Pillar Bar)
-
-A thin strip at the top of the slide for section context. Common in consulting decks.
-
-```yaml
-header: "Strategic Analysis"
-```
-
-- Font: 14px, uppercase, muted color
-- Height: 48px (16:9) / 40px (4:3)
-
-### 2. Heading
-
-The slide title. Present on almost every slide except cover/section layouts.
-
-```yaml
-heading: "Market Entry Strategy"
-```
-
-- Font: 56px bold (auto-scales down to 40px if needed)
-- Max: 2 lines, ~50 characters per line
-
-### 3. Summary
-
-An optional subtitle that frames the content below.
-
-```yaml
-summary: "Three factors support a phased approach"
-```
-
-- Font: 24px, muted color
-- Max: 2 lines
-
-### 4. Body (Content Area)
-
-The main content area. This is where layout-specific content lives -- bullet points, cards, charts, tables, images, code blocks.
-
-Content is standard Markdown below the frontmatter. For structured layouts (stats, features, bento, etc.), use `###` headings to define each item:
-
-```yaml
----
-layout: stats
-heading: "Key Metrics"
+background: "#0f172a"
 ---
 
-### :trending-up: $4.2M
-Revenue
-+38% YoY
+## Dark Slide
+
+### :moon: Night Mode {md}
+Supports dark backgrounds automatically.
 ```
 
-### 5. Footer
-
-Page numbers, dates, and other metadata at the bottom.
-
-```yaml
-footer: true
-pageNumber: true
-```
-
-- Font: 13px, muted, 70% opacity
-- Supports template strings: `{title}`, `{author}`, `{date}`, `{slideNumber}`, `{totalSlides}`
-
-## Content Modules
-
-The body area supports different content types depending on the layout:
-
-| Module | Used In | Format |
-|---|---|---|
-| Text / Markdown | `default`, `two-column` | Standard Markdown below frontmatter |
-| Stat items | `stats` | YAML list with `value`, `label`, `icon`, `trend` |
-| Feature cards | `features` | YAML list with `icon`, `title`, `description` |
-| Chart data | `chart` | YAML list with `label`, `value` |
-| Table | `table` | Markdown table in body |
-| Quote | `quote` | Markdown blockquote in body |
-| Image | `image` | `src` option in frontmatter |
-| Code | `default` | Fenced code block in Markdown body |
-
-## Overflow Prevention
-
-bentomd uses a content budget system to prevent overflow. Each layout has a maximum vertical budget. When content exceeds it, the renderer automatically:
-
-1. Reduces footer padding
-2. Steps down body font size (20px -> 18px -> 16px -> 14px)
-3. Steps down subtitle size (may hide it entirely)
-4. Steps down heading size (56px -> 48px -> 40px)
-5. Compresses line height
-6. Truncates as a last resort
-
-You never need to worry about content overflowing the slide.
+The text color adapts automatically based on contrast.

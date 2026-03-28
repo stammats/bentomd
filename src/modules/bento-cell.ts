@@ -34,6 +34,9 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   if (cell.color) {
     styles.push(`color:${cell.color}`);
   }
+  if (cell.border) {
+    styles.push(`border:2px solid ${cell.border}`);
+  }
 
   // Full-bleed image cell (image only, no icon/value — title overlays)
   if (cell.image && !cell.icon && !cell.value) {

@@ -24,8 +24,8 @@ export function resolveSlide(
   // Handle dynamic layouts (bento, two-column ratio variants)
   const adjusted = adjustLayout(layoutDef, slide);
 
-  // Handle cover/section background styles
-  if (layoutDef.name === 'cover' || layoutDef.name === 'section' || layoutDef.name === 'end') {
+  // Handle background styles (any layout with background: option)
+  if (slide.options.background || slide.options.color) {
     containerStyle = resolveBackgroundStyle(slide);
   }
 

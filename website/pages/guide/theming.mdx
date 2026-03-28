@@ -1,97 +1,239 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
 # Theming
 
-bentomd uses a semantic color system and design token architecture. You can customize the visual appearance through the `palette` and `fonts` config fields.
+bentomd has two independent visual controls: **theme** (palette presets) and **style** (how cells are painted). Both are set in the global frontmatter and apply to the entire deck.
 
-## Built-in Theme
+## Themes
 
-The `default` theme provides a clean, professional look:
+`theme:` sets the base color palette. Six built-in themes are available:
 
-- White background with slate-gray text
-- Blue primary accent (`#2563EB`)
-- Inter-style system font stack
-- 8px base spacing unit
+| Theme | Description |
+|---|---|
+| `default` | Blue and purple on white |
+| `ocean` | Teal and blue on white |
+| `sunset` | Coral and amber on white |
+| `forest` | Green and teal on white |
+| `berry` | Purple and pink on white |
+| `mono` | Charcoal gray on white |
+
+```markdown
+---
+theme: ocean
+title: My Deck
+---
+```
+
+<SlidePreview code={`---
+theme: ocean
+title: Ocean Theme
+---
+
+## Ocean Theme
+
+### :droplet: Cool Blues
+Teal and deep blue palette with high contrast text.
+
+### **99.9%** {sm center}
+Uptime
+
+### :globe: Global Edge {md}
+42 regions with automatic failover and sub-50ms latency anywhere.
+
+### :shield: Secure {sm}
+End-to-end encrypted`} />
+
+<SlidePreview code={`---
+theme: sunset
+title: Sunset Theme
+---
+
+## Sunset Theme
+
+### :sun: Warm Tones
+Coral and amber work well for energetic, optimistic decks.
+
+### **4.9** {sm center}
+Rating
+
+### :trending-up: Growing Fast {md}
+340% year-over-year growth with no signs of slowing down.
+
+### :users: Team {sm}
+42 people`} />
+
+<SlidePreview code={`---
+theme: berry
+title: Berry Theme
+---
+
+## Berry Theme
+
+### :sparkles: Bold & Modern
+Purple and pink — great for product launches and creative work.
+
+### **$1.2M** {sm center}
+ARR
+
+### :zap: Instant Setup {md}
+Zero infrastructure to manage. Deploy in under 5 minutes with a single command.
+
+### :code: Developer First {sm}
+Full API access`} />
+
+## Cell Styles
+
+`style:` controls how bento cells are painted. Six options are available:
+
+| Style | Description |
+|---|---|
+| `mixed` | Alternating light/dark cells from the palette (default) |
+| `tint` | Light pastel tints of each accent color |
+| `solid` | Full-color backgrounds with white text |
+| `outline` | Transparent cells with colored borders and text |
+| `white` | White background, colored text and icons |
+| `mono` | Single-hue variations using only the primary color |
+
+```markdown
+---
+theme: default
+style: tint
+---
+```
+
+<SlidePreview code={`---
+theme: default
+style: tint
+title: Tint Style
+---
+
+## Tint Style
+
+### :zap: Performance
+Sub-10ms latency on all endpoints.
+
+### **42K** {sm center}
+Daily active users
+
+### :shield: Secure {md}
+SOC 2 Type II with end-to-end encryption.
+
+### :globe: Global {sm}
+42 regions`} />
+
+<SlidePreview code={`---
+theme: forest
+style: solid
+title: Solid Style
+---
+
+## Solid Style
+
+### :leaf: Sustainable
+Carbon-neutral since 2023.
+
+### **100%** {sm center}
+Renewable energy
+
+### :recycle: Zero Waste {md}
+Full supply chain visibility with supplier sustainability scores.
+
+### :globe: 42 Countries {sm}
+Operations`} />
+
+<SlidePreview code={`---
+theme: default
+style: outline
+title: Outline Style
+---
+
+## Outline Style
+
+### :frame: Clean & Minimal
+Transparent cells with colored borders.
+
+### **v3.0** {sm center}
+Current version
+
+### :book: Well Documented {md}
+Comprehensive API reference, guides, and interactive examples.
+
+### :code: Open Source {sm}
+MIT license`} />
 
 ## Custom Palette
 
-Override any of the six color tokens in your global config:
+Override any color token using `palette:`. Your values take precedence over the theme preset.
 
-```yaml
+```markdown
+---
+theme: default
 palette:
-  primary: "#dc2626"     # Red accent
-  secondary: "#f97316"   # Orange secondary
+  primary: "#dc2626"
+  secondary: "#f97316"
   background: "#ffffff"
-  surface: "#fef2f2"     # Light red surface
+  surface: "#fef2f2"
   text: "#1e293b"
   muted: "#64748b"
+---
 ```
 
-### Dark Theme
+### Color Tokens
 
-Set a dark background and light text colors:
-
-```yaml
-palette:
-  primary: "#6366f1"
-  secondary: "#818cf8"
-  background: "#0f172a"
-  surface: "#1e293b"
-  text: "#f8fafc"
-  muted: "#94a3b8"
-```
-
-### Contrast Requirements
-
-All text must meet WCAG 2.1 AA minimums:
-
-| Text Type | Min Contrast |
+| Token | Used For |
 |---|---|
-| Body text on background | 4.5:1 |
-| Large text (>= 24px) on background | 3:1 |
-| Muted text on background | 4.5:1 |
+| `primary` | Cell accents, icons, highlights, chart colors |
+| `secondary` | Gradient endpoints, secondary accents |
+| `background` | Slide background |
+| `surface` | Card backgrounds, code blocks |
+| `text` | Headings, body text |
+| `muted` | Subtitles, footers, secondary labels |
+
+You can override just the tokens you need — the rest come from the theme:
+
+```markdown
+---
+theme: ocean
+palette:
+  primary: "#dc2626"   # Override only the primary accent
+---
+```
+
+## `borderRadius`
+
+Controls the corner radius of bento cells in pixels. Default is `40`.
+
+```markdown
+---
+theme: default
+borderRadius: 16
+---
+```
+
+Use smaller values (8–16) for a more structured, corporate look. Larger values (40–60) for a softer, modern feel.
+
+## `fontSize`
+
+A scale factor applied to cell body text. `1.0` is default. Use `0.85` to fit more content, `1.2` for large-text slides.
+
+```markdown
+---
+theme: default
+fontSize: 0.9
+---
+```
 
 ## Custom Fonts
 
-```yaml
+Load any Google Font for headings, body text, and code:
+
+```markdown
+---
 fonts:
   heading: "Playfair Display"
   body: "Source Sans Pro"
   mono: "JetBrains Mono"
+---
 ```
 
-Fonts are loaded from Google Fonts automatically. Use any font available on Google Fonts.
-
-## Design Tokens
-
-bentomd uses an 8px base unit for all spacing. Key tokens:
-
-| Token | Value | Use |
-|---|---|---|
-| `--space-sm` | 8px | Small gaps |
-| `--space-md` | 16px | Default element spacing |
-| `--space-lg` | 24px | Grid gutters |
-| `--space-xl` | 32px | Heading-to-body gaps |
-| `--space-2xl` | 48px | Major section breaks |
-
-### Border Radius
-
-| Token | Value | Use |
-|---|---|---|
-| `--radius-sm` | 4px | Inline code, badges |
-| `--radius-md` | 8px | Buttons |
-| `--radius-lg` | 12px | Code blocks |
-| `--radius-xl` | 16px | Feature cards |
-
-### Typography Scale
-
-Based on a 1.25 (Major Third) scale ratio:
-
-| Name | Size | Use |
-|---|---|---|
-| display | 64px | Cover title (max) |
-| h1 | 56px | Slide headings |
-| h2 | 40px | Section headings |
-| h3 | 28px | Card titles |
-| body-lg | 20px | Body text |
-| body | 16px | Secondary text |
-| small | 14px | Header bar, captions |
-| caption | 13px | Footer text |
+Fonts are loaded from Google Fonts automatically at render time.

@@ -1,14 +1,76 @@
+import { SlidePreview } from '../components/SlidePreview'
+
 # bentomd
 
-**Modular slide decks from Markdown + YAML. Built for the AI era.**
+**Modular slide decks from Markdown. Write cells, not layouts.**
 
-Pixel-perfect slides that always fit 16:9 or 4:3. 10 built-in layouts. AI-native syntax.
+bentomd turns plain Markdown into pixel-perfect 16:9 slide decks. Use `---` to separate slides and `###` to define cells. Content type is detected automatically — text, lists, images, charts, and more.
 
-## Features
+## How It Works
 
-- 📐 **Pixel-Perfect** — Fixed canvas rendering (1920×1080) with transform scaling
-- 🧱 **Modular Layouts** — cover, stats, charts, tables, features, and more
-- 🤖 **AI-Native** — Simple YAML + Markdown syntax designed for LLM generation
-- 🎨 **Beautiful Defaults** — Professional typography, spacing, and color system
+Three rules cover everything:
 
-[Get Started →](/guide) · [View Layouts →](/layouts/cover)
+1. **`---`** separates slides
+2. **`##`** is the slide title
+3. **`###`** is a bento cell — content inside determines how it renders
+
+```markdown
+---
+theme: ocean
+title: My Deck
+---
+
+## Why bentomd
+
+### :zap: Zero Config
+Write Markdown. Get slides.
+
+### **42%** Faster {sm center}
+Than the previous approach
+
+### :shield: Open Source {md}
+MIT licensed. No lock-in.
+```
+
+<SlidePreview code={`---
+theme: ocean
+title: Why bentomd
+---
+
+## Why bentomd
+
+### :zap: Zero Config
+Write Markdown. Get slides.
+
+### **42%** Faster {sm center}
+Than the previous approach
+
+### :shield: Open Source {md}
+MIT licensed. No lock-in.
+
+### Built for Teams {md}
+Real-time collaboration with role-based access and audit logs.
+
+### 99.99%
+Uptime SLA
+
+### 12ms
+Avg Response`} />
+
+## Key Concepts
+
+- **Auto-bento layout** — cells are placed with bin-packing, no positions needed
+- **Auto-detected content** — text, lists, images, tables, blockquotes, mermaid diagrams
+- **`{size}` hints** — `{hero}`, `{tall}`, `{md}`, `{sm}`, `{wide}` control cell dimensions
+- **`**bold**` in titles** renders large, for metrics like `### **42**% Growth`
+- **6 themes** — default, ocean, sunset, forest, berry, mono
+- **6 cell styles** — mixed, tint, solid, outline, white, mono
+
+## Get Started
+
+```bash
+npm install bentomd
+npx bentomd dev deck.bmd
+```
+
+[Quick Start →](/guide/quickstart) · [Slide Structure →](/guide/structure) · [Theming →](/guide/theming)

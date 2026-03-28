@@ -34,63 +34,120 @@ const SLIDE_OPTION_KEYS = new Set([
 ]);
 
 // ============================================================
-// Cell theme generation for bento grid
+// Theme + Style system for bento cells
 // ============================================================
-
-// ---------------------------------------------------------------------------
-// Cell theme: bright/dark paired color system (Wise-inspired)
-// ---------------------------------------------------------------------------
-//
-// Hand-tuned color pairs ordered warm/cool alternating.
-// Each pair has a bright variant and a dark variant.
-// Bright bg → dark text, dark bg → bright text.
-// Internal contrast is guaranteed so mixing is safe.
 
 interface CellTheme {
   background: string;
   color: string;
+  border?: string;
 }
 
-/** Default bright/dark pairs — warm/cool alternating, muted tones.
- *  Bright = soft pastel for bg, Dark = rich deep for bg.
- *  Warm and cool colors interleave so any subset looks balanced. */
-const DEFAULT_PAIRS: { bright: string; dark: string }[] = [
-  { bright: '#fce4b8', dark: '#5c3d0e' },  // Honey / warm
-  { bright: '#c5dde8', dark: '#1a3a4a' },  // Slate Blue / cool
-  { bright: '#f5c6c6', dark: '#6b2020' },  // Blush / warm
-  { bright: '#c2e0c6', dark: '#1a4028' },  // Sage / cool
-  { bright: '#e8d0f0', dark: '#3b1f50' },  // Mauve / warm
-  { bright: '#b8ddd6', dark: '#1a3833' },  // Mint / cool
-];
+// ---------------------------------------------------------------------------
+// Color Themes — preset palettes
+// ---------------------------------------------------------------------------
+
+interface ThemePalette {
+  primary: string;
+  secondary: string;
+  background: string;
+  surface: string;
+  text: string;
+  muted: string;
+}
+
+const THEME_PRESETS: Record<string, ThemePalette> = {
+  default: { primary: '#0984e3', secondary: '#6c5ce7', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+  ocean:   { primary: '#00cec9', secondary: '#0984e3', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+  sunset:  { primary: '#e17055', secondary: '#fdcb6e', background: '#ffffff', surface: '#ffeaa7', text: '#2d3436', muted: '#636e72' },
+  forest:  { primary: '#00b894', secondary: '#00cec9', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+  berry:   { primary: '#6c5ce7', secondary: '#e84393', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+  mono:    { primary: '#2d3436', secondary: '#636e72', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+};
+
+// ---------------------------------------------------------------------------
+// Cell Styles — how cells are painted
+// ---------------------------------------------------------------------------
+
+type CellStyle = 'mixed' | 'tint' | 'solid' | 'outline' | 'white' | 'mono';
+
+function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
+  const primary = palette?.primary ?? '#0984e3';
+  const secondary = palette?.secondary ?? '#6c5ce7';
+  const surface = palette?.surface ?? '#dfe6e9';
+  const text = palette?.text ?? '#2d3436';
+  const accents = [primary, secondary, '#00b894', '#e17055', '#00cec9', '#fdcb6e'];
+  const cellStyle = (style ?? 'mixed') as CellStyle;
+
+  switch (cellStyle) {
+    case 'tint':
+      return accents.map((c) => ({
+        background: tintColor(c, 0.8),
+        color: shadeColor(c, 0.4),
+      }));
+
+    case 'solid':
+      return accents.map((c) => ({
+        background: c,
+        color: '#ffffff',
+      }));
+
+    case 'outline':
+      return accents.map((c) => ({
+        background: 'transparent',
+        color: c,
+        border: c,
+      }));
+
+    case 'white':
+      return accents.map((c) => ({
+        background: '#ffffff',
+        color: c,
+      }));
+
+    case 'mono': {
+      return [
+        { background: tintColor(primary, 0.8), color: shadeColor(primary, 0.4) },
+        { background: primary, color: '#ffffff' },
+        { background: tintColor(primary, 0.9), color: shadeColor(primary, 0.3) },
+        { background: shadeColor(primary, 0.3), color: tintColor(primary, 0.9) },
+      ];
+    }
+
+    case 'mixed':
+    default: {
+      // Bright/dark pairs from primary + secondary + default accents
+      const pairs = [
+        { bright: tintColor(primary, 0.75), dark: shadeColor(primary, 0.55) },
+        { bright: tintColor(secondary, 0.75), dark: shadeColor(secondary, 0.55) },
+        { bright: '#fce4b8', dark: '#5c3d0e' },
+        { bright: '#c5dde8', dark: '#1a3a4a' },
+        { bright: '#f5c6c6', dark: '#6b2020' },
+        { bright: '#c2e0c6', dark: '#1a4028' },
+      ];
+      const themes: CellTheme[] = [];
+      for (const pair of pairs) {
+        themes.push({ background: pair.bright, color: pair.dark });
+        themes.push({ background: pair.dark, color: pair.bright });
+      }
+      return themes;
+    }
+  }
+}
 
 /**
- * Generate cell themes from palette.
- * If custom primary/secondary are set, derive pairs from them and mix with defaults.
+ * Resolve theme preset into palette. User's palette overrides preset values.
  */
-function generateCellThemes(palette?: {
-  primary?: string; secondary?: string;
-}): CellTheme[] {
-  const primary = palette?.primary;
-  const secondary = palette?.secondary;
-
-  let pairs = [...DEFAULT_PAIRS];
-
-  // If user set custom palette colors, prepend derived pairs
-  if (primary && primary !== '#0984e3') {
-    pairs.unshift({ bright: tintColor(primary, 0.65), dark: shadeColor(primary, 0.6) });
-  }
-  if (secondary && secondary !== '#6c5ce7') {
-    pairs.splice(1, 0, { bright: tintColor(secondary, 0.65), dark: shadeColor(secondary, 0.6) });
-  }
-
-  // Generate themes: for each pair, bright-bg then dark-bg
-  const themes: CellTheme[] = [];
-  for (const pair of pairs) {
-    themes.push({ background: pair.bright, color: pair.dark });
-    themes.push({ background: pair.dark, color: pair.bright });
-  }
-
-  return themes;
+function resolveTheme(themeName?: string, userPalette?: Palette): Palette {
+  const preset = THEME_PRESETS[themeName ?? 'default'] ?? THEME_PRESETS.default;
+  return {
+    primary: userPalette?.primary ?? preset.primary,
+    secondary: userPalette?.secondary ?? preset.secondary,
+    background: userPalette?.background ?? preset.background,
+    surface: userPalette?.surface ?? preset.surface,
+    text: userPalette?.text ?? preset.text,
+    muted: userPalette?.muted ?? preset.muted,
+  };
 }
 
 /** Mix a color with white by ratio (0=original, 1=white) */
@@ -192,6 +249,7 @@ function parseMarkdownItems(
   layout: string,
   options: SlideOptions,
   palette?: Palette,
+  style?: string,
 ): { items: ContentModule[]; rawItems: Record<string, unknown>[] } | null {
   if (!content.match(/^###\s/m)) return null;
 
@@ -200,7 +258,7 @@ function parseMarkdownItems(
 
   // Generate cell themes for bento and auto-bento layouts
   const bentoLayouts = new Set(['bento', 'default', 'features', 'stats', 'comparison', 'three-column', 'image-left', 'image-right', 'grid']);
-  const cellThemes = bentoLayouts.has(layout) ? generateCellThemes(palette) : undefined;
+  const cellThemes = bentoLayouts.has(layout) ? generateCellThemes(palette, style) : undefined;
 
   const rawItems: Record<string, unknown>[] = [];
 
@@ -217,6 +275,7 @@ function parseMarkdownItems(
       const theme = cellThemes[idx % cellThemes.length];
       item.background = theme.background;
       item.color = theme.color;
+      if (theme.border) item.border = theme.border;
     }
 
     rawItems.push(item);
@@ -482,6 +541,10 @@ function parseGlobalConfig(raw: Record<string, unknown>): GlobalConfig {
   if (raw.defaults != null) config.defaults = raw.defaults as GlobalConfig['defaults'];
   if (raw.borderRadius != null) config.borderRadius = Number(raw.borderRadius);
   if (raw.fontSize != null) config.fontSize = Number(raw.fontSize);
+  if (raw.style != null) config.style = String(raw.style);
+
+  // Resolve theme preset → palette (user palette overrides preset)
+  config.palette = resolveTheme(config.theme, config.palette);
 
   return config;
 }
@@ -527,8 +590,9 @@ export function parse(source: string): Deck {
     const frontmatterBlock = blocks[i]?.trim() ?? '';
     const contentBlock = blocks[i + 1]?.trim() ?? '';
 
-    // If this block looks like frontmatter (has layout:), pair it with next block as content
-    if (frontmatterBlock.match(/^layout\s*:/m)) {
+    // If this block looks like frontmatter (has YAML-style key: value pairs)
+    const looksLikeFrontmatter = frontmatterBlock.match(/^(layout|style|heading|summary|background|color|pageNumber|footer)\s*:/m);
+    if (looksLikeFrontmatter) {
       const parsed = yaml.load(frontmatterBlock) as Record<string, unknown> | null;
       const layout = String(parsed?.layout ?? 'default');
       const options = extractSlideOptions(parsed ?? {});
@@ -538,7 +602,8 @@ export function parse(source: string): Deck {
       let rawItems: Record<string, unknown>[] | undefined;
 
       if (LIST_LAYOUTS.has(layout)) {
-        const mdResult = parseMarkdownItems(content, layout, options, config.palette);
+        const slideStyle = (options.style as string) ?? config.style;
+        const mdResult = parseMarkdownItems(content, layout, options, config.palette, slideStyle);
         if (mdResult) {
           items = mdResult.items;
           rawItems = mdResult.rawItems;
@@ -581,7 +646,7 @@ export function parse(source: string): Deck {
 
       // If it contains ### items, parse them for auto-bento
       if (content.match(/^###\s/m)) {
-        const mdResult = parseMarkdownItems(content, 'default', options, config.palette);
+        const mdResult = parseMarkdownItems(content, 'default', options, config.palette, config.style);
         if (mdResult) {
           slide.items = mdResult.items;
           slide.rawItems = mdResult.rawItems;

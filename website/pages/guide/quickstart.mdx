@@ -1,3 +1,5 @@
+import { SlidePreview } from '../../components/SlidePreview'
+
 # Quick Start
 
 ## Install
@@ -8,55 +10,71 @@ npm install bentomd
 
 ## Create a `.bmd` File
 
-Create a file called `deck.bmd`:
+Create `deck.bmd` with the following content:
 
-```yaml
+```markdown
 ---
 theme: default
 title: My First Deck
-aspectRatio: "16:9"
-palette:
-  primary: "#2563eb"
 ---
 
----
-layout: cover
-background: "#1e293b"
----
+## Hello, bentomd
 
-# Hello, bentomd
+Welcome to your first slide deck.
 
-## Your first slide deck
+### :zap: Instant Slides
+Write Markdown, get slides. No config needed.
 
----
-layout: default
-heading: "What is bentomd?"
-summary: "A quick overview"
-footer: true
-pageNumber: true
----
+### **3** Rules {sm center}
+That cover everything
 
-- Modular slide decks from Markdown + YAML
-- Fixed canvas rendering -- content always fits
-- 10 built-in layouts for common slide types
-- Designed for AI generation
+### :shield: Open Source {md}
+MIT licensed. Runs locally, no accounts required.
+
+### What you can do {md}
+- Mix text, images, charts, and diagrams
+- Apply themes and styles with one line
+- Export to standalone HTML
 
 ---
-layout: stats
-heading: "By the Numbers"
-footer: true
-pageNumber: true
----
 
-### :layout: 10
-Built-in Layouts
+## By the Numbers
 
-### :monitor: 1920px
-Canvas Width
+### **1920px** {sm center}
+Canvas width
 
-### :check-circle: 0
-Overflow Bugs
+### **99.99%** {sm center}
+Overflow-free
+
+### :layout: Auto-placed {md}
+Cells are placed with bin-packing. No grid positions to manage.
+
+### :palette: 6 Themes {md}
+default · ocean · sunset · forest · berry · mono
 ```
+
+<SlidePreview code={`---
+theme: default
+title: My First Deck
+---
+
+## Hello, bentomd
+
+Welcome to your first slide deck.
+
+### :zap: Instant Slides
+Write Markdown, get slides. No config needed.
+
+### **3** Rules {sm center}
+That cover everything
+
+### :shield: Open Source {md}
+MIT licensed. Runs locally, no accounts required.
+
+### What you can do {md}
+- Mix text, images, charts, and diagrams
+- Apply themes and styles with one line
+- Export to standalone HTML`} />
 
 ## Run the Dev Server
 
@@ -72,13 +90,19 @@ This opens your deck in the browser with live reload. Edit the `.bmd` file and s
 npx bentomd build deck.bmd -o output/
 ```
 
-Generates a standalone HTML file you can open anywhere.
+Generates a standalone HTML file you can open anywhere — no server needed.
 
 ## File Format
 
 A `.bmd` file has two parts:
 
-1. **Global frontmatter** (first YAML block) -- theme, palette, fonts, footer settings
-2. **Slides** (separated by `---`) -- each slide has its own YAML frontmatter plus optional Markdown content
+1. **Global frontmatter** — the first `---` block: theme, palette, fonts, title
+2. **Slides** — each slide is a block of Markdown separated by `---`
 
-See [Slide Structure](/guide/structure) for the full anatomy.
+Within each slide:
+
+- `##` sets the slide title
+- `###` defines a bento cell
+- Everything inside a cell is auto-detected (text, list, image, table, blockquote, diagram)
+
+See [Slide Structure](/guide/structure) for the full syntax reference.

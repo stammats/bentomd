@@ -244,12 +244,13 @@ tr:last-child td { border-bottom: none; }
   font-weight: 800;
   line-height: 1.1;
   font-family: ${fontHeading};
-  color: ${text};
+  color: inherit;
   letter-spacing: -0.02em;
 }
 .slide-summary {
   font-size: ${fontH4}px;
-  color: ${muted};
+  color: inherit;
+  opacity: 0.7;
   line-height: 1.4;
   margin-top: ${spMd}px;
   margin-top: 12px;

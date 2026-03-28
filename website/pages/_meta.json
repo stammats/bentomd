@@ -2,7 +2,6 @@
   "index": "Home",
   "guide": "Guide",
   "layouts": "Layouts",
-  "patterns": "Patterns",
   "editor": {
     "title": "Editor",
     "display": "hidden"

@@ -286,6 +286,155 @@ bentomd turns your Markdown into beautiful, professional presentations. No desig
 - Present from any browser
 
 ---
+layout: section
+background: "#1e293b"
+color: "#f8fafc"
+---
+
+# Part 3
+## Themes & Styles
+
+---
+style: mixed
+heading: "Style: mixed (default)"
+summary: "Bright and dark pairs alternate for visual variety."
+---
+
+### :zap: Fast
+Lightning performance.
+
+### :shield: Secure
+Enterprise grade.
+
+### :code: Open
+Full API access.
+
+---
+style: tint
+heading: "Style: tint"
+summary: "Soft pastel backgrounds with accent-colored text."
+---
+
+### :anchor: Maritime
+Ocean-inspired tones.
+
+### :ship: Voyage
+Fresh aquatic palette.
+
+### :compass: Navigate
+Clear data presentation.
+
+---
+style: solid
+heading: "Style: solid"
+summary: "Bold accent backgrounds with white text."
+---
+
+### :sun: Warm Tones
+Commands attention.
+
+### :flame: Vibrant
+Creates urgency.
+
+### :sunrise: Golden Hour
+Perfect for marketing.
+
+---
+style: outline
+heading: "Style: outline"
+summary: "Clean borders on transparent backgrounds."
+---
+
+### :grape: Elegant
+Refined modern look.
+
+### :sparkles: Minimal
+Content takes center stage.
+
+### :pen-tool: Designer
+Crafted with care.
+
+---
+style: white
+heading: "Style: white"
+summary: "White cells with accent-colored text and icons."
+---
+
+### :moon: Clean
+Distraction-free design.
+
+### :briefcase: Corporate
+Professional and classic.
+
+### :file-check: Focused
+Content-first approach.
+
+---
+style: mono
+heading: "Style: mono"
+summary: "Single-color palette for brand consistency."
+---
+
+### :target: Branded
+One color, unified look.
+
+### :layers: Consistent
+Brand identity in every cell.
+
+### :palette: On-brand
+Your primary color throughout.
+
+---
+style: white
+background: "#0984e3"
+color: "#ffffff"
+heading: "Style: white + colored background"
+summary: "White cells on a colored slide background."
+---
+
+### :cloud: Cloud Native
+Deploy anywhere with confidence.
+
+### :lock: Secure
+Enterprise-grade security built in.
+
+### :zap: **99.9**% Uptime
+Always available for your users.
+
+---
+style: white
+background: "#e8f4f8"
+heading: "Style: white + light background"
+summary: "White cells on a soft blue background."
+---
+
+### :cloud: Light & Airy
+Soft colored backgrounds create a calm, professional feel.
+
+### :sun: Subtle Contrast
+White cells gently stand out against the tinted backdrop.
+
+### :palette: Brand Tint
+Use your brand color at low opacity for a cohesive look.
+
+---
+style: white
+background: "#2d3436"
+color: "#ffffff"
+heading: "Style: white + dark background"
+summary: "White cells on a dark slide for dramatic contrast."
+---
+
+### :moon: Dark Mode
+Elegant dark presentation style.
+
+### :star: Standout
+White cells pop on dark backgrounds.
+
+### :eye: High Contrast
+Maximum readability and impact.
+
+---
 layout: cover
 background: "#0f172a"
 color: "#f8fafc"
@@ -297,10 +446,212 @@ color: "#f8fafc"
 bentomd.dev
 `
 
+const BRAND_CONTENT = `---
+title: Brand Presentation
+theme: default
+style: mono
+borderRadius: 40
+palette:
+  primary: "#0017cb"
+defaults:
+  pageNumber: true
+---
+
+---
+layout: cover
+background: "#0017cb"
+color: "#ffffff"
+---
+
+# Product Strategy 2026
+## Q2 Planning & Roadmap
+
+---
+
+## Executive Summary
+
+### :target: **3** Strategic Priorities
+We're focusing on platform expansion, developer experience, and enterprise readiness this quarter.
+
+### :trending-up: **+42**% Revenue Target
+Aggressive but achievable growth driven by enterprise pipeline and self-serve expansion.
+
+### :users: **10K** New Users
+Projected monthly active user growth from marketing campaigns and product-led acquisition.
+
+---
+
+## Key Metrics
+
+### **$4.2M** ARR
+
+### **150K** Monthly Active Users
+
+### **99.99**% Uptime SLA
+
+### **12**ms Avg Response Time
+
+---
+
+## Platform Roadmap
+
+### :rocket: **Launch** API v2
+Complete REST and GraphQL API redesign with improved rate limiting and webhook support.
+
+### :shield: **SOC 2** Type II
+Achieve compliance certification by end of Q2. Audit process already underway.
+
+### :globe: **5** New Regions
+Expand infrastructure to APAC and LATAM for lower latency and data residency compliance.
+
+---
+
+## Product Features
+
+### :code: Developer SDK
+Native SDKs for Python, Node.js, Go, and Rust with full type safety and auto-generated docs.
+
+### :layout-grid: Dashboard Redesign
+New analytics dashboard with customizable widgets, real-time data, and export capabilities.
+
+### :lock: Advanced Security
+SSO with SAML/OIDC, audit logging, IP allowlists, and granular role-based permissions.
+
+### :zap: Performance
+Edge caching, smart routing, and connection pooling for sub-10ms global response times.
+
+### :bar-chart: Analytics
+Funnel analysis, cohort tracking, and custom event pipelines with SQL query access.
+
+### :heart: Customer Success
+Dedicated onboarding, quarterly business reviews, and 24/7 priority support for enterprise.
+
+---
+
+## Team & Hiring
+
+### :users: **28** Current Team
+Engineering, product, design, and go-to-market across 4 time zones.
+
+### :user-plus: **8** Open Roles
+Hiring senior engineers, product managers, and enterprise sales reps.
+
+---
+layout: cover
+background: "#0017cb"
+color: "#ffffff"
+---
+
+# Thank You
+## Questions?
+`
+
 const DEFAULT_DOC: Document = {
   id: 'demo-v3',
   name: 'Complete Demo',
   content: DEFAULT_CONTENT,
+  updatedAt: Date.now(),
+}
+
+const BRAND_DOC: Document = {
+  id: 'brand-sample',
+  name: 'Brand Sample (#0017cb)',
+  content: BRAND_CONTENT,
+  updatedAt: Date.now(),
+}
+
+const LIGHT_CONTENT = `---
+title: Light Theme Sample
+style: white
+borderRadius: 40
+palette:
+  primary: "#0017cb"
+  background: "#eef2ff"
+defaults:
+  pageNumber: true
+---
+
+---
+layout: cover
+background: "#0017cb"
+color: "#ffffff"
+---
+
+# Quarterly Review
+## Q2 2026 Results
+
+---
+
+## Performance Highlights
+
+### :trending-up: **+38**% Revenue
+Exceeded target by 8 points driven by enterprise expansion and self-serve growth.
+
+### :users: **12K** New Users
+Record monthly signups from product-led acquisition campaigns.
+
+### :zap: **99.99**% Uptime
+Zero major incidents this quarter across all regions.
+
+---
+
+## Product Milestones
+
+### :rocket: API v2 Launched
+Complete REST and GraphQL redesign with 3x throughput improvement.
+
+### :shield: SOC 2 Certified
+Type II certification achieved ahead of schedule.
+
+### :globe: APAC Expansion
+New regions in Tokyo, Singapore, and Sydney now live.
+
+### :code: SDK Released
+Native SDKs for Python, Node.js, Go, and Rust with full type safety.
+
+### :bar-chart: Analytics Dashboard
+Custom widgets, real-time data streams, and SQL query access.
+
+### :heart: NPS Score **72**
+Up from 64 last quarter — highest in company history.
+
+---
+
+## Team Growth
+
+### :user-plus: **8** New Hires
+Engineering, product, and enterprise sales across 3 time zones.
+
+### :target: **4** Promoted
+Internal mobility program showing strong results.
+
+---
+
+## Next Quarter Priorities
+
+### :rocket: **Scale** Infrastructure
+Double capacity in EMEA and LATAM regions for data residency compliance.
+
+### :lock: **Launch** Advanced Security
+IP allowlists, audit log exports, and custom session policies.
+
+### :users: **Grow** Enterprise Pipeline
+Target 15 new enterprise accounts with dedicated onboarding program.
+
+---
+layout: cover
+background: "#0017cb"
+color: "#ffffff"
+---
+
+# Thank You
+## Questions?
+`
+
+const LIGHT_DOC: Document = {
+  id: 'light-sample',
+  name: 'Light Background + White Cells',
+  content: LIGHT_CONTENT,
   updatedAt: Date.now(),
 }
 
@@ -561,7 +912,7 @@ function EditorInner() {
   const isDev = process.env.NODE_ENV === 'development'
   useEffect(() => {
     if (isDev) {
-      setDocs([DEFAULT_DOC])
+      setDocs([DEFAULT_DOC, BRAND_DOC, LIGHT_DOC])
       setActiveId(DEFAULT_DOC.id)
       setEditorContent(DEFAULT_CONTENT)
       setIsLoaded(true)
