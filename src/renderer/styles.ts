@@ -175,7 +175,7 @@ ${gridCSS}
 /* Scoped to slide content — excludes mermaid internals */
 .slide-content h1 { font-size: ${fontH1}px; font-weight: 700; line-height: 1.15; font-family: ${fontHeading}; }
 .slide-content h2 { font-size: ${fontH2}px; font-weight: 600; line-height: 1.2; font-family: ${fontHeading}; }
-.slide-content h3 { font-size: ${fontH3}px; font-weight: 600; line-height: 1.3; font-family: ${fontHeading}; }
+.slide-content h3:not(.bento-title) { font-size: ${fontH3}px; font-weight: 600; line-height: 1.3; font-family: ${fontHeading}; }
 .slide-content h4 { font-size: ${fontH4}px; font-weight: 500; line-height: 1.3; font-family: ${fontHeading}; }
 .slide-content .module-richtext > p,
 .slide-content .module-richtext > ul p,
@@ -623,11 +623,12 @@ tr:last-child td { border-bottom: none; }
   line-height: 1;
 }
 .bento-title {
-  font-size: ${fontH2}px;
+  font-size: ${fontH1}px;
   font-weight: 700;
   color: inherit;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+  font-family: ${fontHeading};
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 .bento-label {
   font-size: ${fontH3}px;
@@ -646,9 +647,15 @@ tr:last-child td { border-bottom: none; }
 .bento-desc table { font-size: ${fontBase}px; }
 .bento-icon {
   color: inherit;
-  margin-bottom: ${spSm}px;
+  display: inline;
+  vertical-align: middle;
 }
-.bento-icon svg { width: 40px; height: 40px; }
+.bento-title .bento-icon svg {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.1em;
+}
+.bento-icon svg { width: 1em; height: 1em; }
 .bento-content { margin-top: ${spSm}px; }
 
 /* Bento inline image (content image, not background) */

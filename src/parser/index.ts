@@ -83,7 +83,7 @@ function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
     case 'tint':
       return accents.map((c) => ({
         background: tintColor(c, 0.8),
-        color: shadeColor(c, 0.4),
+        color: shadeColor(c, 0.6),
       }));
 
     case 'solid':
@@ -95,22 +95,22 @@ function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
     case 'outline':
       return accents.map((c) => ({
         background: 'transparent',
-        color: c,
+        color: shadeColor(c, 0.2),
         border: c,
       }));
 
     case 'white':
       return accents.map((c) => ({
         background: '#ffffff',
-        color: c,
+        color: shadeColor(c, 0.2),
       }));
 
     case 'mono': {
       return [
-        { background: tintColor(primary, 0.8), color: shadeColor(primary, 0.4) },
+        { background: tintColor(primary, 0.8), color: shadeColor(primary, 0.6) },
         { background: primary, color: '#ffffff' },
-        { background: tintColor(primary, 0.9), color: shadeColor(primary, 0.3) },
-        { background: shadeColor(primary, 0.3), color: tintColor(primary, 0.9) },
+        { background: tintColor(primary, 0.9), color: shadeColor(primary, 0.5) },
+        { background: shadeColor(primary, 0.4), color: tintColor(primary, 0.9) },
       ];
     }
 
@@ -118,8 +118,8 @@ function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
     default: {
       // Bright/dark pairs from primary + secondary + default accents
       const pairs = [
-        { bright: tintColor(primary, 0.75), dark: shadeColor(primary, 0.55) },
-        { bright: tintColor(secondary, 0.75), dark: shadeColor(secondary, 0.55) },
+        { bright: tintColor(primary, 0.75), dark: shadeColor(primary, 0.65) },
+        { bright: tintColor(secondary, 0.75), dark: shadeColor(secondary, 0.65) },
         { bright: '#fce4b8', dark: '#5c3d0e' },
         { bright: '#c5dde8', dark: '#1a3a4a' },
         { bright: '#f5c6c6', dark: '#6b2020' },
@@ -140,7 +140,7 @@ function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
  */
 function resolveTheme(themeName?: string, userPalette?: Palette): Palette {
   const preset = THEME_PRESETS[themeName ?? 'default'] ?? THEME_PRESETS.default;
-  return {
+  const resolved: Palette = {
     primary: userPalette?.primary ?? preset.primary,
     secondary: userPalette?.secondary ?? preset.secondary,
     background: userPalette?.background ?? preset.background,
@@ -148,6 +148,24 @@ function resolveTheme(themeName?: string, userPalette?: Palette): Palette {
     text: userPalette?.text ?? preset.text,
     muted: userPalette?.muted ?? preset.muted,
   };
+
+  // Auto-adjust text colors when background is dark and user didn't set text/muted
+  if (resolved.background && isDarkHex(resolved.background)) {
+    if (!userPalette?.text) resolved.text = '#f1f5f9';
+    if (!userPalette?.muted) resolved.muted = '#94a3b8';
+    if (!userPalette?.surface) resolved.surface = '#334155';
+  }
+
+  return resolved;
+}
+
+/** Check if a hex color is dark (luminance < 0.4) */
+function isDarkHex(hex: string): boolean {
+  if (!hex.startsWith('#')) return false;
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 0.4;
 }
 
 /** Mix a color with white by ratio (0=original, 1=white) */

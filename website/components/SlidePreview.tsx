@@ -13,7 +13,7 @@ export function useDebugGrid() {
 }
 
 export function DebugGridProvider({ children }: { children: React.ReactNode }) {
-  const [debugGrid, setDebugGrid] = useState(true)
+  const [debugGrid, setDebugGrid] = useState(false)
   const toggle = useCallback(() => setDebugGrid((v) => !v), [])
   return (
     <DebugGridContext.Provider value={{ debugGrid, toggle }}>

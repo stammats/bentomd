@@ -55,22 +55,21 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
 
   const parts: string[] = [];
 
-  // Icon
-  const iconStyle = cell.color ? `color:${cell.color}` : '';
-  if (cell.icon) {
-    parts.push(`<div class="bento-icon" style="${iconStyle}">${renderIcon(cell.icon, { size: 32 })}</div>`);
-  }
-
-  // Title — **bold** parts render large (bento-value style)
+  // Title with optional inline icon — **bold** parts render large (bento-value style)
   if (cell.title) {
+    const iconHtml = cell.icon
+      ? `<span class="bento-icon">${renderIcon(cell.icon)}</span> `
+      : '';
     const titleHtml = escapeHtml(cell.title)
       .replace(/\*\*([^*]+)\*\*/g, '<span class="bento-value">$1</span>');
-    // If title contains a bento-value span, wrap in a title div
     if (titleHtml.includes('bento-value')) {
-      parts.push(`<div class="bento-title">${titleHtml}</div>`);
+      parts.push(`<div class="bento-title">${iconHtml}${titleHtml}</div>`);
     } else {
-      parts.push(`<h3 class="bento-title">${titleHtml}</h3>`);
+      parts.push(`<h3 class="bento-title">${iconHtml}${titleHtml}</h3>`);
     }
+  } else if (cell.icon) {
+    // Icon only, no title
+    parts.push(`<div class="bento-icon">${renderIcon(cell.icon)}</div>`);
   }
   if (cell.description) {
     parts.push(`<div class="bento-desc">${renderMarkdown(cell.description)}</div>`);
