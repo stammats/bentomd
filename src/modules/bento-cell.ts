@@ -11,12 +11,14 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   if (!cell) return '';
 
   // Determine layout direction based on cell aspect ratio.
-  // colSpan/rowSpan approximates the aspect ratio on a 12-col grid.
-  // Wide cells (ratio > 4) use horizontal layout for icon+value;
-  // tall or square cells keep vertical stacking.
+  // colSpan/rowSpan approximates the grid ratio; actual pixel ratio is wider
+  // because columns (~160px) are narrower than rows (~290px).
+  // Horizontal layout for: wide single-row cells (ratio > 4) or
+  // multi-row cells that are still landscape (ratio > 2, e.g. tall 6×2).
   const colSpan = slot.colSpan ?? 4;
   const rowSpan = slot.rowSpan ?? 1;
-  const isWide = colSpan / rowSpan > 4;
+  const gridRatio = colSpan / rowSpan;
+  const isWide = gridRatio > 4 || (rowSpan >= 2 && gridRatio > 2);
   const area = colSpan * rowSpan;
   // Size tier: lg (hero/full), md (half-width+), sm (small cells in 6-cell grids)
   const sizeTier = area >= 12 ? 'lg' : area >= 6 ? 'md' : 'sm';
@@ -58,44 +60,54 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
     styles.push('justify-content:center');
   }
 
-  // Build text parts (title, description, content, etc.)
-  const textParts: string[] = [];
-
+  // Build title HTML
+  let titleTag = '';
   if (cell.title) {
     const titleHtml = escapeHtml(cell.title)
-      .replace(/\*\*([^*]+)\*\*/g, '<span class="bento-value">$1</span>');
+      .replace(/\*\*([^*]+)\*\*/g, '<br><span class="bento-value">$1</span>');
     if (titleHtml.includes('bento-value')) {
-      textParts.push(`<div class="bento-title">${titleHtml}</div>`);
+      const cleaned = titleHtml.replace(/^(<br>)/, '');
+      titleTag = `<div class="bento-title">${cleaned}</div>`;
     } else {
-      textParts.push(`<h3 class="bento-title">${titleHtml}</h3>`);
+      titleTag = `<h3 class="bento-title">${titleHtml}</h3>`;
     }
   }
+
+  // Build body parts (description, content, mermaid, image — everything below title)
+  const bodyParts: string[] = [];
   if (cell.description) {
-    textParts.push(`<div class="bento-desc">${renderMarkdown(cell.description)}</div>`);
+    bodyParts.push(`<div class="bento-desc">${renderMarkdown(cell.description)}</div>`);
   }
   if (cell.content) {
-    textParts.push(`<div class="bento-content">${renderMarkdown(cell.content)}</div>`);
+    bodyParts.push(`<div class="bento-content">${renderMarkdown(cell.content)}</div>`);
   }
   if (cell.mermaid) {
-    textParts.push(`<pre class="mermaid">${cell.mermaid}</pre>`);
+    bodyParts.push(`<pre class="mermaid">${cell.mermaid}</pre>`);
   }
   if (cell.image) {
-    textParts.push(`<div class="bento-inline-image"><img src="${escapeHtml(cell.image)}" alt="${escapeHtml(cell.title ?? '')}" /></div>`);
+    bodyParts.push(`<div class="bento-inline-image"><img src="${escapeHtml(cell.image)}" alt="${escapeHtml(cell.title ?? '')}" /></div>`);
   }
 
   const parts: string[] = [];
 
   if (cell.icon && isWide) {
-    // Wide cell: horizontal 2-column layout — icon left, text right
+    // Wide cell: icon left, text right. Put text-only desc in right column;
+    // heavy content (charts, mermaid, images) stays below at full width.
     const iconHtml = `<div class="bento-icon">${renderIcon(cell.icon)}</div>`;
-    const textHtml = `<div class="bento-text">${textParts.join('\n')}</div>`;
-    parts.push(`<div class="bento-horizontal">${iconHtml}${textHtml}</div>`);
+    const descHasHeavy = cell.description && /```(chart|mermaid)/.test(cell.description);
+    const textBodyParts = descHasHeavy ? [] : bodyParts.filter(p => p.includes('bento-desc'));
+    const heavyParts = descHasHeavy ? bodyParts : bodyParts.filter(p => !p.includes('bento-desc'));
+    const rightCol = [titleTag, ...textBodyParts].filter(Boolean).join('\n');
+    const headerHtml = `<div class="bento-horizontal">${iconHtml}<div class="bento-text">${rightCol}</div></div>`;
+    parts.push(headerHtml);
+    parts.push(...heavyParts);
   } else {
-    // Tall/square cell: vertical stack — icon on top, text below
+    // Vertical stack: icon on top, title, then body
     if (cell.icon) {
       parts.push(`<div class="bento-icon">${renderIcon(cell.icon)}</div>`);
     }
-    parts.push(...textParts);
+    if (titleTag) parts.push(titleTag);
+    parts.push(...bodyParts);
   }
 
   return (

@@ -19,6 +19,7 @@ export { minimalDarkTemplate } from './minimal-dark'
 export { devMeetupTemplate } from './dev-meetup'
 export { imageMetricsTemplate } from './image-metrics'
 export { inlineGalleryTemplate } from './inline-gallery'
+export { digitalAgencyTemplate } from './digital-agency'
 
 import { appleProductTemplate } from './apple-product'
 import { startupPitchTemplate } from './startup-pitch'
@@ -28,6 +29,7 @@ import { minimalDarkTemplate } from './minimal-dark'
 import { devMeetupTemplate } from './dev-meetup'
 import { imageMetricsTemplate } from './image-metrics'
 import { inlineGalleryTemplate } from './inline-gallery'
+import { digitalAgencyTemplate } from './digital-agency'
 
 export const templates: Template[] = [
   appleProductTemplate,
@@ -38,4 +40,5 @@ export const templates: Template[] = [
   quarterlyReviewTemplate,
   techArchitectureTemplate,
   minimalDarkTemplate,
+  digitalAgencyTemplate,
 ]

@@ -30,16 +30,10 @@ defaults:
   footer: false
 ---
 
----
-layout: cover
-background: "#000000"
-color: "#ffffff"
----
+## {cover, bg="#000000"}
 
 # MacBook Air
-## 圧倒的パワーを、薄さの中に。
-
----
+圧倒的パワーを、薄さの中に。
 
 ## Liquid Retina ディスプレイ
 
@@ -55,8 +49,6 @@ AIタスクを圧倒的スピードで
 ### :palette: 4色展開
 あなたにぴったりの一台を
 
----
-
 ## パフォーマンス
 
 ### :zap: **18** 時間
@@ -70,8 +62,6 @@ AIタスクを圧倒的スピードで
 
 ### :gauge: **10** コアGPU
 圧倒的グラフィックス
-
----
 
 ## Apple Intelligence
 
@@ -87,12 +77,7 @@ AIタスクを圧倒的スピードで
 ### :wand-2: 画像生成
 アイデアを瞬時にビジュアル化
 
----
-background: "#000000"
-color: "#ffffff"
----
-
-## ラインナップ
+## ラインナップ {bg="#000000"}
 
 ### iPhone 17 Pro {hero}
 ![iPhone](https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&q=80)
@@ -103,13 +88,9 @@ MacBook Air
 ### **¥179,800** から
 iPhone 17 Pro
 
----
-layout: cover
-background: "#000000"
-color: "#ffffff"
----
+## {cover, bg="#000000"}
 
 # さあ、始めよう。
-## apple.com
+apple.com
 `,
 }

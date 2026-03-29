@@ -9,29 +9,21 @@ import type {
   FontConfig,
 } from '../types/index.js';
 
-const LIST_LAYOUTS = new Set([
-  'features',
-  'chart',
-  'stats',
-  'timeline',
-  'comparison',
-  'bento',
-  'grid',
-  'three-column',
-  'image-left',
-  'image-right',
-  'default',  // auto-bento: default with ### items
+/** All known layout names — used for bare-word detection in {attrs} and item parsing */
+const KNOWN_LAYOUTS = new Set([
+  'cover', 'section', 'default', 'bento',
+  'features', 'chart', 'stats', 'timeline', 'comparison',
+  'grid', 'three-column', 'image-left', 'image-right',
+  'table', 'quote', 'image', 'two-column',
 ]);
 
-/** Keys that belong in SlideOptions rather than being left in frontmatter */
-const SLIDE_OPTION_KEYS = new Set([
-  'header', 'heading', 'summary', 'footer', 'pageNumber',
-  'ratio', 'columns', 'valign', 'gap', 'background', 'overlay', 'align', 'style', 'color',
-  'src', 'fit', 'position', 'caption',
-  'type', 'title', 'showValues', 'showLegend', 'colors',
-  'language', 'highlight',
-  'direction',
+/** Layouts that parse ### items into structured data */
+const LIST_LAYOUTS = new Set([
+  'features', 'chart', 'stats', 'timeline', 'comparison',
+  'bento', 'grid', 'three-column', 'image-left', 'image-right',
+  'default',
 ]);
+
 
 // ============================================================
 // Theme + Style system for bento cells
@@ -630,113 +622,145 @@ function parseGlobalConfig(raw: Record<string, unknown>): GlobalConfig {
   return config;
 }
 
-function extractSlideOptions(parsed: Record<string, unknown>): SlideOptions {
-  const options: SlideOptions = {};
-  for (const key of Object.keys(parsed)) {
-    if (key === 'layout') continue;
-    if (SLIDE_OPTION_KEYS.has(key)) {
-      (options as Record<string, unknown>)[key] = parsed[key];
-    }
-  }
-  return options;
+
+
+// ============================================================
+// Inline attribute parser for ## headings
+// ============================================================
+
+const ATTR_ALIASES: Record<string, string> = { bg: 'background' };
+
+interface ParsedSlideHeading {
+  title: string | undefined;
+  layout: string;
+  options: SlideOptions;
 }
 
-export function parse(source: string): Deck {
-  // Split by lines that are exactly `---`
-  const blocks = source.split(/^---$/m);
+/** Parse `## Title {cover, bg="photo.jpg", style=mono}` */
+function parseSlideHeading(line: string): ParsedSlideHeading {
+  const h2Match = line.match(/^##\s+(.*?)\s*$/);
+  if (!h2Match) return { title: undefined, layout: 'default', options: {} };
 
-  let config: GlobalConfig = {};
+  let raw = h2Match[1].trim();
+  const options: SlideOptions = {};
+  let layout = 'default';
+
+  const attrMatch = raw.match(/\{([^}]*)\}\s*$/);
+  if (attrMatch) {
+    raw = raw.slice(0, attrMatch.index).trim();
+    for (const token of attrMatch[1].split(',').map(t => t.trim()).filter(Boolean)) {
+      const eqIdx = token.indexOf('=');
+      if (eqIdx >= 0) {
+        const key = token.slice(0, eqIdx).trim();
+        let val = token.slice(eqIdx + 1).trim();
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.slice(1, -1);
+        }
+        (options as Record<string, unknown>)[ATTR_ALIASES[key] ?? key] = val;
+      } else if (KNOWN_LAYOUTS.has(token)) {
+        layout = token;
+      }
+    }
+  }
+
+  const title = raw || undefined;
+
+  // Auto-detect text color from background
+  const bg = options.background as string | undefined;
+  if (bg && !options.color) {
+    if (bg.startsWith('http') || bg.startsWith('/') || bg.startsWith('.')) {
+      options.color = '#ffffff';
+      if (options.overlay === undefined) options.overlay = 0.4;
+    } else if (bg.startsWith('#')) {
+      options.color = isDarkHex(bg) ? '#ffffff' : '#2d3436';
+    }
+  }
+
+  return { title, layout, options };
+}
+
+// ============================================================
+// Global config extraction
+// ============================================================
+
+function extractGlobalConfig(source: string): { config: GlobalConfig; body: string } {
+  const fmMatch = source.match(/^\s*---\s*\n([\s\S]*?)\n---\s*(?:\n|$)/);
+  if (!fmMatch) return { config: parseGlobalConfig({}), body: source };
+  const raw = (yaml.load(fmMatch[1].trim()) as Record<string, unknown>) || {};
+  return { config: parseGlobalConfig(raw), body: source.slice(fmMatch[0].length) };
+}
+
+// ============================================================
+// Slide parser — splits on ## headings
+// ============================================================
+
+function parseSlides(body: string, config: GlobalConfig): Slide[] {
+  const lines = body.split('\n');
   const slides: Slide[] = [];
 
-  // Find the global config block: first non-empty block without `layout`
-  let i = 0;
+  interface Chunk { headingLine: string | null; bodyLines: string[] }
+  const chunks: Chunk[] = [];
+  let current: Chunk = { headingLine: null, bodyLines: [] };
+  let inCode = false;
 
-  // Skip leading empty block (before first ---)
-  if (blocks.length > 0 && blocks[0].trim() === '') {
-    i = 1;
-  }
-
-  // Parse global config from first meaningful block
-  if (i < blocks.length) {
-    const trimmed = blocks[i].trim();
-    if (trimmed && !trimmed.match(/^layout\s*:/m)) {
-      const raw = (yaml.load(trimmed) as Record<string, unknown>) || {};
-      config = parseGlobalConfig(raw);
-      i++;
-    }
-  }
-
-  // Process remaining blocks in pairs: (frontmatter, content)
-  while (i < blocks.length) {
-    const frontmatterBlock = blocks[i]?.trim() ?? '';
-    const contentBlock = blocks[i + 1]?.trim() ?? '';
-
-    // If this block looks like frontmatter (has YAML-style key: value pairs)
-    const looksLikeFrontmatter = frontmatterBlock.match(/^(layout|style|heading|summary|background|color|pageNumber|footer)\s*:/m);
-    if (looksLikeFrontmatter) {
-      const parsed = yaml.load(frontmatterBlock) as Record<string, unknown> | null;
-      const layout = String(parsed?.layout ?? 'default');
-      const options = extractSlideOptions(parsed ?? {});
-
-      let content = contentBlock;
-      let items: ContentModule[] | undefined;
-      let rawItems: Record<string, unknown>[] | undefined;
-
-      if (LIST_LAYOUTS.has(layout)) {
-        const slideStyle = (options.style as string) ?? config.style;
-        const mdResult = parseMarkdownItems(content, layout, options, config.palette, slideStyle);
-        if (mdResult) {
-          items = mdResult.items;
-          rawItems = mdResult.rawItems;
-        }
+  for (const line of lines) {
+    if (line.match(/^```/)) inCode = !inCode;
+    if (!inCode && line.match(/^##\s/)) {
+      if (current.headingLine !== null || current.bodyLines.some(l => l.trim())) {
+        chunks.push(current);
       }
-
-      const slide: Slide = { layout, options, content };
-      if (items) {
-        slide.items = items;
-        slide.rawItems = rawItems;
-      }
-      slides.push(slide);
-      i += 2;
-    } else if (frontmatterBlock === '') {
-      // Empty block, skip
-      i++;
+      current = { headingLine: line, bodyLines: [] };
     } else {
-      // Block without layout - treat as content-only slide with default layout
-      const content = frontmatterBlock;
-      const options: SlideOptions = {};
-
-      // Extract ## heading and body text before first ###
-      const h2Match = content.match(/^##\s+(.+)$/m);
-      if (h2Match) {
-        options.heading = h2Match[1].trim();
-        // Text between ## and first ### is the summary/body
-        const h2End = (content.indexOf(h2Match[0]) + h2Match[0].length);
-        const firstH3 = content.indexOf('\n###');
-        if (firstH3 > h2End) {
-          const bodyText = content.substring(h2End, firstH3).trim();
-          if (bodyText) options.summary = bodyText;
-        }
-      }
-
-      const slide: Slide = {
-        layout: 'default',
-        options,
-        content,
-      };
-
-      // If it contains ### items, parse them for auto-bento
-      if (content.match(/^###\s/m)) {
-        const mdResult = parseMarkdownItems(content, 'default', options, config.palette, config.style);
-        if (mdResult) {
-          slide.items = mdResult.items;
-          slide.rawItems = mdResult.rawItems;
-        }
-      }
-      slides.push(slide);
-      i++;
+      current.bodyLines.push(line);
     }
   }
+  if (current.headingLine !== null || current.bodyLines.some(l => l.trim())) {
+    chunks.push(current);
+  }
 
-  return { config, slides };
+  for (const chunk of chunks) {
+    const content = chunk.bodyLines.join('\n').trim();
+
+    if (!chunk.headingLine) {
+      if (!content) continue;
+      slides.push({ layout: 'default', options: {}, content });
+      continue;
+    }
+
+    const { title, layout, options } = parseSlideHeading(chunk.headingLine);
+    if (title) options.heading = title;
+
+    // Extract summary: text between ## heading and first ### item
+    if (content && title) {
+      const firstH3 = content.indexOf('###');
+      if (firstH3 > 0) {
+        const summaryText = content.substring(0, firstH3).trim();
+        if (summaryText && !options.summary) options.summary = summaryText;
+      }
+    }
+
+    const slide: Slide = { layout, options, content };
+
+    if (content.match(/^###\s/m)) {
+      const slideStyle = (options.style as string) ?? config.style;
+      const mdResult = parseMarkdownItems(content, layout, options, config.palette, slideStyle);
+      if (mdResult) {
+        slide.items = mdResult.items;
+        slide.rawItems = mdResult.rawItems;
+      }
+    }
+
+    slides.push(slide);
+  }
+
+  return slides;
+}
+
+// ============================================================
+// Main entry point
+// ============================================================
+
+export function parse(source: string): Deck {
+  const { config, body } = extractGlobalConfig(source);
+  return { config, slides: parseSlides(body, config) };
 }

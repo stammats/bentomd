@@ -25,16 +25,10 @@ defaults:
   pageNumber: true
 ---
 
----
-layout: cover
-background: "#0f172a"
-color: "#f8fafc"
----
+## {cover, bg="#0f172a"}
 
 # YourApp
-## チームコラボを再定義する
-
----
+チームコラボを再定義する
 
 ## 課題
 
@@ -47,8 +41,6 @@ color: "#f8fafc"
 ### :users: **500M** 人の市場
 巨大な未開拓セグメント
 
----
-
 ## 解決策
 
 ### :rocket: 統合プラットフォーム {hero}
@@ -59,8 +51,6 @@ color: "#f8fafc"
 
 ### :link: コンテキスト維持
 すべてが繋がり、切り替え不要
-
----
 
 ## トラクション
 
@@ -76,8 +66,6 @@ MoM 25% 成長
 ### :repeat: **95%** 継続率
 年間コホート全セグメント
 
----
-
 ## チーム
 
 ### :user: CEO — Jane Smith
@@ -89,13 +77,9 @@ Ex-Google Chrome DevTools。15年のプラットフォーム開発。
 ### :bar-chart: COO — Maria Lopez
 Ex-Notion。10→500名のスケーリング経験。
 
----
-layout: cover
-background: "#0f172a"
-color: "#f8fafc"
----
+## {cover, bg="#0f172a"}
 
 # Series A $10M 調達中
-## 一緒に未来をつくりましょう
+一緒に未来をつくりましょう
 `,
 }

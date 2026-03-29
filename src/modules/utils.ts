@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 import * as lucideIcons from 'lucide-static';
-import { renderBarChart, renderPieChart, renderLineChart } from './chart.js';
+import { renderBarChart, renderPieChart, renderLineChart, renderColumnChart } from './chart.js';
 import type { ChartDataItem } from '../types/index.js';
 
 const DEFAULT_CHART_COLORS = ['#0984e3', '#6c5ce7', '#00b894', '#d63031', '#fdcb6e', '#e17055'];
@@ -44,6 +44,10 @@ function renderInlineChart(text: string): string {
     case 'line':
     case 'area':
       svg = renderLineChart(items, colors);
+      break;
+    case 'column':
+    case 'vbar':
+      svg = renderColumnChart(items, colors);
       break;
     default:
       svg = renderBarChart(items, colors);

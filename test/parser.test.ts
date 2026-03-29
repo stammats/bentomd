@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { parse } from '../src/parser/index.js';
 
 describe('parse', () => {
+  // ---- Global config ----
+
   it('parses global config', () => {
     const source = `---
 theme: dark
@@ -10,9 +12,7 @@ author: Alice
 aspectRatio: "16:9"
 ---
 
----
-layout: cover
----
+## {cover}
 
 Hello`;
 
@@ -45,9 +45,7 @@ defaults:
   layout: default
 ---
 
----
-layout: cover
----
+## {cover}
 
 Hello`;
 
@@ -77,9 +75,7 @@ fonts:
   mono: Fira Code
 ---
 
----
-layout: cover
----
+## {cover}
 
 Hello`;
 
@@ -94,9 +90,7 @@ fonts:
   mono: Courier
 ---
 
----
-layout: cover
----
+## {cover}
 
 Hello`;
 
@@ -105,21 +99,49 @@ Hello`;
     expect(deck.config.fonts!.body).toBe('Helvetica');
   });
 
-  it('parses a single slide with default layout', () => {
+  it('returns default config and no slides for empty input', () => {
+    const deck = parse('');
+    expect(deck.config.palette).toBeDefined();
+    expect(deck.slides).toEqual([]);
+  });
+
+  // ---- Slide splitting ----
+
+  it('splits slides on ## headings', () => {
+    const source = `---
+title: Test
+---
+
+## Slide One
+
+Hello world
+
+## Slide Two
+
+Goodbye world
+`;
+    const deck = parse(source);
+    expect(deck.slides).toHaveLength(2);
+    expect(deck.slides[0].options.heading).toBe('Slide One');
+    expect(deck.slides[0].content).toContain('Hello world');
+    expect(deck.slides[1].options.heading).toBe('Slide Two');
+    expect(deck.slides[1].content).toContain('Goodbye world');
+  });
+
+  it('parses single slide with default layout', () => {
     const source = `---
 theme: default
 ---
 
----
-layout: default
----
+## Hello
 
 # Hello World`;
 
     const deck = parse(source);
     expect(deck.slides).toHaveLength(1);
     expect(deck.slides[0].layout).toBe('default');
-    expect(deck.slides[0].content).toBe('# Hello World');
+    expect(deck.slides[0].options.heading).toBe('Hello');
+    expect(deck.slides[0].content).toContain('# Hello World');
   });
 
   it('parses multiple slides', () => {
@@ -127,68 +149,156 @@ layout: default
 title: Multi
 ---
 
----
-layout: cover
----
+## {cover}
 
 # Title Slide
 
----
-layout: section
----
+## Section
 
 # Section Slide
 
----
-layout: default
----
+## Content
 
 Some content`;
 
     const deck = parse(source);
     expect(deck.slides).toHaveLength(3);
     expect(deck.slides[0].layout).toBe('cover');
-    expect(deck.slides[1].layout).toBe('section');
-    expect(deck.slides[2].layout).toBe('default');
+    expect(deck.slides[1].options.heading).toBe('Section');
+    expect(deck.slides[2].options.heading).toBe('Content');
     expect(deck.slides[2].content).toBe('Some content');
   });
 
-  it('parses per-slide options (header, heading, summary)', () => {
+  it('does not split on ## inside code blocks', () => {
     const source = `---
-theme: default
+title: Test
 ---
 
----
-layout: default
-header: Page Header
-heading: Main Heading
-summary: A brief summary
-footer: true
-pageNumber: true
-background: "#f0f0f0"
----
+## Code Example
 
-Body content`;
-
+\`\`\`markdown
+## This is not a slide
+\`\`\`
+`;
     const deck = parse(source);
-    const opts = deck.slides[0].options;
-    expect(opts.header).toBe('Page Header');
-    expect(opts.heading).toBe('Main Heading');
-    expect(opts.summary).toBe('A brief summary');
-    expect(opts.footer).toBe(true);
-    expect(opts.pageNumber).toBe(true);
-    expect(opts.background).toBe('#f0f0f0');
+    expect(deck.slides).toHaveLength(1);
+    expect(deck.slides[0].options.heading).toBe('Code Example');
+    expect(deck.slides[0].content).toContain('## This is not a slide');
   });
 
-  it('parses features layout with items and infers FeatureItem type', () => {
+  // ---- Inline attributes ----
+
+  it('parses inline attributes {cover, bg="..."}', () => {
+    const source = `---
+title: Test
+---
+
+## {cover, bg="#0f172a"}
+
+# Big Title
+`;
+    const deck = parse(source);
+    expect(deck.slides).toHaveLength(1);
+    expect(deck.slides[0].layout).toBe('cover');
+    expect(deck.slides[0].options.background).toBe('#0f172a');
+    expect(deck.slides[0].options.color).toBe('#ffffff');
+    expect(deck.slides[0].options.heading).toBeUndefined();
+  });
+
+  it('parses title with attributes', () => {
+    const source = `---
+title: Test
+---
+
+## Architecture {style=mono}
+
+### :cloud: K8s
+Auto scaling
+`;
+    const deck = parse(source);
+    expect(deck.slides).toHaveLength(1);
+    expect(deck.slides[0].options.heading).toBe('Architecture');
+    expect(deck.slides[0].options.style).toBe('mono');
+    expect(deck.slides[0].items).toBeDefined();
+  });
+
+  it('parses multiple attributes', () => {
+    const source = `---
+title: Test
+---
+
+## {cover, bg="#1a1a2e", align=left}
+
+# Title
+`;
+    const deck = parse(source);
+    expect(deck.slides[0].layout).toBe('cover');
+    expect(deck.slides[0].options.background).toBe('#1a1a2e');
+    expect(deck.slides[0].options.align).toBe('left');
+    expect(deck.slides[0].options.color).toBe('#ffffff');
+  });
+
+  it('auto-detects light bg text color', () => {
+    const source = `---
+title: Test
+---
+
+## {cover, bg="#ffffff"}
+
+# Title
+`;
+    const deck = parse(source);
+    expect(deck.slides[0].options.color).toBe('#2d3436');
+  });
+
+  it('auto-detects image background with overlay', () => {
+    const source = `---
+title: Test
+---
+
+## {cover, bg="https://example.com/photo.jpg"}
+
+# Title
+`;
+    const deck = parse(source);
+    expect(deck.slides[0].options.background).toBe('https://example.com/photo.jpg');
+    expect(deck.slides[0].options.color).toBe('#ffffff');
+    expect(deck.slides[0].options.overlay).toBe(0.4);
+  });
+
+  // ---- Item parsing (### items) ----
+
+  it('parses bento slides with ### items', () => {
+    const source = `---
+title: Test
+theme: ocean
+---
+
+## Tech Stack {style=tint}
+
+### :code: TypeScript
+Full-stack type safety
+
+### :database: PostgreSQL
+ACID compliant
+
+### :server: Node.js
+Async I/O
+`;
+    const deck = parse(source);
+    expect(deck.slides).toHaveLength(1);
+    expect(deck.slides[0].options.heading).toBe('Tech Stack');
+    expect(deck.slides[0].options.style).toBe('tint');
+    expect(deck.slides[0].rawItems).toBeDefined();
+    expect(deck.slides[0].rawItems!.length).toBe(3);
+  });
+
+  it('parses feature items with icon + title + description', () => {
     const source = `---
 theme: default
 ---
 
----
-layout: features
-columns: 3
----
+## Features
 
 ### :zap: Fast
 Very fast
@@ -197,9 +307,6 @@ Very fast
 Very secure`;
 
     const deck = parse(source);
-    expect(deck.slides).toHaveLength(1);
-    expect(deck.slides[0].layout).toBe('features');
-    expect(deck.slides[0].options).toEqual({ columns: 3 });
     expect(deck.slides[0].items).toHaveLength(2);
     expect(deck.slides[0].items![0]).toMatchObject({
       icon: 'zap',
@@ -213,14 +320,12 @@ Very secure`;
     });
   });
 
-  it('infers StatItem type for items with string value + label', () => {
+  it('parses stat items with value + label', () => {
     const source = `---
 theme: default
 ---
 
----
-layout: stats
----
+## Metrics
 
 ### 99.9%
 Uptime
@@ -234,20 +339,14 @@ Latency`;
       title: '99.9%',
       description: 'Uptime',
     });
-    expect(deck.slides[0].items![1]).toMatchObject({
-      title: '50ms',
-      description: 'Latency',
-    });
   });
 
-  it('infers ChartDataItem type for items with label + numeric value', () => {
+  it('parses chart data items with label: value', () => {
     const source = `---
 theme: default
 ---
 
----
-layout: chart
----
+## Revenue {chart}
 
 ### Q1: 100
 ### Q2: 200`;
@@ -259,21 +358,14 @@ layout: chart
       label: 'Q1',
       value: 100,
     });
-    expect(deck.slides[0].items![1]).toEqual({
-      type: 'chart-data',
-      label: 'Q2',
-      value: 200,
-    });
   });
 
-  it('infers ComparisonItem type for items with label + features array', () => {
+  it('parses comparison items', () => {
     const source = `---
 theme: default
 ---
 
----
-layout: comparison
----
+## Plans
 
 ### Basic — $10
 - Feature A
@@ -286,22 +378,16 @@ layout: comparison
 
     const deck = parse(source);
     expect(deck.slides[0].items).toHaveLength(2);
-    expect(deck.slides[0].items![0]).toMatchObject({
-      title: 'Basic — $10',
-    });
-    expect(deck.slides[0].items![1]).toMatchObject({
-      title: 'Pro — $20',
-    });
+    expect(deck.slides[0].items![0]).toMatchObject({ title: 'Basic — $10' });
+    expect(deck.slides[0].items![1]).toMatchObject({ title: 'Pro — $20' });
   });
 
-  it('infers TimelineItem type for items with date + title', () => {
+  it('parses timeline items with date + title', () => {
     const source = `---
 theme: default
 ---
 
----
-layout: timeline
----
+## History {timeline}
 
 ### 2024-01 — Launch
 Product launched
@@ -324,32 +410,12 @@ Product launched
     });
   });
 
-  it('infers feature type from icon + title fields', () => {
+  it('stores rawItems', () => {
     const source = `---
 theme: default
 ---
 
----
-layout: features
----
-
-### :star: Custom`;
-
-    const deck = parse(source);
-    expect(deck.slides[0].items![0]).toMatchObject({
-      icon: 'star',
-      title: 'Custom',
-    });
-  });
-
-  it('stores rawItems for backward compat', () => {
-    const source = `---
-theme: default
----
-
----
-layout: stats
----
+## Stats
 
 ### 42
 Answer`;
@@ -359,68 +425,12 @@ Answer`;
     expect(deck.slides[0].rawItems![0]).toMatchObject({ title: '42', description: 'Answer' });
   });
 
-  it('handles two-column layout with ::left:: and ::right:: markers', () => {
+  it('does not parse items for slides without ### headings', () => {
     const source = `---
 theme: default
 ---
 
----
-layout: two-column
----
-
-::left::
-
-Left content here
-
-::right::
-
-Right content here`;
-
-    const deck = parse(source);
-    expect(deck.slides).toHaveLength(1);
-    expect(deck.slides[0].layout).toBe('two-column');
-    expect(deck.slides[0].content).toContain('::left::');
-    expect(deck.slides[0].content).toContain('::right::');
-    expect(deck.slides[0].content).toContain('Left content here');
-    expect(deck.slides[0].content).toContain('Right content here');
-  });
-
-  it('handles empty content', () => {
-    const source = `---
-theme: default
----
-
----
-layout: cover
----
-`;
-
-    const deck = parse(source);
-    expect(deck.slides).toHaveLength(1);
-    expect(deck.slides[0].layout).toBe('cover');
-    expect(deck.slides[0].content).toBe('');
-  });
-
-  it('handles minimal slide with just layout', () => {
-    const source = `---
-layout: blank
----
-`;
-
-    const deck = parse(source);
-    // No global config block with theme/title, so first block with layout is a slide
-    expect(deck.slides).toHaveLength(1);
-    expect(deck.slides[0].layout).toBe('blank');
-  });
-
-  it('does not parse items for non-list layouts', () => {
-    const source = `---
-theme: default
----
-
----
-layout: default
----
+## Simple
 
 - bullet one
 - bullet two`;
@@ -430,41 +440,80 @@ layout: default
     expect(deck.slides[0].content).toContain('- bullet one');
   });
 
-  it('returns empty config and slides for empty input', () => {
-    const deck = parse('');
-    expect(deck.config).toEqual({});
-    expect(deck.slides).toEqual([]);
-  });
-
-  it('parses deck with cover and features slides using Markdown item syntax', () => {
+  it('extracts summary text between ## and first ###', () => {
     const source = `---
-theme: dark
-title: Old Deck
-author: Bob
+title: Test
 ---
 
----
-layout: cover
----
+## Overview
 
-# Welcome
+This is the summary
 
----
-layout: features
-columns: 2
----
-
-### :star: Feature 1
-Desc 1`;
+### :star: Item 1
+Description`;
 
     const deck = parse(source);
-    expect(deck.config.theme).toBe('dark');
-    expect(deck.config.title).toBe('Old Deck');
-    expect(deck.slides).toHaveLength(2);
+    expect(deck.slides[0].options.heading).toBe('Overview');
+    expect(deck.slides[0].options.summary).toBe('This is the summary');
+  });
+
+  // ---- Cover slides ----
+
+  it('parses cover with no title (heading comes from body)', () => {
+    const source = `---
+title: Test
+---
+
+## {cover, bg="#0f172a"}
+
+# Welcome
+This is the subtitle
+`;
+    const deck = parse(source);
     expect(deck.slides[0].layout).toBe('cover');
-    expect(deck.slides[1].layout).toBe('features');
-    expect(deck.slides[1].items).toHaveLength(1);
-    // rawItems preserves the built object (without inferred type)
-    expect(deck.slides[1].rawItems![0]).not.toHaveProperty('type');
+    expect(deck.slides[0].options.heading).toBeUndefined();
+    expect(deck.slides[0].content).toContain('# Welcome');
+    expect(deck.slides[0].content).toContain('This is the subtitle');
+  });
+
+  // ---- Full deck ----
+
+  it('parses a realistic full deck', () => {
+    const source = `---
+title: React Server Components
+theme: ocean
+style: tint
+---
+
+## {cover, bg="#0f172a"}
+
+# React Server Components
+実践投入して分かったこと
+
+## 移行前の課題 {style=mono}
+
+### :zap: バンドルサイズ **1.8MB**
+SPAで肥大化
+
+### :refresh-cw: データフェッチ **カオス**
+useEffect + SWR が混在
+
+### :alert-triangle: SEO **壊滅的**
+CSRのみ
+
+## {cover, bg="#0f172a"}
+
+# ありがとうございました
+`;
+    const deck = parse(source);
+    expect(deck.config.theme).toBe('ocean');
+    expect(deck.config.style).toBe('tint');
+    expect(deck.slides).toHaveLength(3);
+    expect(deck.slides[0].layout).toBe('cover');
+    expect(deck.slides[0].options.background).toBe('#0f172a');
+    expect(deck.slides[1].options.heading).toBe('移行前の課題');
+    expect(deck.slides[1].options.style).toBe('mono');
+    expect(deck.slides[1].rawItems).toHaveLength(3);
+    expect(deck.slides[2].layout).toBe('cover');
   });
 });

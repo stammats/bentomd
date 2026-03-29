@@ -24,16 +24,10 @@ defaults:
   footer: false
 ---
 
----
-layout: cover
-background: "#0f172a"
-color: "#f8fafc"
----
+## {cover, bg="#0f172a"}
 
 # 2026 Annual Report
-## Year in Review
-
----
+Year in Review
 
 ## 成長を支えた数字
 
@@ -46,8 +40,6 @@ color: "#f8fafc"
 ### **42** ヶ国展開
 ![Global office](https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80)
 
----
-
 ## プロダクトの進化
 
 ### **3x** 高速化 {hero}
@@ -59,13 +51,9 @@ color: "#f8fafc"
 ### **99.99%** 稼働率
 ![Data center](https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80)
 
----
-layout: cover
-background: "#0f172a"
-color: "#f8fafc"
----
+## {cover, bg="#0f172a"}
 
 # Thank You
-## 2027年もよろしくお願いします
+2027年もよろしくお願いします
 `,
 }

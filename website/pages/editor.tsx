@@ -40,27 +40,15 @@ defaults:
   pageNumber: true
 ---
 
----
-layout: cover
-background: "#0f172a"
-color: "#f8fafc"
----
+## {cover, bg="#0f172a"}
 
 # bentomd
-## Slide decks from Markdown
+Slide decks from Markdown
 
----
-
----
-layout: section
-background: "#1e293b"
-color: "#f8fafc"
----
+## {section, bg="#1e293b"}
 
 # Part 1
-## Core Features
-
----
+Core Features
 
 ## 1. Three Cells (auto grid)
 
@@ -75,8 +63,6 @@ Professional type scale, spacing, and grid out of the box.
 ### :package: Single File
 Export to standalone HTML or PDF. Share anywhere.
 
----
-
 ## 2. Four Metrics (2x2 grid)
 
 Highlight numbers with **bold** syntax.
@@ -88,8 +74,6 @@ Highlight numbers with **bold** syntax.
 ### **12**ms Avg Build Time
 
 ### **0** Config Required
-
----
 
 ## 3. Six Features (3x2 grid)
 
@@ -115,18 +99,10 @@ RTL support and locale-aware formatting.
 ### :bar-chart-2: Data
 Charts, tables, and Mermaid diagrams from Markdown.
 
----
-
----
-layout: section
-background: "#0f172a"
-color: "#f8fafc"
----
+## {section, bg="#0f172a"}
 
 # Part 2
-## Content Types
-
----
+Content Types
 
 ## 4. Rich Text Content
 
@@ -151,8 +127,6 @@ Cells support **bold**, *italic*, \`inline code\`, and [hyperlinks](https://bent
 | Export | HTML | HTML + PDF |
 | Themes | 3 | All |
 
----
-
 ## 5. Mermaid Diagrams
 
 ### System Architecture
@@ -166,8 +140,6 @@ graph LR
 ### :code: Auto-Detected
 Use \`\`\`mermaid code fences inside any cell. Diagrams are themed to match your palette.
 
----
-
 ## 6. Metrics with Images in Cells
 
 ### :trending-up: **+42**% Revenue Growth
@@ -178,8 +150,6 @@ Use \`\`\`mermaid code fences inside any cell. Diagrams are themed to match your
 
 ### **$4.2M** Annual Revenue
 ![Revenue](https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&q=80)
-
----
 
 ## 8. Size Hints
 
@@ -194,8 +164,6 @@ Control cell layout with size modifiers:
 
 ### :zap: **5**ms Response {sm}
 
----
-
 ## 9. Full-bleed Image Cell
 
 ### Product Dashboard {hero}
@@ -207,8 +175,6 @@ End-to-end encryption with SOC 2 compliance.
 ### :bar-chart: Analytics
 Real-time dashboards with custom alerting.
 
----
-
 ## 10. Icon + Title + Text + Image
 
 ### :rocket: Product Launch
@@ -218,8 +184,6 @@ Our new dashboard is live with real-time analytics, custom alerts, and team coll
 ### :users: **50K+** Active Users
 
 ### :star: **4.9** App Store Rating
-
----
 
 ## 11. Lists + Tables in Cells
 
@@ -237,8 +201,6 @@ We take security seriously:
 | Latency | 12ms |
 | Regions | 20+ |
 
----
-
 ## 12. Vertical Stack (wide)
 
 ### :terminal: Step 1: Install {wide}
@@ -250,8 +212,6 @@ Create a \`.bmd\` file with \`---\` slide separators and \`###\` cell separators
 ### :rocket: Step 3: Present {wide}
 Run \`bentomd dev\` for live preview, or \`bentomd build\` for static HTML export.
 
----
-
 ## 13. Two Cell Layout
 
 ### :terminal: How It Works
@@ -259,8 +219,6 @@ Write \`---\` to separate slides. Write \`###\` to create bento cells. Add \`##\
 
 ### :file-text: Just Markdown
 No proprietary format. Your \`.bmd\` files are valid Markdown — readable in any text editor, on GitHub, or in your IDE.
-
----
 
 ## 14. Tall + Right Stack
 
@@ -275,8 +233,6 @@ Build and deploy with confidence:
 
 ### :zap: **12**ms Response {sm}
 
----
-
 ## 15. Single Hero
 
 ### :rocket: **Ready to Launch** {hero}
@@ -285,20 +241,14 @@ bentomd turns your Markdown into beautiful, professional presentations. No desig
 - Export to HTML or PDF
 - Present from any browser
 
----
-layout: section
-background: "#1e293b"
-color: "#f8fafc"
----
+## {section, bg="#1e293b"}
 
 # Part 3
-## Themes & Styles
+Themes & Styles
 
----
-style: mixed
-heading: "Style: mixed (default)"
-summary: "Bright and dark pairs alternate for visual variety."
----
+## Style: mixed (default) {style=mixed}
+
+Bright and dark pairs alternate for visual variety.
 
 ### :zap: Fast
 Lightning performance.
@@ -309,11 +259,9 @@ Enterprise grade.
 ### :code: Open
 Full API access.
 
----
-style: tint
-heading: "Style: tint"
-summary: "Soft pastel backgrounds with accent-colored text."
----
+## Style: tint {style=tint}
+
+Soft pastel backgrounds with accent-colored text.
 
 ### :anchor: Maritime
 Ocean-inspired tones.
@@ -324,11 +272,9 @@ Fresh aquatic palette.
 ### :compass: Navigate
 Clear data presentation.
 
----
-style: solid
-heading: "Style: solid"
-summary: "Bold accent backgrounds with white text."
----
+## Style: solid {style=solid}
+
+Bold accent backgrounds with white text.
 
 ### :sun: Warm Tones
 Commands attention.
@@ -339,11 +285,9 @@ Creates urgency.
 ### :sunrise: Golden Hour
 Perfect for marketing.
 
----
-style: outline
-heading: "Style: outline"
-summary: "Clean borders on transparent backgrounds."
----
+## Style: outline {style=outline}
+
+Clean borders on transparent backgrounds.
 
 ### :grape: Elegant
 Refined modern look.
@@ -354,11 +298,9 @@ Content takes center stage.
 ### :pen-tool: Designer
 Crafted with care.
 
----
-style: white
-heading: "Style: white"
-summary: "White cells with accent-colored text and icons."
----
+## Style: white {style=white}
+
+White cells with accent-colored text and icons.
 
 ### :moon: Clean
 Distraction-free design.
@@ -369,11 +311,9 @@ Professional and classic.
 ### :file-check: Focused
 Content-first approach.
 
----
-style: mono
-heading: "Style: mono"
-summary: "Single-color palette for brand consistency."
----
+## Style: mono {style=mono}
+
+Single-color palette for brand consistency.
 
 ### :target: Branded
 One color, unified look.
@@ -384,13 +324,9 @@ Brand identity in every cell.
 ### :palette: On-brand
 Your primary color throughout.
 
----
-style: white
-background: "#0984e3"
-color: "#ffffff"
-heading: "Style: white + colored background"
-summary: "White cells on a colored slide background."
----
+## Style: white + colored background {style=white, bg="#0984e3"}
+
+White cells on a colored slide background.
 
 ### :cloud: Cloud Native
 Deploy anywhere with confidence.
@@ -401,12 +337,9 @@ Enterprise-grade security built in.
 ### :zap: **99.9**% Uptime
 Always available for your users.
 
----
-style: white
-background: "#e8f4f8"
-heading: "Style: white + light background"
-summary: "White cells on a soft blue background."
----
+## Style: white + light background {style=white, bg="#e8f4f8"}
+
+White cells on a soft blue background.
 
 ### :cloud: Light & Airy
 Soft colored backgrounds create a calm, professional feel.
@@ -417,13 +350,9 @@ White cells gently stand out against the tinted backdrop.
 ### :palette: Brand Tint
 Use your brand color at low opacity for a cohesive look.
 
----
-style: white
-background: "#2d3436"
-color: "#ffffff"
-heading: "Style: white + dark background"
-summary: "White cells on a dark slide for dramatic contrast."
----
+## Style: white + dark background {style=white, bg="#2d3436"}
+
+White cells on a dark slide for dramatic contrast.
 
 ### :moon: Dark Mode
 Elegant dark presentation style.
@@ -434,14 +363,10 @@ White cells pop on dark backgrounds.
 ### :eye: High Contrast
 Maximum readability and impact.
 
----
-layout: cover
-background: "#0f172a"
-color: "#f8fafc"
----
+## {cover, bg="#0f172a"}
 
 # Get Started
-## npm install -g bentomd
+npm install -g bentomd
 
 bentomd.dev
 `
@@ -457,16 +382,10 @@ defaults:
   pageNumber: true
 ---
 
----
-layout: cover
-background: "#0017cb"
-color: "#ffffff"
----
+## {cover, bg="#0017cb"}
 
 # Product Strategy 2026
-## Q2 Planning & Roadmap
-
----
+Q2 Planning & Roadmap
 
 ## Executive Summary
 
@@ -479,8 +398,6 @@ Aggressive but achievable growth driven by enterprise pipeline and self-serve ex
 ### :users: **10K** New Users
 Projected monthly active user growth from marketing campaigns and product-led acquisition.
 
----
-
 ## Key Metrics
 
 ### **$4.2M** ARR
@@ -490,8 +407,6 @@ Projected monthly active user growth from marketing campaigns and product-led ac
 ### **99.99**% Uptime SLA
 
 ### **12**ms Avg Response Time
-
----
 
 ## Platform Roadmap
 
@@ -503,8 +418,6 @@ Achieve compliance certification by end of Q2. Audit process already underway.
 
 ### :globe: **5** New Regions
 Expand infrastructure to APAC and LATAM for lower latency and data residency compliance.
-
----
 
 ## Product Features
 
@@ -526,8 +439,6 @@ Funnel analysis, cohort tracking, and custom event pipelines with SQL query acce
 ### :heart: Customer Success
 Dedicated onboarding, quarterly business reviews, and 24/7 priority support for enterprise.
 
----
-
 ## Team & Hiring
 
 ### :users: **28** Current Team
@@ -536,14 +447,10 @@ Engineering, product, design, and go-to-market across 4 time zones.
 ### :user-plus: **8** Open Roles
 Hiring senior engineers, product managers, and enterprise sales reps.
 
----
-layout: cover
-background: "#0017cb"
-color: "#ffffff"
----
+## {cover, bg="#0017cb"}
 
 # Thank You
-## Questions?
+Questions?
 `
 
 const DEFAULT_DOC: Document = {
@@ -571,16 +478,10 @@ defaults:
   pageNumber: true
 ---
 
----
-layout: cover
-background: "#0017cb"
-color: "#ffffff"
----
+## {cover, bg="#0017cb"}
 
 # Quarterly Review
-## Q2 2026 Results
-
----
+Q2 2026 Results
 
 ## Performance Highlights
 
@@ -592,8 +493,6 @@ Record monthly signups from product-led acquisition campaigns.
 
 ### :zap: **99.99**% Uptime
 Zero major incidents this quarter across all regions.
-
----
 
 ## Product Milestones
 
@@ -615,8 +514,6 @@ Custom widgets, real-time data streams, and SQL query access.
 ### :heart: NPS Score **72**
 Up from 64 last quarter — highest in company history.
 
----
-
 ## Team Growth
 
 ### :user-plus: **8** New Hires
@@ -624,8 +521,6 @@ Engineering, product, and enterprise sales across 3 time zones.
 
 ### :target: **4** Promoted
 Internal mobility program showing strong results.
-
----
 
 ## Next Quarter Priorities
 
@@ -638,14 +533,10 @@ IP allowlists, audit log exports, and custom session policies.
 ### :users: **Grow** Enterprise Pipeline
 Target 15 new enterprise accounts with dedicated onboarding program.
 
----
-layout: cover
-background: "#0017cb"
-color: "#ffffff"
----
+## {cover, bg="#0017cb"}
 
 # Thank You
-## Questions?
+Questions?
 `
 
 const LIGHT_DOC: Document = {
@@ -1070,7 +961,7 @@ function EditorInner() {
     const newDoc: Document = {
       id: generateId(),
       name: 'New Presentation',
-      content: `---\ntitle: New Presentation\n---\n\n---\nlayout: cover\n---\n\n# Title\n## Subtitle\n`,
+      content: `---\ntitle: New Presentation\n---\n\n## {cover}\n\n# Title\nSubtitle\n`,
       updatedAt: Date.now(),
     }
     setDocs((prev) => {

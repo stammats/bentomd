@@ -26,16 +26,10 @@ defaults:
   pageNumber: true
 ---
 
----
-layout: cover
-background: "#111111"
-color: "#ffffff"
----
+## {cover, bg="#111111"}
 
 # Your Title
-## Subtitle goes here
-
----
+Subtitle goes here
 
 ## Key Points
 
@@ -47,8 +41,6 @@ color: "#ffffff"
 
 ### :gem: クオリティ
 すべての要素に存在理由を
-
----
 
 ## 実績
 
@@ -64,11 +56,7 @@ API中央値レイテンシ
 ### **99.9%** 稼働率
 サービス信頼性
 
----
-layout: cover
-background: "#111111"
-color: "#ffffff"
----
+## {cover, bg="#111111"}
 
 # Thank You
 `,

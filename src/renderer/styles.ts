@@ -623,7 +623,7 @@ tr:last-child td { border-bottom: none; }
   line-height: 1;
 }
 .bento-title {
-  font-size: ${fontH1}px;
+  font-size: ${Math.round(fontH1 * 0.75)}px;
   font-weight: 700;
   color: inherit;
   font-family: ${fontHeading};
@@ -663,16 +663,11 @@ tr:last-child td { border-bottom: none; }
 }
 
 /* Large cells (hero, full — area >= 12) */
-.bento-lg .bento-icon svg { width: 112px; height: 112px; }
 .bento-lg .bento-icon { margin-bottom: 24px; }
 
-/* Small cells (4col×1row — area < 6, e.g. 6-cell grids) */
+/* Small cells — only adjust padding and icon, not text sizes */
 .bento-sm { padding: 32px !important; }
-.bento-sm .bento-icon svg { width: 56px; height: 56px; }
 .bento-sm .bento-icon { margin-bottom: 12px; }
-.bento-sm .bento-title { font-size: ${Math.round(fontH1 * 0.7)}px; }
-.bento-sm .bento-value { font-size: ${Math.round(fontDisplay * 0.7)}px; }
-.bento-sm .bento-desc { font-size: ${Math.round(fontH3 * 0.8)}px; }
 
 /* Wide cell: icon left, text right */
 .bento-horizontal {
@@ -716,6 +711,26 @@ tr:last-child td { border-bottom: none; }
 }
 .bento-cell .mermaid-wrapper svg,
 .bento-cell pre.mermaid svg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+/* Inline chart inside bento cells — scale to fit like mermaid */
+.bento-cell .bento-desc:has(.inline-chart),
+.bento-cell .bento-content:has(.inline-chart) {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.bento-cell .inline-chart {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.bento-cell .inline-chart svg {
   max-width: 100%;
   max-height: 100%;
   width: auto;

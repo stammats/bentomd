@@ -29,25 +29,15 @@ defaults:
   pageNumber: true
 ---
 
----
-layout: cover
-background: "#0a0a0a"
-color: "#fafafa"
----
+## {cover, bg="#0a0a0a"}
 
 # 本番で学んだRSC移行
-## 5分でわかる3ヶ月の記録
+5分でわかる3ヶ月の記録
 
----
-layout: section
-background: "#0a0a0a"
-color: "#fafafa"
----
+## {section, bg="#0a0a0a"}
 
 # ある日のこと
-## Lighthouseスコアが32点だった
-
----
+Lighthouseスコアが32点だった
 
 ## 現実を直視した
 
@@ -60,16 +50,10 @@ color: "#fafafa"
 ### :clock: 初期表示 **6秒**
 3G回線のユーザーが離脱
 
----
-layout: section
-background: "#0a0a0a"
-color: "#fafafa"
----
+## {section, bg="#0a0a0a"}
 
 # 原因はシンプルだった
-## 全部クライアントで動かしていた
-
----
+全部クライアントで動かしていた
 
 ## 犯人はこいつ
 
@@ -95,16 +79,10 @@ export default function Dashboard() {
 ### :calendar: Picker **62KB**
 日付選択すら重い
 
----
-layout: section
-background: "#0a0a0a"
-color: "#fafafa"
----
+## {section, bg="#0a0a0a"}
 
 # 3ヶ月かけて移行した
-## 段階的に、壊さずに
-
----
+段階的に、壊さずに
 
 ## 移行の3原則
 
@@ -116,8 +94,6 @@ Feature Flagで段階的に適用
 
 ### :shield: 型で守る
 Server/Clientの境界をTSで明示
-
----
 
 ## 結果
 
@@ -133,16 +109,10 @@ Server/Clientの境界をTSで明示
 ### :trending-up: 直帰率 **−35%**
 ユーザー体験が数字に反映
 
----
-layout: section
-background: "#0a0a0a"
-color: "#fafafa"
----
+## {section, bg="#0a0a0a"}
 
 # 一番の学び
-## use client は伝播する
-
----
+use client は伝播する
 
 ## 持ち帰ってほしいこと
 
@@ -155,13 +125,9 @@ use client の配置が全てを決める
 ### :heart: DXを犠牲にしない
 RSCはPHP的、それは褒め言葉
 
----
-layout: cover
-background: "#0a0a0a"
-color: "#fafafa"
----
+## {cover, bg="#0a0a0a"}
 
 # ありがとう！
-## @yourhandle
+@yourhandle
 `,
 }

@@ -27,16 +27,10 @@ defaults:
   pageNumber: true
 ---
 
----
-layout: cover
-background: "#0f172a"
-color: "#f8fafc"
----
+## {cover, bg="#0f172a"}
 
 # システムアーキテクチャ
-## プラットフォーム設計概要
-
----
+プラットフォーム設計概要
 
 ## 全体構成
 
@@ -61,8 +55,6 @@ ACID + キャッシュの二層構成
 
 ### :cloud: Kubernetes
 マルチリージョン自動スケーリング
-
----
 
 ## API設計
 
@@ -92,8 +84,6 @@ Edgeキャッシュ+コネクションプール
 ### :activity: **99.99%** SLA
 Active-Active マルチリージョン
 
----
-
 ## 技術スタック
 
 ### :code: TypeScript
@@ -114,13 +104,9 @@ GitHub Actions + PR プレビュー環境
 ### :bar-chart: 可観測性
 OpenTelemetry + Grafana + PagerDuty
 
----
-layout: cover
-background: "#0f172a"
-color: "#f8fafc"
----
+## {cover, bg="#0f172a"}
 
 # Q&A
-## github.com/yourorg
+github.com/yourorg
 `,
 }

@@ -26,16 +26,10 @@ defaults:
   footer: false
 ---
 
----
-layout: cover
-background: "#1d1d1f"
-color: "#f8fafc"
----
+## {cover, bg="#1d1d1f"}
 
 # Product Showcase
-## Our Latest Lineup
-
----
+Our Latest Lineup
 
 ## 注目のプロダクト
 
@@ -51,8 +45,6 @@ ProMotionの滑らかさ
 没入感のあるサウンド体験
 ![Headphones](https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80)
 
----
-
 ## 数字で見る実力
 
 ### **18h** バッテリー
@@ -67,13 +59,9 @@ ProMotionの滑らかさ
 世界中で愛されるブランド
 ![Globe](https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&q=80)
 
----
-layout: cover
-background: "#1d1d1f"
-color: "#f8fafc"
----
+## {cover, bg="#1d1d1f"}
 
 # 詳しくはWebで
-## example.com
+example.com
 `,
 }

@@ -19,6 +19,10 @@ export function renderChart(slide: Slide, _config: GlobalConfig): string {
     case 'area':
       chartSvg = renderLineChart(items, colors);
       break;
+    case 'column':
+    case 'vbar':
+      chartSvg = renderColumnChart(items, colors);
+      break;
     default:
       chartSvg = renderBarChart(items, colors);
   }
@@ -35,8 +39,8 @@ export function renderChart(slide: Slide, _config: GlobalConfig): string {
 
 export function renderBarChart(items: ChartDataItem[], colors: string[]): string {
   const maxVal = Math.max(...items.map((d) => d.value), 1);
-  const barHeight = 40;
-  const barGap = 20;
+  const barHeight = 24;
+  const barGap = 16;
   const labelWidth = 160;
   const valueWidth = 80;
   const chartWidth = 800;
@@ -50,9 +54,9 @@ export function renderBarChart(items: ChartDataItem[], colors: string[]): string
       const color = item.color ?? colors[i % colors.length];
       return (
         `<text x="${labelWidth - 12}" y="${y + barHeight / 2 + 5}" text-anchor="end" ` +
-        `font-size="14" fill="currentColor">${escapeHtml(item.label)}</text>` +
-        `<rect x="${labelWidth}" y="${y}" width="${w}" height="${barHeight}" rx="4" fill="${color}" />` +
-        `<text x="${labelWidth + w + 8}" y="${y + barHeight / 2 + 5}" font-size="13" opacity="0.6">${item.value}</text>`
+        `font-size="16" fill="currentColor">${escapeHtml(item.label)}</text>` +
+        `<rect x="${labelWidth}" y="${y}" width="${w}" height="${barHeight}" rx="6" fill="${color}" />` +
+        `<text x="${labelWidth + w + 8}" y="${y + barHeight / 2 + 5}" font-size="15" opacity="0.6">${item.value}</text>`
       );
     })
     .join('\n');
@@ -91,7 +95,7 @@ export function renderPieChart(items: ChartDataItem[], colors: string[]): string
       const color = item.color ?? colors[i % colors.length];
       return (
         `<rect x="350" y="${ly}" width="14" height="14" rx="3" fill="${color}" />` +
-        `<text x="372" y="${ly + 12}" font-size="13" fill="currentColor">${escapeHtml(item.label)} (${item.value})</text>`
+        `<text x="372" y="${ly + 12}" font-size="15" fill="currentColor">${escapeHtml(item.label)} (${item.value})</text>`
       );
     })
     .join('\n');
@@ -155,6 +159,52 @@ export function renderLineChart(items: ChartDataItem[], colors: string[]): strin
     `<polyline points="${polyline}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />` +
     dots +
     xLabels +
+    `</svg>`
+  );
+}
+
+export function renderColumnChart(items: ChartDataItem[], colors: string[]): string {
+  const width = 800;
+  const height = 400;
+  const pad = { top: 40, right: 30, bottom: 70, left: 50 };
+  const plotW = width - pad.left - pad.right;
+  const plotH = height - pad.top - pad.bottom;
+
+  const maxVal = Math.max(...items.map((d) => d.value), 1);
+  const n = items.length;
+  const colWidth = Math.floor(plotW / n);
+  const barW = Math.max(Math.floor(colWidth * 0.4), 8);
+  const barGap = colWidth - barW;
+
+  const gridLines: string[] = [];
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (plotH / 4) * i;
+    const val = Math.round(maxVal * (1 - i / 4));
+    gridLines.push(
+      `<line x1="${pad.left}" y1="${y}" x2="${width - pad.right}" y2="${y}" stroke="currentColor" stroke-opacity="0.15" />` +
+      `<text x="${pad.left - 8}" y="${y + 4}" text-anchor="end" font-size="11" opacity="0.6">${val}</text>`,
+    );
+  }
+
+  const columns = items
+    .map((item, i) => {
+      const cx = pad.left + i * colWidth + colWidth / 2;
+      const x = cx - barW / 2;
+      const barH = Math.max((item.value / maxVal) * plotH, 2);
+      const y = pad.top + plotH - barH;
+      const color = item.color ?? colors[i % colors.length];
+      return (
+        `<rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="6" fill="${color}" />` +
+        `<text x="${cx}" y="${y - 6}" text-anchor="middle" font-size="14" fill="currentColor">${item.value}</text>` +
+        `<text x="${cx}" y="${pad.top + plotH + 22}" text-anchor="middle" font-size="14" fill="currentColor">${escapeHtml(item.label)}</text>`
+      );
+    })
+    .join('\n');
+
+  return (
+    `<svg class="chart-svg" viewBox="0 0 ${width} ${height}" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">` +
+    gridLines.join('\n') +
+    columns +
     `</svg>`
   );
 }
