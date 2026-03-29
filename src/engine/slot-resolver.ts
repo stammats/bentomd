@@ -272,6 +272,8 @@ function resolveBentoWithBinPacking(
   distributeRowGaps(slots, totalCols);
 
   const numRows = Math.max(...slots.map((s) => (s.row as number) + (s.rowSpan ?? 1) - 1 - rowOffset), 1);
+  // Attach gridRows to each slot so modules can compute pixel aspect ratio
+  for (const s of slots) s.gridRows = numRows;
   return { slots, numRows };
 }
 

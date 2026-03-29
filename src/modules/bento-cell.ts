@@ -10,18 +10,18 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
 
   if (!cell) return '';
 
-  // Determine layout direction based on cell aspect ratio.
-  // colSpan/rowSpan approximates the grid ratio; actual pixel ratio is wider
-  // because columns (~160px) are narrower than rows (~290px).
-  // Horizontal layout for: wide single-row cells (ratio > 4) or
-  // multi-row cells that are still landscape (ratio > 2, e.g. tall 6×2).
+  // Determine layout direction based on cell pixel aspect ratio.
+  // Approximate pixel size from grid dimensions:
+  //   width  ≈ (colSpan / 12) × 1760
+  //   height ≈ (rowSpan / gridRows) × 608
+  // Cells wider than 1.3:1 use horizontal layout (icon + title in a row).
   const colSpan = slot.colSpan ?? 4;
   const rowSpan = slot.rowSpan ?? 1;
-  const gridRatio = colSpan / rowSpan;
-  const isWide = gridRatio > 4 || (rowSpan >= 2 && gridRatio > 2);
-  const area = colSpan * rowSpan;
-  // Size tier: lg (hero/full), md (half-width+), sm (small cells in 6-cell grids)
-  const sizeTier = area >= 12 ? 'lg' : area >= 6 ? 'md' : 'sm';
+  const gridRows = slot.gridRows ?? 1;
+  const pxWidth = (colSpan / 12) * 1760;
+  const pxHeight = (rowSpan / gridRows) * 608;
+  const pixelRatio = pxWidth / pxHeight;
+  const isWide = pixelRatio > 1.3;
 
   // Build inline styles
   const borderRadius = config.borderRadius ?? 40;
@@ -111,7 +111,7 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   }
 
   return (
-    `<div class="bento-cell bento-${sizeTier}" style="${styles.join(';')}">` +
+    `<div class="bento-cell" style="${styles.join(';')}">` +
     parts.join('\n') +
     `</div>`
   );

@@ -45,6 +45,8 @@ export interface Slot {
   colSpan: number;
   /** Number of rows this slot spans (default: 1) */
   rowSpan?: number;
+  /** Total grid rows (for pixel ratio calculation) */
+  gridRows?: number;
   /** The module type that fills this slot */
   module: ModuleType;
   /** Vertical alignment within the slot */

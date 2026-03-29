@@ -663,11 +663,7 @@ tr:last-child td { border-bottom: none; }
 }
 
 /* Large cells (hero, full — area >= 12) */
-.bento-lg .bento-icon { margin-bottom: 24px; }
 
-/* Small cells — only adjust padding and icon, not text sizes */
-.bento-sm { padding: 32px !important; }
-.bento-sm .bento-icon { margin-bottom: 12px; }
 
 /* Wide cell: icon left, text right */
 .bento-horizontal {

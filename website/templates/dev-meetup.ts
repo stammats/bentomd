@@ -3,7 +3,7 @@ import type { Template } from './index'
 export const devMeetupTemplate: Template = {
   id: 'dev-meetup',
   name: 'Dev Meetup LT',
-  description: 'Lightning talk with narrative flow for tech meetups',
+  description: 'Lightning talk with code, diagrams, and before/after comparisons',
   category: 'tech',
   thumbnail: {
     background: '#0a0a0a',
@@ -41,32 +41,60 @@ Lighthouseスコアが32点だった
 
 ## 現実を直視した
 
-### :gauge: Lighthouse **32** 点
+### :gauge: Lighthouse **32**点
 パフォーマンススコアが赤信号
 
-### :package: **2.4MB** の壁
+### :package: バンドル **2.4MB**
 クライアントJSが肥大化
 
 ### :clock: 初期表示 **6秒**
 3G回線のユーザーが離脱
 
+## 当時のアーキテクチャ
+
+### アーキテクチャ（Before） {tall}
+\`\`\`mermaid
+graph TB
+  Browser[Browser] --> Bundle[JS Bundle 2.4MB]
+  Bundle --> Chart[Chart 180KB]
+  Bundle --> Table[Table 95KB]
+  Bundle --> Picker[Picker 62KB]
+  Bundle --> API[API Client]
+  API --> Server[Backend API]
+\`\`\`
+
+### 問題点
+- 全コンポーネントがクライアントで実行
+- データ取得もクライアント側
+- 初期ロードで全JSを配信
+- Hydration完了まで操作不能
+
 ## {section, bg="#0a0a0a"}
 
-# 原因はシンプルだった
+# 犯人はこいつ
 全部クライアントで動かしていた
 
-## 犯人はこいつ
+## Before: 肥大化したクライアント
 
 ### {6x2}
 \`\`\`typescript
-// pages/dashboard.tsx
+// pages/dashboard.tsx — Before
+'use client'  // ← これが全てを巻き込む
+
 import { Chart } from '@/components/Chart'
 import { DataTable } from '@/components/Table'
 import { DatePicker } from '@/components/Picker'
+import { Sidebar } from '@/components/Sidebar'
 
 export default function Dashboard() {
   const { data } = useSWR('/api/metrics')
-  return <Chart data={data} />
+  return (
+    <Layout>
+      <Sidebar />
+      <Chart data={data} />
+      <DataTable data={data} />
+    </Layout>
+  )
 }
 \`\`\`
 
@@ -79,35 +107,139 @@ export default function Dashboard() {
 ### :calendar: Picker **62KB**
 日付選択すら重い
 
+### :layout: Sidebar **45KB**
+静的なのにJSに含まれる
+
+## After: Server Componentで分離
+
+### {6x2}
+\`\`\`typescript
+// app/dashboard/page.tsx — After
+import { Chart } from '@/components/Chart'
+import { DataTable } from '@/components/Table'
+import { Sidebar } from '@/components/Sidebar'
+import { DateFilter } from './DateFilter'
+
+export default async function Dashboard() {
+  const data = await db.metrics.findMany()
+  return (
+    <Layout>
+      <Sidebar />        {/* Server Component */}
+      <Chart data={data} /> {/* Server Component */}
+      <DataTable data={data} />
+      <DateFilter />      {/* 'use client' */}
+    </Layout>
+  )
+}
+\`\`\`
+
+### Server側で実行
+Chart, Table, Sidebarはサーバーで描画。HTMLだけ配信。
+
+### Client最小化
+\`use client\` は DateFilter のみ。インタラクティブな部分だけ。
+
+## コンポーネント境界の設計
+
+### Server/Client 境界 {hero}
+\`\`\`mermaid
+graph LR
+  subgraph Server Components
+    Page[Dashboard Page]
+    Sidebar[Sidebar]
+    Chart[Chart SVG]
+    Table[Data Table]
+  end
+  subgraph Client Components
+    Filter[Date Filter]
+    Toggle[Theme Toggle]
+    Toast[Toast Notifications]
+  end
+  Page --> Sidebar
+  Page --> Chart
+  Page --> Table
+  Page --> Filter
+\`\`\`
+
+### 境界のルール
+- Server: データ取得・表示系
+- Client: ユーザー操作が必要な部分のみ
+
 ## {section, bg="#0a0a0a"}
 
-# 3ヶ月かけて移行した
+# 移行戦略
 段階的に、壊さずに
 
-## 移行の3原則
+## 3原則
 
-### :leaf: 末端から
-子を持たないコンポーネントから着手
+### 末端から着手 {tall}
+子を持たないコンポーネントから移行。依存関係の葉から剪定する。
+\`\`\`
+移行順序:
+1. アイコン、ラベル → Server
+2. カード、リスト → Server
+3. フォーム、モーダル → Client維持
+4. ページ全体 → Server (async)
+\`\`\`
 
-### :flag: 10%ずつ公開
-Feature Flagで段階的に適用
+### Feature Flagで段階展開
+10%→50%→100%の3段階で公開
 
-### :shield: 型で守る
-Server/Clientの境界をTSで明示
+### 型で境界を守る
+Server/Clientの混在をTSで検出
 
-## 結果
+## バンドル変化
 
-### :zap: **780KB** に削減
-バンドルサイズ −68%
+### バンドルサイズ推移 {tall}
+\`\`\`chart
+type: column
+colors: #e2e8f0
+移行前: 2400
+Phase1: 1800
+Phase2: 1100
+移行後: 780
+\`\`\`
+
+### :package: **−68%** 削減
+2.4MB → 780KB
+
+### :zap: LCP **1.1s**
+6秒 → 1.1秒
+
+## {section, bg="#0a0a0a"}
+
+# Before / After
+数字で振り返る
+
+## ビフォーアフター
+
+### :x: Before {tall}
+- Lighthouse: **32**点
+- バンドル: **2.4MB**
+- LCP: **6.0s**
+- 直帰率: **52%**
+- \`use client\`: **全ページ**
+
+### :check: After {tall}
+- Lighthouse: **94**点
+- バンドル: **780KB**
+- LCP: **1.1s**
+- 直帰率: **34%**
+- \`use client\`: **12ファイル**
+
+## 最終結果
+
+### :gauge: Lighthouse **94**点
+32点 → 94点（+62点）
 
 ### :rocket: LCP **1.1s**
 初期表示が5倍速に改善
 
-### :gauge: Lighthouse **94** 点
-32点 → 94点の劇的改善
-
-### :trending-up: 直帰率 **−35%**
+### :trending-down: 直帰率 **−35%**
 ユーザー体験が数字に反映
+
+### :package: バンドル **−68%**
+2.4MB → 780KBに削減
 
 ## {section, bg="#0a0a0a"}
 
@@ -116,13 +248,27 @@ use client は伝播する
 
 ## 持ち帰ってほしいこと
 
-### :alert-triangle: 1行で100KB増
-use client の配置が全てを決める
+### 1行で100KB増 {tall}
+\`use client\` の配置が全てを決める。親に書くと全子孫がクライアントに巻き込まれる。
+\`\`\`typescript
+// ❌ ここに書くと全部Client
+'use client'
+export function Layout({ children }) {
+  return <div>{children}</div>
+}
 
-### :git-branch: 境界は設計する
+// ✅ 必要な箇所だけに書く
+'use client'
+export function ThemeToggle() {
+  const [dark, setDark] = useState(false)
+  return <button onClick={...} />
+}
+\`\`\`
+
+### 境界は設計する
 偶然の境界ではなく意図的に引く
 
-### :heart: DXを犠牲にしない
+### DXを犠牲にしない
 RSCはPHP的、それは褒め言葉
 
 ## {cover, bg="#0a0a0a"}

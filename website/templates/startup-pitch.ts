@@ -43,13 +43,13 @@ defaults:
 
 ## 解決策
 
-### :rocket: 統合プラットフォーム {hero}
+### 統合プラットフォーム {hero}
 チャット・ドキュメント・タスク・コードを一つに
 
 ### :zap: **3x** 高速化
 統合ワークフローで開発速度3倍
 
-### :link: コンテキスト維持
+### コンテキスト維持
 すべてが繋がり、切り替え不要
 
 ## トラクション
@@ -68,13 +68,13 @@ MoM 25% 成長
 
 ## チーム
 
-### :user: CEO — Jane Smith
+### CEO — Jane Smith
 Ex-Stripe。開発ツール領域10年。前回Exit $50M。
 
-### :code: CTO — Alex Chen
+### CTO — Alex Chen
 Ex-Google Chrome DevTools。15年のプラットフォーム開発。
 
-### :bar-chart: COO — Maria Lopez
+### COO — Maria Lopez
 Ex-Notion。10→500名のスケーリング経験。
 
 ## {cover, bg="#0f172a"}

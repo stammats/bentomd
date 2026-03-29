@@ -47,13 +47,13 @@ graph TB
     Queue --> Worker[Worker]
 \`\`\`
 
-### :layers: マイクロサービス
+### マイクロサービス
 イベント駆動の非同期アーキテクチャ
 
-### :database: PostgreSQL + Redis
+### PostgreSQL + Redis
 ACID + キャッシュの二層構成
 
-### :cloud: Kubernetes
+### Kubernetes
 マルチリージョン自動スケーリング
 
 ## API設計
@@ -78,7 +78,7 @@ app.post('/users',
 ### :zap: **<10ms** p99レイテンシ
 Edgeキャッシュ+コネクションプール
 
-### :shield: OAuth 2.0 + RBAC
+### OAuth 2.0 + RBAC
 ロールベースのアクセス制御
 
 ### :activity: **99.99%** SLA
@@ -86,22 +86,22 @@ Active-Active マルチリージョン
 
 ## 技術スタック
 
-### :code: TypeScript
+### TypeScript
 API からDBクエリまでフルスタック型安全
 
-### :database: PostgreSQL
+### PostgreSQL
 ACID + jsonb で柔軟なスキーマ
 
-### :server: Node.js
+### Node.js
 高スループット非同期I/O
 
-### :container: Docker + K8s
+### Docker + K8s
 Helm チャートで統一デプロイ
 
-### :git-branch: CI/CD
+### CI/CD
 GitHub Actions + PR プレビュー環境
 
-### :bar-chart: 可観測性
+### 可観測性
 OpenTelemetry + Grafana + PagerDuty
 
 ## {cover, bg="#0f172a"}
