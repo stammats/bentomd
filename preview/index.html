@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bentomd Template Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #e4e4e7;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #0a0a0a;
+      border-bottom: 1px solid #27272a;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fafafa;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+    }
+    .filter-btn {
+      background: transparent;
+      border: 1px solid #3f3f46;
+      color: #a1a1aa;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover { border-color: #71717a; color: #e4e4e7; }
+    .filter-btn.active { background: #fafafa; color: #0a0a0a; border-color: #fafafa; }
+    .template-section {
+      padding: 32px 24px;
+      border-bottom: 1px solid #18181b;
+    }
+    .template-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .template-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fafafa;
+    }
+    .template-desc {
+      font-size: 13px;
+      color: #71717a;
+    }
+    .slide-count {
+      font-size: 12px;
+      color: #52525b;
+      background: #18181b;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .slides-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+      gap: 16px;
+    }
+    .slide-wrapper {
+      position: relative;
+      background: #18181b;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #27272a;
+    }
+    .slide-wrapper:hover { border-color: #3f3f46; }
+    .slide-label {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      pointer-events: none;
+    }
+    .slide-number {
+      font-size: 11px;
+      font-weight: 600;
+      color: #a1a1aa;
+      background: rgba(0,0,0,0.7);
+      padding: 2px 6px;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid transparent;
+      color: #71717a;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: ui-monospace, 'JetBrains Mono', monospace;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.15s;
+    }
+    .copy-btn { opacity: 1; }
+    .copy-btn:hover { background: rgba(0,0,0,0.9); color: #e4e4e7; border-color: #3f3f46; }
+    .copy-btn.copied { color: #4ade80; }
+    .copy-btn.copied .copy-icon::after { content: ' ✓'; }
+    .copy-icon { font-size: 13px; }
+    .slide-frame {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      pointer-events: none;
+    }
+    #loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 60vh;
+      color: #52525b;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>bentomd Preview</h1>
+    <div class="filter-bar" id="filters"></div>
+  </div>
+  <div id="app">
+    <div id="loading">Loading templates...</div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>

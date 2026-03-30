@@ -1,0 +1,11 @@
+{
+  "name": "bentomd-preview",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3082"
+  },
+  "dependencies": {
+    "vite": "^6.0.0"
+  }
+}

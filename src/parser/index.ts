@@ -108,14 +108,14 @@ function generateCellThemes(palette?: Palette, style?: string, theme?: string): 
 
   switch (cellStyle) {
     case 'tint':
-      return accents.map((c) => {
+      return [primary, secondary].map((c) => {
         const bg = tintColor(c, 0.82);
         const fg = shadeColor(c, 0.65);
         return { background: bg, color: ensureContrast(bg, fg) };
       });
 
     case 'solid':
-      return accents.map((c) => {
+      return [primary, secondary].map((c) => {
         const fg = needsDarkText(c) ? shadeColor(c, 0.7) : tintColor(c, 0.85);
         return { background: c, color: ensureContrast(c, fg) };
       });
@@ -161,8 +161,8 @@ function generateCellThemes(palette?: Palette, style?: string, theme?: string): 
             { bright: tintColor(primary, 0.70), dark: shadeColor(primary, 0.80) },
           ]
         : [
-            { bright: tintColor(primary, 0.78), dark: primary },
-            { bright: tintColor(secondary, 0.78), dark: secondary },
+            { bright: tintColor(primary, 0.78), dark: shadeColor(primary, 0.7) },
+            { bright: tintColor(secondary, 0.78), dark: shadeColor(secondary, 0.7) },
             { bright: '#fce4b8', dark: '#4a2e06' },
             { bright: '#c5dde8', dark: '#12303e' },
             { bright: '#f5c6c6', dark: '#561818' },
