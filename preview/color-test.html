@@ -140,9 +140,11 @@
   </style>
 </head>
 <body>
-  <div class="header">
+  <div class="header" style="flex-wrap:wrap">
     <h1>Color Test Matrix</h1>
-    <div class="filter-bar" id="filters"></div>
+    <div style="display:flex;gap:8px;align-items:center"><span style="font-size:12px;color:#71717a">Theme</span><div class="filter-bar" id="filters"></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><span style="font-size:12px;color:#71717a">Style</span><div class="filter-bar" id="style-filters"></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><span style="font-size:12px;color:#71717a">Palette</span><div class="filter-bar" id="palette-filters"></div></div>
   </div>
   <div id="app">
     <div id="loading">Loading color combinations...</div>

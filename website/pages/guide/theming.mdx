@@ -6,7 +6,7 @@ bentomd has two independent visual controls: **theme** (palette presets) and **s
 
 ## Themes
 
-`theme:` sets the base color palette. Six built-in themes are available:
+`theme:` sets the base color palette. Seven built-in themes are available:
 
 | Theme | Description |
 |---|---|
@@ -16,6 +16,7 @@ bentomd has two independent visual controls: **theme** (palette presets) and **s
 | `forest` | Green and teal on white |
 | `berry` | Purple and pink on white |
 | `mono` | Charcoal gray on white |
+| `custom` | Your own colors via `palette.primary` (and optional `secondary`) |
 
 ```markdown
 ---
@@ -221,43 +222,75 @@ Auto-scaling across multiple regions with zero downtime deployments.
 ### :shield: Secure {sm}
 SOC 2 Type II`} />
 
-## Custom Palette
+## Custom Theme
 
-Override any color token using `palette:`. Your values take precedence over the theme preset.
+Use `theme: custom` with `palette.primary` to build a deck around your brand color. A complementary `secondary` is auto-generated, or you can set it explicitly.
 
 ```markdown
 ---
-theme: default
+theme: custom
 palette:
-  primary: "#dc2626"
-  secondary: "#f97316"
-  background: "#ffffff"
-  surface: "#fef2f2"
-  text: "#1e293b"
-  muted: "#64748b"
+  primary: "#4CC9FF"
 ---
 ```
+
+<SlidePreview code={`---
+theme: custom
+style: tint
+palette:
+  primary: "#4CC9FF"
+title: Custom (primary only)
+---
+
+## Custom — primary only
+
+### :zap: Auto Secondary
+Secondary is auto-generated from primary via hue shift.
+
+### **42K** {sm center}
+Users
+
+### :shield: Brand Color {md}
+Your primary color drives the entire palette.
+
+### :globe: Consistent {sm}
+Everywhere`} />
+
+<SlidePreview code={`---
+theme: custom
+style: tint
+palette:
+  primary: "#4CC9FF"
+  secondary: "#FF0311"
+title: Custom (primary + secondary)
+---
+
+## Custom — primary + secondary
+
+### :zap: Full Control
+Both colors explicitly set for maximum brand alignment.
+
+### **99.9%** {sm center}
+Uptime
+
+### :shield: Two-Tone {md}
+Primary and secondary create a distinctive, intentional palette.
+
+### :heart: On-Brand {sm}
+Always`} />
 
 ### Color Tokens
 
 | Token | Used For |
 |---|---|
 | `primary` | Cell accents, icons, highlights, chart colors |
-| `secondary` | Gradient endpoints, secondary accents |
+| `secondary` | Secondary accents (auto-generated if omitted) |
 | `background` | Slide background |
 | `surface` | Card backgrounds, code blocks |
 | `text` | Headings, body text |
 | `muted` | Subtitles, footers, secondary labels |
 
-You can override just the tokens you need — the rest come from the theme:
-
-```markdown
----
-theme: ocean
-palette:
-  primary: "#dc2626"   # Override only the primary accent
----
-```
+> **Note:** Built-in themes (`ocean`, `sunset`, etc.) use their own fixed palettes. Use `theme: custom` when you want to set your own colors.
 
 ## `borderRadius`
 

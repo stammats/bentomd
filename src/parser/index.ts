@@ -181,15 +181,67 @@ function generateCellThemes(palette?: Palette, style?: string, theme?: string): 
 /**
  * Resolve theme preset into palette. User's palette overrides preset values.
  */
+function hexToHsl(hex: string): [number, number, number] {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, l];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h = 0;
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  else if (max === g) h = ((b - r) / d + 2) / 6;
+  else h = ((r - g) / d + 4) / 6;
+  return [h * 360, s, l];
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  h = ((h % 360) + 360) % 360;
+  s = Math.max(0, Math.min(1, s));
+  l = Math.max(0, Math.min(1, l));
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const c = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * c).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+
+/** Generate secondary from primary via complementary hue shift (+150°) */
+function generateSecondary(primary: string): string {
+  const [h, s, l] = hexToHsl(primary);
+  return hslToHex(h + 150, s * 0.85, l);
+}
+
 function resolveTheme(themeName?: string, userPalette?: Palette): Palette {
-  const preset = THEME_PRESETS[themeName ?? 'default'] ?? THEME_PRESETS.default;
+  const isCustom = themeName === 'custom';
+  const preset = isCustom ? null : (THEME_PRESETS[themeName ?? 'default'] ?? THEME_PRESETS.default);
+
+  let primary: string;
+  let secondary: string;
+
+  if (isCustom) {
+    // custom theme: primary required, secondary auto-generated if not set
+    primary = userPalette?.primary ?? '#0984e3';
+    secondary = userPalette?.secondary ?? generateSecondary(primary);
+  } else {
+    // preset theme: use preset colors, ignore palette primary/secondary overrides
+    primary = preset!.primary;
+    secondary = preset!.secondary;
+  }
+
+  const defaults = preset ?? THEME_PRESETS.default;
   const resolved: Palette = {
-    primary: userPalette?.primary ?? preset.primary,
-    secondary: userPalette?.secondary ?? preset.secondary,
-    background: userPalette?.background ?? preset.background,
-    surface: userPalette?.surface ?? preset.surface,
-    text: userPalette?.text ?? preset.text,
-    muted: userPalette?.muted ?? preset.muted,
+    primary,
+    secondary,
+    background: userPalette?.background ?? defaults.background,
+    surface: userPalette?.surface ?? defaults.surface,
+    text: userPalette?.text ?? defaults.text,
+    muted: userPalette?.muted ?? defaults.muted,
   };
 
   // Auto-adjust text colors when background is dark and user didn't set text/muted
