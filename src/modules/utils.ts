@@ -1,9 +1,48 @@
 import { marked } from 'marked';
-import * as lucideIcons from 'lucide-static';
+import hljs from 'highlight.js/lib/core';
+import typescript from 'highlight.js/lib/languages/typescript';
+import javascript from 'highlight.js/lib/languages/javascript';
+import python from 'highlight.js/lib/languages/python';
+import bash from 'highlight.js/lib/languages/bash';
+import json from 'highlight.js/lib/languages/json';
+import css from 'highlight.js/lib/languages/css';
+import xml from 'highlight.js/lib/languages/xml';
+import yaml from 'highlight.js/lib/languages/yaml';
+import go from 'highlight.js/lib/languages/go';
+import rust from 'highlight.js/lib/languages/rust';
+import sql from 'highlight.js/lib/languages/sql';
+import java from 'highlight.js/lib/languages/java';
+
+hljs.registerLanguage('typescript', typescript);
+hljs.registerLanguage('ts', typescript);
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('js', javascript);
+hljs.registerLanguage('python', python);
+hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('sh', bash);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('html', xml);
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('yaml', yaml);
+hljs.registerLanguage('go', go);
+hljs.registerLanguage('rust', rust);
+hljs.registerLanguage('sql', sql);
+hljs.registerLanguage('java', java);
 import { renderBarChart, renderPieChart, renderLineChart, renderColumnChart } from './chart.js';
 import type { ChartDataItem } from '../types/index.js';
 
-const DEFAULT_CHART_COLORS = ['#0984e3', '#6c5ce7', '#00b894', '#d63031', '#fdcb6e', '#e17055'];
+function highlightCode(code: string, lang?: string): string {
+  if (lang && hljs.getLanguage(lang)) {
+    return hljs.highlight(code, { language: lang }).value;
+  }
+  // No language specified: return escaped plain text
+  return code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+
+const ICONIFY_CDN = 'https://api.iconify.design';
+const DEFAULT_ICON_SET = 'lucide';
 
 /**
  * Parse inline chart code block.
@@ -15,7 +54,7 @@ const DEFAULT_CHART_COLORS = ['#0984e3', '#6c5ce7', '#00b894', '#d63031', '#fdcb
 function parseInlineChart(text: string): { type: string; items: ChartDataItem[]; colors: string[] } {
   const lines = text.trim().split('\n').map((l) => l.trim()).filter(Boolean);
   let type = 'bar';
-  let colors = DEFAULT_CHART_COLORS;
+  let colors = ['currentColor'];
   const items: ChartDataItem[] = [];
 
   for (const line of lines) {
@@ -60,19 +99,16 @@ marked.use({
   renderer: {
     code({ text, lang }: { text: string; lang?: string }) {
       if (lang === 'mermaid') {
-        return `<pre class="mermaid">${text}</pre>`;
+        return `<div class="mermaid-container"><pre class="mermaid">${text}</pre></div>`;
       }
       if (lang === 'chart') {
         return renderInlineChart(text);
       }
-      const langClass = lang ? ` class="language-${lang}"` : '';
-      const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return `<pre><code${langClass}>${escaped}</code></pre>`;
+      const highlighted = highlightCode(text, lang);
+      return `<pre><code class="hljs${lang ? ` language-${lang}` : ''}">${highlighted}</code></pre>`;
     },
   },
 });
-
-const icons = lucideIcons as unknown as Record<string, string>;
 
 export function escapeHtml(s: string): string {
   return s
@@ -87,32 +123,52 @@ export function renderMarkdown(md: string): string {
   return marked.parse(md) as string;
 }
 
-function toPascalCase(name: string): string {
-  return name
-    .split('-')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('');
+/**
+ * Parse icon name — supports `icon-name` (default set) or `set:icon-name`.
+ */
+function parseIconName(name: string): { set: string; icon: string } {
+  const colonIdx = name.indexOf(':');
+  if (colonIdx > 0) {
+    return { set: name.slice(0, colonIdx), icon: name.slice(colonIdx + 1) };
+  }
+  return { set: DEFAULT_ICON_SET, icon: name };
 }
 
+/**
+ * Render an icon using Iconify CDN with CSS mask for currentColor support.
+ * Supports any Iconify icon set: lucide, mdi, heroicons, phosphor, tabler, etc.
+ * Syntax: `icon-name` (lucide default) or `set:icon-name`.
+ */
 export function renderIcon(
   name: string,
-  options?: { size?: number; strokeWidth?: number; color?: string },
+  options?: { size?: number; color?: string },
 ): string {
-  const key = toPascalCase(name);
-  const svg = icons[key];
-  if (!svg) return '';
-
-  let result = svg;
-  if (options?.size) {
-    result = result
-      .replace(/width="\d+"/, `width="${options.size}"`)
-      .replace(/height="\d+"/, `height="${options.size}"`);
+  // Parse .size suffix (e.g. "icon-name.lg") — sm, md, lg, xl
+  const ICON_SIZES: Record<string, number> = { sm: 32, md: 48, lg: 72, xl: 96 };
+  let scaledName = name;
+  let sizeOverride: number | undefined;
+  const sizeMatch = name.match(/\.(sm|md|lg|xl)$/);
+  if (sizeMatch) {
+    sizeOverride = ICON_SIZES[sizeMatch[1]];
+    scaledName = name.slice(0, -sizeMatch[0].length);
   }
-  if (options?.strokeWidth) {
-    result = result.replace(/stroke-width="\d+"/, `stroke-width="${options.strokeWidth}"`);
-  }
-  if (options?.color) {
-    result = result.replace(/stroke="currentColor"/, `stroke="${options.color}"`);
-  }
-  return result;
+  const { set, icon } = parseIconName(scaledName);
+  const url = `${ICONIFY_CDN}/${set}/${icon}.svg`;
+  const size = sizeOverride ?? options?.size ?? 48;
+  const color = options?.color ?? 'currentColor';
+  const maskStyle = [
+    `display:inline-block`,
+    `width:${size}px`,
+    `height:${size}px`,
+    `background:${color}`,
+    `-webkit-mask-image:url('${url}')`,
+    `mask-image:url('${url}')`,
+    `-webkit-mask-size:contain`,
+    `mask-size:contain`,
+    `-webkit-mask-repeat:no-repeat`,
+    `mask-repeat:no-repeat`,
+    `-webkit-mask-position:center`,
+    `mask-position:center`,
+  ].join(';');
+  return `<span class="icon" style="${maskStyle}" aria-hidden="true"></span>`;
 }

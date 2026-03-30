@@ -5,18 +5,11 @@ export function renderCardGrid(slide: Slide, config: GlobalConfig): string {
   const items = (slide.items ?? slide.rawItems ?? []) as FeatureItem[];
   const columns = Number(slide.options.columns ?? Math.min(items.length, 3));
   const style = String(slide.options.style ?? 'card');
-  const iconDefaults = config.icons ?? {};
 
   const cards = items
     .map((item) => {
-      const iconOpts = {
-        size: item.iconSize ?? iconDefaults.size ?? 48,
-        strokeWidth: item.iconStrokeWidth ?? iconDefaults.strokeWidth,
-        color: item.iconColor ?? iconDefaults.color,
-      };
-
       const iconHtml = item.icon
-        ? `<div class="feature-icon">${renderIcon(item.icon, iconOpts)}</div>`
+        ? `<div class="feature-icon">${renderIcon(item.icon, { size: item.iconSize ?? 48, color: item.iconColor })}</div>`
         : '';
       const titleHtml = item.title ? `<h3 class="feature-title">${item.title}</h3>` : '';
       const descHtml = item.description

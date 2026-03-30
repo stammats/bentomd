@@ -1,36 +1,19 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 
 // ---------------------------------------------------------------------------
-// Load icon data — name + tags from lucide-static
+// Iconify Search API — supports lucide, mdi, heroicons, phosphor, tabler, etc.
 // ---------------------------------------------------------------------------
 
-// @ts-ignore — JSON import
-import tagsData from 'lucide-static/tags.json'
-import * as lucideIcons from 'lucide-static'
+const ICONIFY_API = 'https://api.iconify.design'
 
 interface IconEntry {
-  name: string       // kebab-case: "activity"
-  key: string        // PascalCase: "Activity"
-  tags: string[]     // semantic tags
-  svg: string        // raw SVG string
+  name: string       // "lucide:gauge", "mdi:home"
+  displayName: string // "gauge", "home"
+  prefix: string     // "lucide", "mdi"
 }
 
-function toPascalCase(name: string): string {
-  return name
-    .split('-')
-    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-    .join('')
-}
-
-// Build icon catalog once
-const ICON_CATALOG: IconEntry[] = Object.entries(tagsData as Record<string, string[]>)
-  .map(([name, tags]) => {
-    const key = toPascalCase(name)
-    const svg = (lucideIcons as Record<string, string>)[key]
-    if (!svg) return null
-    return { name, key, tags, svg }
-  })
-  .filter(Boolean) as IconEntry[]
+// Default icon set for autocomplete
+const DEFAULT_PREFIX = 'lucide'
 
 // ---------------------------------------------------------------------------
 // Component
@@ -45,44 +28,68 @@ interface IconPickerProps {
 
 export function IconPicker({ query, position, onSelect, onClose }: IconPickerProps) {
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [results, setResults] = useState<IconEntry[]>([])
+  const [loading, setLoading] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
   const itemRefs = useRef<Map<number, HTMLDivElement>>(new Map())
+  const abortRef = useRef<AbortController | null>(null)
 
-  const filtered = useMemo(() => {
-    const q = query.toLowerCase().trim()
-    if (!q) return ICON_CATALOG.slice(0, 50)
-
-    // Split on spaces or dashes for flexible search
-    // e.g. "arrow down", "arrow-down", "heart" all work
-    const terms = q.split(/[\s-]+/).filter(Boolean)
-    const scored = ICON_CATALOG.map((icon) => {
-      let score = 0
-
-      // Name match (against both the name and dash-split parts)
-      const nameMatch = terms.every((t) => icon.name.includes(t))
-      if (nameMatch) score += 10
-      // Exact name start bonus
-      if (icon.name.startsWith(q.replace(/\s+/g, '-'))) score += 8
-      else if (icon.name.startsWith(terms[0])) score += 5
-
-      // Tag match
-      const tagStr = icon.tags.join(' ').toLowerCase()
-      const tagMatch = terms.every((t) => tagStr.includes(t))
-      if (tagMatch) score += 3
-
-      return { icon, score }
-    })
-      .filter((s) => s.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 50)
-
-    return scored.map((s) => s.icon)
-  }, [query])
-
-  // Reset selection when results change
+  // Debounced search via Iconify API
   useEffect(() => {
-    setSelectedIndex(0)
-  }, [filtered])
+    const q = query.trim()
+    if (!q) {
+      setResults([])
+      return
+    }
+
+    // Parse prefix:query format
+    const colonIdx = q.indexOf(':')
+    const prefix = colonIdx > 0 ? q.slice(0, colonIdx) : DEFAULT_PREFIX
+    const searchTerm = colonIdx > 0 ? q.slice(colonIdx + 1) : q
+
+    if (!searchTerm) {
+      setResults([])
+      return
+    }
+
+    // Abort previous request
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    const timer = setTimeout(async () => {
+      setLoading(true)
+      try {
+        const url = `${ICONIFY_API}/search?query=${encodeURIComponent(searchTerm)}&prefix=${encodeURIComponent(prefix)}&limit=50`
+        const res = await fetch(url, { signal: controller.signal })
+        if (!res.ok) throw new Error('API error')
+        const data = await res.json()
+
+        const icons: IconEntry[] = (data.icons || []).map((fullName: string) => {
+          const [pfx, ...rest] = fullName.split(':')
+          const iconName = rest.join(':')
+          return {
+            name: pfx === DEFAULT_PREFIX ? iconName : fullName,
+            displayName: iconName,
+            prefix: pfx,
+          }
+        })
+        setResults(icons)
+        setSelectedIndex(0)
+      } catch (e: any) {
+        if (e.name !== 'AbortError') {
+          setResults([])
+        }
+      } finally {
+        setLoading(false)
+      }
+    }, 150) // 150ms debounce
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [query])
 
   // Scroll selected item into view
   useEffect(() => {
@@ -92,30 +99,30 @@ export function IconPicker({ query, position, onSelect, onClose }: IconPickerPro
     }
   }, [selectedIndex])
 
-  // Keyboard handler — attached to window to capture while textarea is focused
+  // Keyboard handler
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault()
-        setSelectedIndex((prev) => Math.min(prev + 1, filtered.length - 1))
+        setSelectedIndex((prev) => Math.min(prev + 1, results.length - 1))
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
         setSelectedIndex((prev) => Math.max(prev - 1, 0))
       } else if (e.key === 'Enter' || e.key === 'Tab') {
         e.preventDefault()
-        if (filtered[selectedIndex]) {
-          onSelect(filtered[selectedIndex].name)
+        if (results[selectedIndex]) {
+          onSelect(results[selectedIndex].name)
         }
       } else if (e.key === 'Escape') {
         e.preventDefault()
         onClose()
       }
     }
-    window.addEventListener('keydown', handler, true) // capture phase
+    window.addEventListener('keydown', handler, true)
     return () => window.removeEventListener('keydown', handler, true)
-  }, [filtered, selectedIndex, onSelect, onClose])
+  }, [results, selectedIndex, onSelect, onClose])
 
-  if (filtered.length === 0) return null
+  if (results.length === 0 && !loading) return null
 
   return (
     <div
@@ -135,6 +142,11 @@ export function IconPicker({ query, position, onSelect, onClose }: IconPickerPro
         flexDirection: 'column',
       }}
     >
+      {loading && results.length === 0 && (
+        <div style={{ padding: '12px 16px', color: '#64748b', fontSize: 13 }}>
+          Searching...
+        </div>
+      )}
       <div
         ref={listRef}
         style={{
@@ -142,7 +154,7 @@ export function IconPicker({ query, position, onSelect, onClose }: IconPickerPro
           padding: '4px 0',
         }}
       >
-        {filtered.map((icon, i) => (
+        {results.map((icon, i) => (
           <div
             key={icon.name}
             ref={(el) => {
@@ -168,22 +180,26 @@ export function IconPicker({ query, position, onSelect, onClose }: IconPickerPro
                 flexShrink: 0,
                 width: 22,
                 height: 22,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              dangerouslySetInnerHTML={{
-                __html: icon.svg
-                  .replace(/width="\d+"/, 'width="18"')
-                  .replace(/height="\d+"/, 'height="18"'),
+                display: 'inline-block',
+                background: 'currentColor',
+                WebkitMaskImage: `url('${ICONIFY_API}/${icon.prefix}/${icon.displayName}.svg')`,
+                maskImage: `url('${ICONIFY_API}/${icon.prefix}/${icon.displayName}.svg')`,
+                WebkitMaskSize: 'contain',
+                maskSize: 'contain',
+                WebkitMaskRepeat: 'no-repeat',
+                maskRepeat: 'no-repeat',
+                WebkitMaskPosition: 'center',
+                maskPosition: 'center',
               }}
             />
             <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {icon.name}
             </span>
-            <span style={{ fontSize: 11, color: '#475569', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 120 }}>
-              {icon.tags.slice(0, 3).join(', ')}
-            </span>
+            {icon.prefix !== DEFAULT_PREFIX && (
+              <span style={{ fontSize: 11, color: '#475569' }}>
+                {icon.prefix}
+              </span>
+            )}
           </div>
         ))}
       </div>

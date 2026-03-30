@@ -54,7 +54,7 @@ const THEME_PRESETS: Record<string, ThemePalette> = {
   sunset:  { primary: '#e17055', secondary: '#fdcb6e', background: '#ffffff', surface: '#ffeaa7', text: '#2d3436', muted: '#636e72' },
   forest:  { primary: '#00b894', secondary: '#00cec9', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
   berry:   { primary: '#6c5ce7', secondary: '#e84393', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
-  mono:    { primary: '#2d3436', secondary: '#636e72', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
+  mono:    { primary: '#2d3436', secondary: '#2d3436', background: '#ffffff', surface: '#dfe6e9', text: '#2d3436', muted: '#636e72' },
 };
 
 // ---------------------------------------------------------------------------
@@ -63,13 +63,14 @@ const THEME_PRESETS: Record<string, ThemePalette> = {
 
 type CellStyle = 'mixed' | 'tint' | 'solid' | 'outline' | 'white' | 'mono';
 
-function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
+function generateCellThemes(palette?: Palette, style?: string, theme?: string): CellTheme[] {
   const primary = palette?.primary ?? '#0984e3';
   const secondary = palette?.secondary ?? '#6c5ce7';
   const surface = palette?.surface ?? '#dfe6e9';
   const text = palette?.text ?? '#2d3436';
   const accents = [primary, secondary, '#00b894', '#e17055', '#00cec9', '#fdcb6e'];
-  const cellStyle = (style ?? 'mixed') as CellStyle;
+  const defaultStyle = theme === 'mono' ? 'mono' : 'mixed';
+  const cellStyle = (style ?? defaultStyle) as CellStyle;
 
   // Helper: ensure text color has sufficient contrast against background.
   // Uses WCAG relative luminance to guarantee ≥ 3:1 contrast ratio.
@@ -115,9 +116,6 @@ function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
 
     case 'solid':
       return accents.map((c) => {
-        // Same hue family for harmony.
-        // Only truly bright colors (yellow etc.) get dark text.
-        // Everything else gets a light tint of the same hue.
         const fg = needsDarkText(c) ? shadeColor(c, 0.7) : tintColor(c, 0.85);
         return { background: c, color: ensureContrast(c, fg) };
       });
@@ -146,26 +144,30 @@ function generateCellThemes(palette?: Palette, style?: string): CellTheme[] {
     }
 
     case 'mono': {
-      // All tint variations of primary — no solid cell that creates unintended emphasis.
-      // Gentle gradient from lighter to slightly deeper tints for rhythm.
-      const tints = [0.82, 0.88, 0.75, 0.92];
-      return tints.map((t) => {
-        const bg = tintColor(primary, t);
-        const fg = shadeColor(primary, 0.65);
-        return { background: bg, color: ensureContrast(bg, fg) };
-      });
+      // All cells same color — mono means uniform, using primary as base.
+      const bg = tintColor(primary, 0.65);
+      const fg = shadeColor(primary, 0.65);
+      const color = ensureContrast(bg, fg);
+      return [{ background: bg, color }];
     }
 
     case 'mixed':
     default: {
-      const pairs = [
-        { bright: tintColor(primary, 0.78), dark: shadeColor(primary, 0.7) },
-        { bright: tintColor(secondary, 0.78), dark: shadeColor(secondary, 0.7) },
-        { bright: '#fce4b8', dark: '#4a2e06' },
-        { bright: '#c5dde8', dark: '#12303e' },
-        { bright: '#f5c6c6', dark: '#561818' },
-        { bright: '#c2e0c6', dark: '#143520' },
-      ];
+      const isMono = theme === 'mono';
+      const pairs = isMono
+        ? [
+            { bright: tintColor(primary, 0.78), dark: primary },
+            { bright: tintColor(primary, 0.88), dark: shadeColor(primary, 0.55) },
+            { bright: tintColor(primary, 0.70), dark: shadeColor(primary, 0.80) },
+          ]
+        : [
+            { bright: tintColor(primary, 0.78), dark: primary },
+            { bright: tintColor(secondary, 0.78), dark: secondary },
+            { bright: '#fce4b8', dark: '#4a2e06' },
+            { bright: '#c5dde8', dark: '#12303e' },
+            { bright: '#f5c6c6', dark: '#561818' },
+            { bright: '#c2e0c6', dark: '#143520' },
+          ];
       const themes: CellTheme[] = [];
       for (const pair of pairs) {
         themes.push({ background: pair.bright, color: ensureContrast(pair.bright, pair.dark) });
@@ -251,9 +253,9 @@ function shadeColor(hex: string, ratio: number): string {
 // Markdown Item Parser
 // ============================================================
 
-/** Heading pattern: ### :icon: Title text {modifiers} */
+/** Heading pattern: ### :icon: or :set:icon: Title text {modifiers} */
 const MD_HEADING_RE = /^###\s+(.+)$/;
-const ICON_RE = /^:([a-z0-9-]+):\s*/;
+const ICON_RE = /^:([a-z0-9-]+(?::[a-z0-9-]+)?(?:\.(?:sm|md|lg|xl))?):\s*/;
 const MODIFIERS_RE = /\s*\{([^}]+)\}\s*$/;
 const IMAGE_RE = /^!\[([^\]]*)\]\(([^)]+)\)/;
 
@@ -323,6 +325,7 @@ function parseMarkdownItems(
   options: SlideOptions,
   palette?: Palette,
   style?: string,
+  theme?: string,
 ): { items: ContentModule[]; rawItems: Record<string, unknown>[] } | null {
   if (!content.match(/^###\s/m)) return null;
 
@@ -331,7 +334,7 @@ function parseMarkdownItems(
 
   // Generate cell themes for bento and auto-bento layouts
   const bentoLayouts = new Set(['bento', 'default', 'features', 'stats', 'comparison', 'three-column', 'image-left', 'image-right', 'grid']);
-  const cellThemes = bentoLayouts.has(layout) ? generateCellThemes(palette, style) : undefined;
+  const cellThemes = bentoLayouts.has(layout) ? generateCellThemes(palette, style, theme) : undefined;
 
   const rawItems: Record<string, unknown>[] = [];
 
@@ -497,11 +500,22 @@ function buildBentoItem(
   // **bold** parts in title will be rendered large (value-style) by bento-cell.
   item.title = h.title;
 
-  // Check for image in body
-  const imageLine = bodyLinesForText.find((l) => IMAGE_RE.test(l));
-  if (imageLine) {
-    const imgMatch = imageLine.match(IMAGE_RE);
-    if (imgMatch) item.image = imgMatch[2];
+  // Collect all images and track position relative to text
+  const imageLines = bodyLinesForText.filter((l) => IMAGE_RE.test(l));
+  const allImages: string[] = [];
+  for (const line of imageLines) {
+    const imgMatch = line.match(IMAGE_RE);
+    if (imgMatch) allImages.push(imgMatch[2]);
+  }
+  if (allImages.length > 0) {
+    item.image = allImages[0];
+    if (allImages.length > 1) item.images = allImages;
+    // Image before first text line = imageFirst
+    const firstImageIdx = bodyLinesForText.findIndex((l) => IMAGE_RE.test(l));
+    const firstTextIdx = bodyLinesForText.findIndex((l) => !IMAGE_RE.test(l) && l.trim());
+    if (firstTextIdx === -1 || firstImageIdx < firstTextIdx) {
+      item.imageFirst = true;
+    }
   }
 
   // Non-image body text = description or label
@@ -519,6 +533,8 @@ function buildBentoItem(
       item.size = mod;
     } else if (mod === 'center') {
       item.align = 'center';
+    } else if (mod === 'contain') {
+      item.fit = 'contain';
     }
   }
 
@@ -543,8 +559,13 @@ function inferItemType(item: Record<string, unknown>): ContentModule {
     return { type: 'stat', ...item } as unknown as ContentModule;
   }
 
-  // FeatureItem: has `icon` + `title` (no `value`)
-  if ('icon' in item && 'title' in item && !('value' in item)) {
+  // TimelineItem: has `date` + `title` (check before feature to avoid ambiguity)
+  if ('date' in item && 'title' in item) {
+    return { type: 'timeline', ...item } as unknown as ContentModule;
+  }
+
+  // FeatureItem: has `title` + `description` (no `value`)
+  if ('title' in item && 'description' in item && !('value' in item)) {
     return { type: 'feature', ...item } as unknown as ContentModule;
   }
 
@@ -556,11 +577,6 @@ function inferItemType(item: Record<string, unknown>): ContentModule {
   // ComparisonItem: has `label` + `features` (array)
   if ('label' in item && 'features' in item && Array.isArray(item.features)) {
     return { type: 'comparison', ...item } as unknown as ContentModule;
-  }
-
-  // TimelineItem: has `date` + `title`
-  if ('date' in item && 'title' in item) {
-    return { type: 'timeline', ...item } as unknown as ContentModule;
   }
 
   // BentoCell: has `size` or `image`
@@ -608,7 +624,6 @@ function parseGlobalConfig(raw: Record<string, unknown>): GlobalConfig {
   }
 
   if (raw.palette != null) config.palette = raw.palette as GlobalConfig['palette'];
-  if (raw.icons != null) config.icons = raw.icons as GlobalConfig['icons'];
   if (raw.logo != null) config.logo = raw.logo as GlobalConfig['logo'];
   if (raw.footer != null) config.footer = raw.footer as GlobalConfig['footer'];
   if (raw.defaults != null) config.defaults = raw.defaults as GlobalConfig['defaults'];
@@ -743,7 +758,7 @@ function parseSlides(body: string, config: GlobalConfig): Slide[] {
 
     if (content.match(/^###\s/m)) {
       const slideStyle = (options.style as string) ?? config.style;
-      const mdResult = parseMarkdownItems(content, layout, options, config.palette, slideStyle);
+      const mdResult = parseMarkdownItems(content, layout, options, config.palette, slideStyle, config.theme);
       if (mdResult) {
         slide.items = mdResult.items;
         slide.rawItems = mdResult.rawItems;

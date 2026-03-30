@@ -145,11 +145,16 @@ function renderLineChart(items: ChartDataItem[], colors: string[]): string {
   );
 }
 
-export const chartRenderer: LayoutRenderer = (slide, _config) => {
+export const chartRenderer: LayoutRenderer = (slide, config) => {
   const items = (slide.items ?? slide.rawItems ?? []) as ChartDataItem[];
   const chartType = String(slide.options.type ?? 'bar');
   const title = slide.options.title as string | undefined;
-  const colors = (slide.options.colors as string[]) ?? DEFAULT_COLORS;
+  const paletteColors = [
+    config.palette?.primary ?? DEFAULT_COLORS[0],
+    config.palette?.secondary ?? DEFAULT_COLORS[1],
+    ...DEFAULT_COLORS.slice(2),
+  ];
+  const colors = (slide.options.colors as string[]) ?? paletteColors;
 
   let chartSvg: string;
   switch (chartType) {

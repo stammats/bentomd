@@ -210,6 +210,8 @@ function resolveBentoLayout(slide: Slide): LayoutDefinition {
       }
     }
     numRows = template.length;
+    // Attach gridRows so modules can compute pixel aspect ratio
+    for (const s of slots) s.gridRows = numRows;
   }
 
   // Add heading slot if present
@@ -268,8 +270,11 @@ function resolveBentoWithBinPacking(
     };
   });
 
-  // Distribute row-end gaps evenly across single-row cells
+  // Distribute row-end gaps evenly across cells in each row
   distributeRowGaps(slots, totalCols);
+
+  // Expand multi-row cells when their row has no single-row neighbours to fill
+  expandMultiRowCells(slots, totalCols);
 
   const numRows = Math.max(...slots.map((s) => (s.row as number) + (s.rowSpan ?? 1) - 1 - rowOffset), 1);
   // Attach gridRows to each slot so modules can compute pixel aspect ratio
@@ -352,6 +357,35 @@ function distributeRowGaps(slots: Slot[], totalCols: number): void {
   }
 }
 
+
+/**
+ * Expand multi-row cells to fill empty columns, but only when the
+ * multi-row cell is truly alone across ALL of its spanned rows.
+ * e.g. a single `hero(8x2)` with nothing beside it → expand to 12.
+ * A `tall(6x2)` with a `sm(4x1)` in row 2 → do NOT expand.
+ */
+function expandMultiRowCells(slots: Slot[], totalCols: number): void {
+  for (const cell of slots) {
+    const span = cell.rowSpan ?? 1;
+    if (span <= 1) continue;
+
+    const cellRow = cell.row as number;
+    // Check every row this cell spans — if ANY row has other cells, skip
+    let aloneInAllRows = true;
+    for (let r = cellRow; r < cellRow + span; r++) {
+      const others = slots.filter(s => {
+        if (s === cell) return false;
+        const sRow = s.row as number;
+        return sRow <= r && sRow + (s.rowSpan ?? 1) - 1 >= r;
+      });
+      if (others.length > 0) { aloneInAllRows = false; break; }
+    }
+    if (!aloneInAllRows) continue;
+
+    const gap = totalCols - cell.colSpan;
+    if (gap > 0) cell.colSpan = totalCols;
+  }
+}
 
 /**
  * Find the first available position for a cell of given size.

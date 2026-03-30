@@ -69,12 +69,15 @@ MoM 25% 成長
 ## チーム
 
 ### CEO — Jane Smith
+![Jane Smith](https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400)
 Ex-Stripe。開発ツール領域10年。前回Exit $50M。
 
 ### CTO — Alex Chen
+![Alex Chen](https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400)
 Ex-Google Chrome DevTools。15年のプラットフォーム開発。
 
 ### COO — Maria Lopez
+![Maria Lopez](https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400)
 Ex-Notion。10→500名のスケーリング経験。
 
 ## {cover, bg="#0f172a"}

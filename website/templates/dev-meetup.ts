@@ -31,55 +31,63 @@ defaults:
 
 ## {cover, bg="#0a0a0a"}
 
-# 本番で学んだRSC移行
-5分でわかる3ヶ月の記録
+# React Server Components 実践ガイド
+クライアントバンドルを68%削減した設計判断
 
 ## {section, bg="#0a0a0a"}
 
-# ある日のこと
-Lighthouseスコアが32点だった
+# RSCの基本モデル
+Server / Client の境界を理解する
 
-## 現実を直視した
+## RSCが解決する問題
 
-### :gauge: Lighthouse **32**点
-パフォーマンススコアが赤信号
+### 従来のReactの課題 {tall}
+SPAではすべてのコンポーネントがクライアントで実行される。データ取得・表示・操作が全てJSバンドルに含まれる。
+- HTMLをサーバーで返しても、Hydrationで全JSが必要
+- 表示専用のコンポーネントもバンドルに含まれる
+- \`useEffect\` + fetch のウォーターフォール問題
 
-### :package: バンドル **2.4MB**
-クライアントJSが肥大化
+### RSCの考え方
+Server Componentはサーバーでのみ実行され、HTMLとして配信される。JSバンドルに含まれない。
+- \`async/await\` でデータ取得が直接書ける
+- クライアントJSはインタラクション部分のみ
+- デフォルトがServer、明示的に\`use client\`
 
-### :clock: 初期表示 **6秒**
-3G回線のユーザーが離脱
+## レンダリングモデルの違い
 
-## 当時のアーキテクチャ
-
-### アーキテクチャ（Before） {tall}
+### 従来のSPA {tall}
 \`\`\`mermaid
 graph TB
-  Browser[Browser] --> Bundle[JS Bundle 2.4MB]
-  Bundle --> Chart[Chart 180KB]
-  Bundle --> Table[Table 95KB]
-  Bundle --> Picker[Picker 62KB]
-  Bundle --> API[API Client]
-  API --> Server[Backend API]
+  Browser[Browser] --> Bundle[JS Bundle]
+  Bundle --> Render[全コンポーネント実行]
+  Render --> DOM[DOM構築]
+  Bundle --> Fetch[fetch/useEffect]
+  Fetch --> API[Backend API]
+  API --> Fetch
+  Fetch --> Render
 \`\`\`
 
-### 問題点
-- 全コンポーネントがクライアントで実行
-- データ取得もクライアント側
-- 初期ロードで全JSを配信
-- Hydration完了まで操作不能
+### RSCモデル {tall}
+\`\`\`mermaid
+graph TB
+  Server[Server] --> DB[DB/API直接アクセス]
+  DB --> RSC[Server Component実行]
+  RSC --> Payload[RSC Payload + HTML]
+  Payload --> Browser[Browser]
+  Browser --> Hydrate[Client Componentのみ Hydrate]
+\`\`\`
 
 ## {section, bg="#0a0a0a"}
 
-# 犯人はこいつ
-全部クライアントで動かしていた
+# 実装パターン
+Before / After で見る設計変更
 
-## Before: 肥大化したクライアント
+## 典型的なBefore
 
 ### {6x2}
 \`\`\`typescript
 // pages/dashboard.tsx — Before
-'use client'  // ← これが全てを巻き込む
+'use client'  // ← 全てを巻き込む
 
 import { Chart } from '@/components/Chart'
 import { DataTable } from '@/components/Table'
@@ -98,19 +106,13 @@ export default function Dashboard() {
 }
 \`\`\`
 
-### :package: Chart **180KB**
-グラフ描画を全員に配信
+### なぜ問題か
+\`use client\` をページ上位に書くと、配下の全コンポーネントがクライアントバンドルに含まれる。Chart（180KB）、Table（95KB）など表示専用のものまでJSとして配信される。
 
-### :table: Table **95KB**
-データ表示もクライアント側
+### API経由のデータ取得
+サーバーにあるデータをわざわざAPIで公開し、クライアントでfetchしている。直接DBから取れるものをネットワーク越しに往復させている。
 
-### :calendar: Picker **62KB**
-日付選択すら重い
-
-### :layout: Sidebar **45KB**
-静的なのにJSに含まれる
-
-## After: Server Componentで分離
+## RSCで書き直す
 
 ### {6x2}
 \`\`\`typescript
@@ -120,40 +122,44 @@ import { DataTable } from '@/components/Table'
 import { Sidebar } from '@/components/Sidebar'
 import { DateFilter } from './DateFilter'
 
+// Server Component: async関数として定義
 export default async function Dashboard() {
   const data = await db.metrics.findMany()
   return (
     <Layout>
-      <Sidebar />        {/* Server Component */}
-      <Chart data={data} /> {/* Server Component */}
+      <Sidebar />
+      <Chart data={data} />
       <DataTable data={data} />
-      <DateFilter />      {/* 'use client' */}
+      <DateFilter />  {/* これだけ 'use client' */}
     </Layout>
   )
 }
 \`\`\`
 
-### Server側で実行
-Chart, Table, Sidebarはサーバーで描画。HTMLだけ配信。
+### 変更のポイント
+- ページレベルの\`use client\`を除去
+- \`useSWR\` → \`await db.metrics.findMany()\`に変更
+- Chart, Table, SidebarはServer Componentとして実行
+- JSバンドルに含まれるのはDateFilterのみ
 
-### Client最小化
-\`use client\` は DateFilter のみ。インタラクティブな部分だけ。
+### 境界設計の原則
+「ユーザー操作が必要か？」で判断する。onClick, onChange, useStateがあればClient。それ以外はServer。
 
-## コンポーネント境界の設計
+## Server/Client境界の設計
 
-### Server/Client 境界 {hero}
+### コンポーネントツリーの境界 {hero}
 \`\`\`mermaid
 graph LR
-  subgraph Server Components
+  subgraph Server["Server Components（JSなし）"]
     Page[Dashboard Page]
     Sidebar[Sidebar]
-    Chart[Chart SVG]
+    Chart[Chart → SVG]
     Table[Data Table]
   end
-  subgraph Client Components
+  subgraph Client["Client Components（Hydrate対象）"]
     Filter[Date Filter]
     Toggle[Theme Toggle]
-    Toast[Toast Notifications]
+    Toast[Toast]
   end
   Page --> Sidebar
   Page --> Chart
@@ -161,119 +167,118 @@ graph LR
   Page --> Filter
 \`\`\`
 
-### 境界のルール
-- Server: データ取得・表示系
-- Client: ユーザー操作が必要な部分のみ
+### 判断基準
+- **Server**: データ表示、静的UI、DBアクセス
+- **Client**: フォーム入力、状態管理、ブラウザAPI使用
+- 迷ったらServerで始めて、必要になったらClientに移す
 
 ## {section, bg="#0a0a0a"}
 
-# 移行戦略
+# 移行の進め方
 段階的に、壊さずに
 
-## 3原則
+## 移行戦略：末端から着手
 
-### 末端から着手 {tall}
-子を持たないコンポーネントから移行。依存関係の葉から剪定する。
+### 依存グラフの葉から剪定する {tall}
+子を持たないコンポーネントから順にServer化する。親のuse clientを外すのは最後。
 \`\`\`
 移行順序:
-1. アイコン、ラベル → Server
-2. カード、リスト → Server
-3. フォーム、モーダル → Client維持
-4. ページ全体 → Server (async)
+1. Icon, Badge, Label → Server（状態なし）
+2. Card, List, Table → Server（表示のみ）
+3. Form, Modal, Dropdown → Client維持
+4. Page → Server (async) + 部分的にClient
 \`\`\`
 
 ### Feature Flagで段階展開
-10%→50%→100%の3段階で公開
+Vercel Edge ConfigやLaunchDarklyで段階リリース。10%→50%→100%の3段階で公開し、Core Web Vitalsを監視。
 
-### 型で境界を守る
-Server/Clientの混在をTSで検出
+### 型でServer/Client境界を守る
+\`\`\`typescript
+// server-only パッケージで誤用を防ぐ
+import 'server-only'
+export async function getMetrics() {
+  return db.metrics.findMany()
+}
+\`\`\`
 
-## バンドル変化
+## バンドルサイズの推移
 
-### バンドルサイズ推移 {tall}
+### フェーズごとの削減量 {tall}
 \`\`\`chart
 type: column
-colors: #e2e8f0
 移行前: 2400
-Phase1: 1800
-Phase2: 1100
-移行後: 780
+Phase1 末端: 1800
+Phase2 中間: 1100
+完了: 780
 \`\`\`
 
-### :package: **−68%** 削減
-2.4MB → 780KB
-
-### :zap: LCP **1.1s**
-6秒 → 1.1秒
-
-## {section, bg="#0a0a0a"}
-
-# Before / After
-数字で振り返る
-
-## ビフォーアフター
-
-### :x: Before {tall}
-- Lighthouse: **32**点
-- バンドル: **2.4MB**
-- LCP: **6.0s**
-- 直帰率: **52%**
-- \`use client\`: **全ページ**
-
-### :check: After {tall}
-- Lighthouse: **94**点
-- バンドル: **780KB**
-- LCP: **1.1s**
-- 直帰率: **34%**
-- \`use client\`: **12ファイル**
-
-## 最終結果
-
-### :gauge: Lighthouse **94**点
-32点 → 94点（+62点）
-
-### :rocket: LCP **1.1s**
-初期表示が5倍速に改善
-
-### :trending-down: 直帰率 **−35%**
-ユーザー体験が数字に反映
-
-### :package: バンドル **−68%**
-2.4MB → 780KBに削減
+### 各フェーズでやったこと
+- **Phase1**: Icon, Label等の末端をServer化（-600KB）
+- **Phase2**: Chart, Tableをサーバー描画に移行（-700KB）
+- **完了**: ページレベルのuse clientを除去（-320KB）
+- 最終的にクライアントJSは780KB、use clientは12ファイルのみ
 
 ## {section, bg="#0a0a0a"}
 
-# 一番の学び
-use client は伝播する
+# ハマりポイント
+移行中に遭遇した問題と対処法
 
-## 持ち帰ってほしいこと
+## use clientの伝播問題
 
-### 1行で100KB増 {tall}
+### 親に書くと全部Clientになる {tall}
 \`use client\` の配置が全てを決める。親に書くと全子孫がクライアントに巻き込まれる。
 \`\`\`typescript
-// ❌ ここに書くと全部Client
+// ❌ Layoutに書くと全ページがClient
 'use client'
 export function Layout({ children }) {
-  return <div>{children}</div>
+  const [theme] = useTheme()
+  return <div data-theme={theme}>{children}</div>
 }
 
-// ✅ 必要な箇所だけに書く
-'use client'
-export function ThemeToggle() {
-  const [dark, setDark] = useState(false)
-  return <button onClick={...} />
+// ✅ ThemeだけをClientに分離
+import { ThemeProvider } from './ThemeProvider'
+export function Layout({ children }) {
+  return <ThemeProvider>{children}</ThemeProvider>
 }
 \`\`\`
 
-### 境界は設計する
-偶然の境界ではなく意図的に引く
+### Context使用時の注意
+ContextはClient Componentでしか使えない。Providerをラップ用の小さなClient Componentに切り出し、中身はServer Componentのままにする。
 
-### DXを犠牲にしない
-RSCはPHP的、それは褒め言葉
+### serializeできない値
+Server → Client の境界ではpropsがJSON serializeされる。Date, Map, 関数は渡せない。
+
+## まとめ
+
+### :lightbulb: 設計原則
+- デフォルトはServer Component
+- \`use client\` は必要最小限の末端に配置
+- データ取得はサーバー側で完結させる
+
+### :tool: 移行のコツ
+- 末端コンポーネントから段階的に移行
+- \`server-only\` パッケージで境界を型安全に
+- Feature Flagで段階リリース
+
+### :book: 参考資料
+- [Next.js App Router Docs](https://nextjs.org/docs)
+- [React Server Components RFC](https://github.com/reactjs/rfcs)
+- [Vercel Blog: Understanding RSC](https://vercel.com/blog)
+
+## 実際の画面
+
+### Lighthouse結果 {contain}
+![Lighthouse](https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800)
+
+### DevTools Network {contain}
+![Network](https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800)
+
+### Before / After {contain}
+![Compare](https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800)
 
 ## {cover, bg="#0a0a0a"}
 
-# ありがとう！
+# Thank you!
 @yourhandle
 `,
 }

@@ -11,7 +11,7 @@ const withNextra = nextra({
 });
 
 export default withNextra({
-  transpilePackages: ['lucide-static', 'mermaid'],
+  transpilePackages: ['mermaid'],
   experimental: {
     externalDir: true,
   },

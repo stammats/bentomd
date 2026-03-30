@@ -4,12 +4,11 @@ import { renderIcon } from './utils.js';
 export function renderStatGrid(slide: Slide, config: GlobalConfig): string {
   const items = (slide.items ?? slide.rawItems ?? []) as StatItem[];
   const columns = Math.min(Number(slide.options.columns ?? items.length), 4);
-  const iconDefaults = config.icons ?? {};
 
   const cards = items
     .map((item) => {
       const iconHtml = item.icon
-        ? `<div class="stat-icon">${renderIcon(item.icon, { size: 40, ...iconDefaults })}</div>`
+        ? `<div class="stat-icon">${renderIcon(item.icon, { size: 40 })}</div>`
         : '';
 
       const trendHtml = item.trend

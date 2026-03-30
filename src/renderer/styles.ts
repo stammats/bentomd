@@ -1,6 +1,10 @@
 import { GlobalConfig, CANVAS_SIZES } from '../types/index.js';
 import { generateGridCSS } from '../engine/grid.js';
 
+const HLJS_DARK = `.hljs{color:#c9d1d9;background:#0d1117}.hljs-doctag,.hljs-keyword,.hljs-meta .hljs-keyword,.hljs-template-tag,.hljs-template-variable,.hljs-type,.hljs-variable.language_{color:#ff7b72}.hljs-title,.hljs-title.class_,.hljs-title.class_.inherited__,.hljs-title.function_{color:#d2a8ff}.hljs-attr,.hljs-attribute,.hljs-literal,.hljs-meta,.hljs-number,.hljs-operator,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-variable{color:#79c0ff}.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#a5d6ff}.hljs-built_in,.hljs-symbol{color:#ffa657}.hljs-code,.hljs-comment,.hljs-formula{color:#8b949e}.hljs-name,.hljs-quote,.hljs-selector-pseudo,.hljs-selector-tag{color:#7ee787}.hljs-subst{color:#c9d1d9}.hljs-section{color:#1f6feb;font-weight:700}.hljs-bullet{color:#f2cc60}.hljs-emphasis{color:#c9d1d9;font-style:italic}.hljs-strong{color:#c9d1d9;font-weight:700}.hljs-addition{color:#aff5b4;background-color:#033a16}.hljs-deletion{color:#ffdcd7;background-color:#67060c}`;
+
+const HLJS_LIGHT = `.hljs{color:#24292e;background:#fff}.hljs-doctag,.hljs-keyword,.hljs-meta .hljs-keyword,.hljs-template-tag,.hljs-template-variable,.hljs-type,.hljs-variable.language_{color:#d73a49}.hljs-title,.hljs-title.class_,.hljs-title.class_.inherited__,.hljs-title.function_{color:#6f42c1}.hljs-attr,.hljs-attribute,.hljs-literal,.hljs-meta,.hljs-number,.hljs-operator,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-variable{color:#005cc5}.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#032f62}.hljs-built_in,.hljs-symbol{color:#e36209}.hljs-code,.hljs-comment,.hljs-formula{color:#6a737d}.hljs-name,.hljs-quote,.hljs-selector-pseudo,.hljs-selector-tag{color:#22863a}.hljs-subst{color:#24292e}.hljs-section{color:#005cc5;font-weight:700}.hljs-bullet{color:#735c0f}.hljs-emphasis{color:#24292e;font-style:italic}.hljs-strong{color:#24292e;font-weight:700}.hljs-addition{color:#22863a;background-color:#f0fff4}.hljs-deletion{color:#b31d28;background-color:#ffeef0}`;
+
 export function generateCSS(config: GlobalConfig): string {
   const p = config.palette ?? {};
   const primary = p.primary ?? '#0984e3';
@@ -53,6 +57,7 @@ export function generateCSS(config: GlobalConfig): string {
   const rLg = 12;
   const rXl = is43 ? 12 : 16;
   const rCell = config.borderRadius ?? 40;
+
 
   // Grid engine CSS (replaces ~400 lines of layout-specific CSS)
   const gridCSS = generateGridCSS();
@@ -157,7 +162,7 @@ ${gridCSS}
   justify-content: space-between;
   font-size: ${fontCaption}px;
   color: ${muted};
-  border-top: 1px solid rgba(100,116,139,0.15);
+  border-top: 1px solid rgba(${hexToRgb(muted)},0.15);
   padding-top: 12px;
   flex-shrink: 0;
 }
@@ -184,12 +189,12 @@ ${gridCSS}
 .slide-content .slide-summary { font-size: ${fontBodySize}px; line-height: 1.6; }
 .slide-content ul, .slide-content ol { font-size: ${fontBodySize}px; line-height: 1.6; padding-left: 1.5em; }
 .slide-content li { margin-bottom: 0.5em; }
-.slide-content a:not(.mermaid a) { color: ${primary}; text-decoration: none; }
-.slide-content a:not(.mermaid a):hover { text-decoration: underline; }
-.slide-content strong:not(.mermaid strong) { font-weight: 700; }
-.slide-content em:not(.mermaid em) { font-style: italic; }
+.slide-content a { color: ${primary}; text-decoration: none; }
+.slide-content a:hover { text-decoration: underline; }
+.slide-content strong { font-weight: 700; }
+.slide-content em { font-style: italic; }
 
-.slide-content code:not(.mermaid code) {
+.slide-content code {
   font-family: ${fontMono};
   background: ${surface};
   padding: 2px 6px;
@@ -202,12 +207,13 @@ ${gridCSS}
   border-radius: ${rLg}px;
   overflow-x: auto;
   margin: 16px 0;
-  line-height: 1.5;
+  line-height: 1.35;
 }
 .slide-content pre:not(.mermaid) code {
   background: none;
   padding: 0;
   font-size: ${fontSmall}px;
+  color: ${text};
 }
 .slide-content blockquote {
   border-left: 4px solid ${primary};
@@ -225,11 +231,11 @@ ${gridCSS}
   text-align: left;
   font-weight: 600;
   padding: ${spSm}px ${spMd}px;
-  border-bottom: 2px solid rgba(100,116,139,0.25);
+  border-bottom: 2px solid rgba(${hexToRgb(muted)},0.25);
 }
 .slide-content td {
   padding: ${spSm}px ${spMd}px;
-  border-bottom: 1px solid rgba(100,116,139,0.12);
+  border-bottom: 1px solid rgba(${hexToRgb(muted)},0.12);
 }
 
 tr:last-child td { border-bottom: none; }
@@ -509,7 +515,7 @@ tr:last-child td { border-bottom: none; }
   top: 0;
   bottom: 0;
   width: 3px;
-  background: rgba(100,116,139,0.2);
+  background: rgba(${hexToRgb(muted)},0.2);
   border-radius: 2px;
 }
 .timeline-item {
@@ -530,7 +536,7 @@ tr:last-child td { border-bottom: none; }
 }
 .timeline-item.active::before {
   background: ${primary};
-  box-shadow: 0 0 0 5px rgba(37,99,235,0.15);
+  box-shadow: 0 0 0 5px rgba(${hexToRgb(primary)},0.15);
   border-color: ${background};
 }
 .timeline-date {
@@ -591,7 +597,7 @@ tr:last-child td { border-bottom: none; }
 .comparison-features li {
   font-size: ${fontBase}px;
   padding: ${spSm}px 0;
-  border-bottom: 1px solid rgba(100,116,139,0.12);
+  border-bottom: 1px solid rgba(${hexToRgb(muted)},0.12);
 }
 .comparison-features li:last-child { border-bottom: none; }
 
@@ -609,8 +615,6 @@ tr:last-child td { border-bottom: none; }
 }
 
 .bento-cell {
-  background: ${surface};
-  color: ${text};
   border-radius: ${rCell}px;
   transition: transform 0.15s ease;
 }
@@ -621,9 +625,11 @@ tr:last-child td { border-bottom: none; }
   font-family: ${fontHeading};
   letter-spacing: -0.03em;
   line-height: 1;
+  display: inline-block;
+  margin-top: 12px;
 }
 .bento-title {
-  font-size: ${Math.round(fontH1 * 0.75)}px;
+  font-size: ${Math.round(fontH1 * 0.6)}px;
   font-weight: 700;
   color: inherit;
   font-family: ${fontHeading};
@@ -632,16 +638,15 @@ tr:last-child td { border-bottom: none; }
 }
 .bento-label {
   font-size: ${fontH3}px;
-  opacity: 0.85;
   margin-top: 4px;
 }
 .bento-desc {
   font-size: ${fontH3}px;
-  opacity: 0.85;
   line-height: 1.4;
   margin-top: 8px;
   min-height: 0;
   overflow: hidden;
+  flex-shrink: 0;
 }
 .bento-desc p { margin: 0 0 0.4em; }
 .bento-desc ul, .bento-desc ol { margin: 0; padding-left: 1.2em; }
@@ -679,6 +684,9 @@ tr:last-child td { border-bottom: none; }
 .bento-horizontal .bento-text {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: ${spMd}px;
 }
 .bento-content {
   margin-top: ${spSm}px;
@@ -687,11 +695,22 @@ tr:last-child td { border-bottom: none; }
   overflow: hidden;
 }
 
-/* Code blocks inside bento cells — fill available space, scroll if needed */
-.bento-cell pre:not(.mermaid) {
-  border-radius: 0;
-  margin: 0;
+/* Bento cell overrides — colors computed per-cell in JS */
+.slide-content .bento-cell code:not(.hljs) {
+  background: var(--cell-code-bg);
+  color: var(--cell-code-color);
 }
+.bento-cell pre:not(.mermaid) {
+  border-radius: ${rLg}px;
+  margin: 0;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+.slide-content .bento-cell a { color: var(--cell-link); }
+.slide-content .bento-cell li,
+.slide-content .bento-cell p,
+.slide-content .bento-cell td { color: inherit; }
 .bento-cell .bento-content pre:not(.mermaid),
 .bento-cell .bento-desc pre:not(.mermaid) {
   flex: 1;
@@ -700,17 +719,26 @@ tr:last-child td { border-bottom: none; }
 }
 
 /* Mermaid wrapper inside bento cells — scale to fit */
-.bento-cell .mermaid-wrapper {
+.bento-cell .mermaid-container {
   flex: 1;
   min-height: 0;
+  max-height: 100%;
   overflow: hidden;
+  position: relative;
 }
-.bento-cell .mermaid-wrapper svg,
+.bento-cell .mermaid-container pre.mermaid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.bento-cell .mermaid-container svg,
 .bento-cell pre.mermaid svg {
   max-width: 100%;
   max-height: 100%;
-  width: auto;
-  height: auto;
+  width: auto !important;
+  height: auto !important;
 }
 
 /* Inline chart inside bento cells — scale to fit like mermaid */
@@ -733,13 +761,7 @@ tr:last-child td { border-bottom: none; }
   height: auto;
 }
 
-/* Code blocks inside bento cells — fill available space */
-.bento-cell .bento-desc pre:not(.mermaid),
-.bento-cell .bento-content pre:not(.mermaid) {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-}
+/* Code blocks inside bento cells — fill available space (consolidated above) */
 
 /* Bento inline image (content image, not background) */
 .bento-inline-image {
@@ -754,6 +776,16 @@ tr:last-child td { border-bottom: none; }
   height: 100%;
   object-fit: cover;
   display: block;
+}
+.bento-image-contain {
+  overflow: visible;
+  flex: none;
+}
+.bento-image-contain img {
+  width: 100%;
+  height: auto;
+  object-fit: unset;
+  border-radius: ${Math.round(rCell * 0.4)}px;
 }
 
 /* Bento image cell */
@@ -795,7 +827,15 @@ tr:last-child td { border-bottom: none; }
    Module: Mermaid Diagrams
    ========================================================== */
 
-pre.mermaid, .mermaid-wrapper {
+/* Mermaid isolation — prevents .slide-content styles from leaking into SVG */
+.slide-content .mermaid-container a { color: inherit; text-decoration: inherit; }
+.slide-content .mermaid-container strong { font-weight: inherit; }
+.slide-content .mermaid-container em { font-style: inherit; }
+.slide-content .mermaid-container code { font-family: inherit; background: none; padding: 0; border-radius: 0; font-size: inherit; }
+.slide-content .mermaid-container pre { background: transparent; padding: 0; border-radius: 0; overflow: hidden; margin: 0; line-height: inherit; }
+.slide-content .mermaid-container pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+
+pre.mermaid, .mermaid-container {
   background: transparent;
   padding: 0;
   margin: auto 0;
@@ -808,9 +848,24 @@ pre.mermaid, .mermaid-wrapper {
   min-height: 0;
   width: 100%;
 }
+.mermaid-container pre.mermaid {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mermaid-container svg,
+pre.mermaid svg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
 
 /* Richtext containing mermaid or charts — fill body area, center content */
-.module-richtext:has(.mermaid-wrapper),
+.module-richtext:has(.mermaid-container),
 .module-richtext:has(.inline-chart) {
   display: flex;
   flex-direction: column;
@@ -1041,6 +1096,16 @@ pre.mermaid, .mermaid-wrapper {
     margin: 0;
   }
 }
+
+
+/* ==========================================================
+   Syntax Highlighting (highlight.js)
+   ========================================================== */
+${isDark(background) ? HLJS_DARK : HLJS_LIGHT}
+
+/* Override hljs defaults to fit slide layout */
+pre code.hljs { padding: 0; background: transparent; }
+code.hljs { padding: 0; background: transparent; }
 `.trim();
 }
 
@@ -1050,4 +1115,20 @@ function hexToRgb(hex: string): string {
   const g = parseInt(h.substring(2, 4), 16);
   const b = parseInt(h.substring(4, 6), 16);
   return isNaN(r) ? '248,250,252' : `${r},${g},${b}`;
+}
+
+function isDark(hex: string): boolean {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 < 128;
+}
+
+function adjustColor(hex: string, amount: number): string {
+  const h = hex.replace('#', '');
+  const r = Math.min(255, Math.max(0, parseInt(h.substring(0, 2), 16) + amount));
+  const g = Math.min(255, Math.max(0, parseInt(h.substring(2, 4), 16) + amount));
+  const b = Math.min(255, Math.max(0, parseInt(h.substring(4, 6), 16) + amount));
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }

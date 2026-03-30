@@ -10,7 +10,6 @@ export interface GlobalConfig {
   aspectRatio?: '16:9' | '4:3';
   fonts?: FontConfig;
   palette?: Palette;
-  icons?: IconConfig;
   logo?: LogoConfig;
   footer?: FooterConfig;
   lang?: string;
@@ -39,12 +38,6 @@ export interface Palette {
   surface?: string;
   text?: string;
   muted?: string;
-}
-
-export interface IconConfig {
-  strokeWidth?: number;
-  size?: number;
-  color?: string;
 }
 
 export interface LogoConfig {
@@ -183,7 +176,6 @@ export interface FeatureItem {
   link?: string;
   iconColor?: string;
   iconSize?: number;
-  iconStrokeWidth?: number;
 }
 
 // Stat/KPI
@@ -275,6 +267,10 @@ export interface BentoCell {
   title?: string;
   description?: string;
   image?: string;
+  /** Multiple images */
+  images?: string[];
+  /** Whether image(s) appear before description text */
+  imageFirst?: boolean;
   value?: string;
   label?: string;
   align?: string;
@@ -282,6 +278,8 @@ export interface BentoCell {
   mermaid?: string;
   /** Border color for outline style */
   border?: string;
+  /** Image fit: 'cover' (crop to fill) or 'contain' (show entire image) */
+  fit?: 'cover' | 'contain';
 }
 
 // Generic fallback

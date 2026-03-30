@@ -6,8 +6,6 @@ export const featuresRenderer: LayoutRenderer = (slide, config, _context) => {
   const columns = Number(slide.options.columns ?? 3);
   const style = String(slide.options.style ?? 'card');
 
-  const iconDefaults = config.icons ?? {};
-
   const cards = items
     .map((item) => {
       const iconName = item.icon;
@@ -15,14 +13,8 @@ export const featuresRenderer: LayoutRenderer = (slide, config, _context) => {
       const description = item.description;
       const link = item.link;
 
-      const iconOpts = {
-        size: item.iconSize ?? iconDefaults.size ?? 32,
-        strokeWidth: item.iconStrokeWidth ?? iconDefaults.strokeWidth,
-        color: item.iconColor ?? iconDefaults.color,
-      };
-
       const iconHtml = iconName
-        ? `<div class="feature-icon">${renderIcon(iconName, iconOpts)}</div>`
+        ? `<div class="feature-icon">${renderIcon(iconName, { size: item.iconSize ?? 32, color: item.iconColor })}</div>`
         : '';
       const titleHtml = title ? `<h3 class="feature-title">${title}</h3>` : '';
       const descHtml = description

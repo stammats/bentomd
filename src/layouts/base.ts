@@ -1,22 +1,9 @@
 import { marked } from 'marked';
-import * as lucideIcons from 'lucide-static';
 import { Slide, GlobalConfig, RenderContext } from '../types/index.js';
+export { renderIcon } from '../modules/utils.js';
 
 // Configure marked for synchronous operation
 marked.use({ async: false });
-
-const icons = lucideIcons as unknown as Record<string, string>;
-
-/**
- * Convert kebab-case to PascalCase for lucide icon lookup.
- * e.g. "arrow-right" -> "ArrowRight"
- */
-function toPascalCase(name: string): string {
-  return name
-    .split('-')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('');
-}
 
 export function escapeHtml(str: string): string {
   return str
@@ -107,28 +94,3 @@ export function renderMarkdown(md: string): string {
   return marked.parse(md) as string;
 }
 
-export function renderIcon(
-  name: string,
-  options?: { size?: number; strokeWidth?: number; color?: string },
-): string {
-  const key = toPascalCase(name);
-  const svg = icons[key];
-  if (!svg) return '';
-
-  let result = svg;
-  if (options?.size) {
-    result = result
-      .replace(/width="\d+"/, `width="${options.size}"`)
-      .replace(/height="\d+"/, `height="${options.size}"`);
-  }
-  if (options?.strokeWidth) {
-    result = result.replace(
-      /stroke-width="\d+"/,
-      `stroke-width="${options.strokeWidth}"`,
-    );
-  }
-  if (options?.color) {
-    result = result.replace(/stroke="currentColor"/, `stroke="${options.color}"`);
-  }
-  return result;
-}

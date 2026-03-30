@@ -3,11 +3,16 @@ import { escapeHtml } from './utils.js';
 
 const DEFAULT_COLORS = ['#0984e3', '#6c5ce7', '#00b894', '#d63031', '#fdcb6e', '#e17055'];
 
-export function renderChart(slide: Slide, _config: GlobalConfig): string {
+export function renderChart(slide: Slide, config: GlobalConfig): string {
   const items = (slide.items ?? slide.rawItems ?? []) as ChartDataItem[];
   const chartType = String(slide.options.type ?? 'bar');
   const title = slide.options.title as string | undefined;
-  const colors = (slide.options.colors as string[]) ?? DEFAULT_COLORS;
+  const paletteColors = [
+    config.palette?.primary ?? DEFAULT_COLORS[0],
+    config.palette?.secondary ?? DEFAULT_COLORS[1],
+    ...DEFAULT_COLORS.slice(2),
+  ];
+  const colors = (slide.options.colors as string[]) ?? paletteColors;
 
   let chartSvg: string;
   switch (chartType) {

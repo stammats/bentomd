@@ -29,6 +29,7 @@
     "test:watch": "vitest",
     "docs:dev": "cd website && npm run dev",
     "docs:build": "cd website && npm run build",
+    "preview": "cd preview && npx vite --port 3082 --host",
     "desktop:dev": "cd desktop && npm run tauri:dev",
     "desktop:build": "cd desktop && npm run tauri:build"
   },
@@ -43,8 +44,8 @@
   "dependencies": {
     "chokidar": "^4.0.0",
     "commander": "^13.1.0",
+    "highlight.js": "^11.11.1",
     "js-yaml": "^4.1.0",
-    "lucide-static": "^1.7.0",
     "marked": "^15.0.0",
     "mermaid": "^11.13.0",
     "ws": "^8.18.0"

@@ -2,6 +2,39 @@ import type { Slide, GlobalConfig, BentoCell } from '../types/index.js';
 import type { Slot } from '../engine/types.js';
 import { renderMarkdown, renderIcon, escapeHtml } from './utils.js';
 
+function parseHex(hex: string): [number, number, number] {
+  const h = hex.replace('#', '');
+  return [
+    parseInt(h.substring(0, 2), 16),
+    parseInt(h.substring(2, 4), 16),
+    parseInt(h.substring(4, 6), 16),
+  ];
+}
+
+function isDarkBg(hex: string): boolean {
+  const [r, g, b] = parseHex(hex);
+  return (r * 299 + g * 587 + b * 114) / 1000 < 128;
+}
+
+function shiftColor(hex: string, amount: number): string {
+  const [r, g, b] = parseHex(hex);
+  const clamp = (v: number) => Math.min(255, Math.max(0, v + amount));
+  return `#${clamp(r).toString(16).padStart(2, '0')}${clamp(g).toString(16).padStart(2, '0')}${clamp(b).toString(16).padStart(2, '0')}`;
+}
+
+/** Compute a full color palette from a cell's background */
+function cellColors(bg: string, primary: string) {
+  const dark = isDarkBg(bg);
+  const codeBg = shiftColor(bg, dark ? 25 : -18);
+  return {
+    text: dark ? '#fafafa' : '#1a1a1a',
+    codeBg,
+    codeColor: isDarkBg(codeBg) ? '#fafafa' : '#1a1a1a',
+    link: dark ? shiftColor(primary, 60) : primary,
+  };
+}
+
+
 export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig): string {
   const items = (slide.items ?? slide.rawItems ?? []) as BentoCell[];
   const match = slot.id.match(/cell-(\d+)/);
@@ -35,10 +68,13 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
 
   // Background + text color from cell theme
   const bg = cell.background ?? config.palette?.surface ?? '#dfe6e9';
+  const primary = config.palette?.primary ?? '#0984e3';
+  const colors = cellColors(bg, primary);
   styles.push(`background:${bg}`);
-  if (cell.color) {
-    styles.push(`color:${cell.color}`);
-  }
+  styles.push(`color:${cell.color ?? colors.text}`);
+  styles.push(`--cell-code-bg:${colors.codeBg}`);
+  styles.push(`--cell-code-color:${colors.codeColor}`);
+  styles.push(`--cell-link:${colors.link}`);
   if (cell.border) {
     styles.push(`border:2px solid ${cell.border}`);
   }
@@ -46,16 +82,18 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
   // Full-bleed image cell: image is the sole content (no icon, no description, no body text).
   // Title-only overlay is allowed. If there's any text content besides title, render inline.
   const hasBodyContent = !!(cell.icon || cell.description || cell.content || cell.value);
-  if (cell.image && !hasBodyContent) {
+  if (cell.image && !hasBodyContent && cell.fit !== 'contain') {
     return renderImageCell(cell, styles);
   }
 
   // Padding for non-image cells
   styles.push('padding:48px');
 
-  // Content alignment
+  // Content alignment — cells with inline images align to top
   if (cell.align === 'center') {
     styles.push('align-items:center', 'text-align:center', 'justify-content:center');
+  } else if (cell.image) {
+    styles.push('justify-content:flex-start');
   } else {
     styles.push('justify-content:center');
   }
@@ -73,8 +111,15 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
     }
   }
 
-  // Build body parts (description, content, mermaid, image — everything below title)
+  // Build body parts — respect source order (imageFirst)
   const bodyParts: string[] = [];
+  const imgList = cell.images ?? (cell.image ? [cell.image] : []);
+  const fitClass = cell.fit === 'contain' ? ' bento-image-contain' : '';
+  const imageHtml = imgList.length > 0
+    ? imgList.map(src => `<div class="bento-inline-image${fitClass}"><img src="${escapeHtml(src)}" alt="" /></div>`).join('\n')
+    : '';
+
+  if (cell.imageFirst && imageHtml) bodyParts.push(imageHtml);
   if (cell.description) {
     bodyParts.push(`<div class="bento-desc">${renderMarkdown(cell.description)}</div>`);
   }
@@ -82,11 +127,9 @@ export function renderBentoCell(slot: Slot, slide: Slide, config: GlobalConfig):
     bodyParts.push(`<div class="bento-content">${renderMarkdown(cell.content)}</div>`);
   }
   if (cell.mermaid) {
-    bodyParts.push(`<pre class="mermaid">${cell.mermaid}</pre>`);
+    bodyParts.push(`<div class="mermaid-container"><pre class="mermaid">${cell.mermaid}</pre></div>`);
   }
-  if (cell.image) {
-    bodyParts.push(`<div class="bento-inline-image"><img src="${escapeHtml(cell.image)}" alt="${escapeHtml(cell.title ?? '')}" /></div>`);
-  }
+  if (!cell.imageFirst && imageHtml) bodyParts.push(imageHtml);
 
   const parts: string[] = [];
 
@@ -137,7 +180,7 @@ function renderImageCell(cell: BentoCell, baseStyles: string[]): string {
 
   return (
     `<div class="bento-cell bento-cell-image" style="${styles.join(';')}">` +
-    `<img src="${escapeHtml(cell.image!)}" alt="${escapeHtml(cell.title ?? '')}" style="width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0" />` +
+    `<img src="${escapeHtml(cell.image!)}" alt="${escapeHtml(cell.title ?? '')}" style="width:100%;height:100%;object-fit:${cell.fit ?? 'cover'};display:block;position:absolute;inset:0" />` +
     overlayHtml +
     `</div>`
   );

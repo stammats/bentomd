@@ -5,12 +5,10 @@ export const statsRenderer: LayoutRenderer = (slide, config) => {
   const items = (slide.items ?? slide.rawItems ?? []) as StatItem[];
   const columns = Math.min(Number(slide.options.columns ?? items.length), 4);
 
-  const iconDefaults = config.icons ?? {};
-
   const cards = items
     .map((item) => {
       const iconHtml = item.icon
-        ? `<div class="stat-icon">${renderIcon(item.icon, { size: 32, ...iconDefaults })}</div>`
+        ? `<div class="stat-icon">${renderIcon(item.icon, { size: 32 })}</div>`
         : '';
 
       const trendHtml = item.trend
